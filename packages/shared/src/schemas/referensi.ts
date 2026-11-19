@@ -6,6 +6,16 @@ export type JenisAyam = z.infer<typeof jenisAyamSchema>;
 export const faseAyamSchema = z.enum(["starter", "grower", "layer"]);
 export type FaseAyam = z.infer<typeof faseAyamSchema>;
 
+export const ambangReferensiSchema = z.object({
+  jenisAyam: jenisAyamSchema,
+  kematianPersenMaks: z.number().positive(),
+  suhuMinC: z.number(),
+  suhuMaksC: z.number(),
+  produksiTelurMinPersen: z.number().min(0).max(100),
+  sumber: z.string().min(1),
+  isDemo: z.boolean().default(true),
+});
+
 export const bahanMasterSchema = z.object({
   id: z.string().min(1),
   nama: z.string().min(1),
@@ -39,5 +49,6 @@ export const dataReferensiSchema = z.object({
   staleDays: z.number().int().positive(),
   bahan: z.array(bahanMasterSchema),
   kebutuhanGizi: z.array(kebutuhanGiziItemSchema),
+  ambangPeringatan: z.array(ambangReferensiSchema).default([]),
 });
 export type DataReferensi = z.infer<typeof dataReferensiSchema>;
