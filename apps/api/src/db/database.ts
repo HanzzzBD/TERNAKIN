@@ -4,9 +4,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import {
+  ambangPeringatanSchema,
   bahanMasterSchema,
   dataReferensiSchema,
   kebutuhanGiziItemSchema,
+  type AmbangPeringatan,
   type BahanMaster,
   type DataReferensi,
   type KebutuhanGiziItem,
@@ -22,6 +24,7 @@ const seedReferensiFileSchema = z.object({
   catatanData: z.string().min(1),
   bahan: z.array(bahanMasterSchema),
   kebutuhanGizi: z.array(kebutuhanGiziItemSchema),
+  ambangPeringatan: z.array(ambangPeringatanSchema).default([]),
 });
 
 type SeedReferensiFile = z.infer<typeof seedReferensiFileSchema>;
@@ -32,6 +35,7 @@ export interface DatabaseContext {
     versi: string;
     isDemo: boolean;
     catatanData: string;
+    ambangPeringatan: AmbangPeringatan[];
   };
   close: () => void;
 }
@@ -53,6 +57,8 @@ export function initDatabase(
 
   const sql = fs.readFileSync(MIGRATION_001, "utf-8");
   db.exec(sql);
+  ensureColumn(db, "kandang", "bahan_tersedia_json", "TEXT NOT NULL DEFAULT '[]'");
+  ensureColumn(db, "catatan_harian", "dihapus_pada", "TEXT");
 
   const rawSeed: unknown = JSON.parse(fs.readFileSync(seedReferensiPath, "utf-8"));
   const seed = seedReferensiFileSchema.parse(rawSeed);
@@ -64,9 +70,22 @@ export function initDatabase(
       versi: seed.versi,
       isDemo: seed.isDemo,
       catatanData: seed.catatanData,
+      ambangPeringatan: seed.ambangPeringatan,
     },
     close: () => db.close(),
   };
+}
+
+function ensureColumn(
+  db: Database.Database,
+  table: string,
+  column: string,
+  definition: string,
+): void {
+  const cols = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+  if (!cols.some((c) => c.name === column)) {
+    db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+  }
 }
 
 function seedReferensi(db: Database.Database, seed: SeedReferensiFile): void {
@@ -210,5 +229,6 @@ export function getReferensiData(ctx: DatabaseContext, staleDays: number): DataR
     staleDays,
     bahan,
     kebutuhanGizi,
+    ambangPeringatan: ctx.referensiMeta.ambangPeringatan,
   });
 }

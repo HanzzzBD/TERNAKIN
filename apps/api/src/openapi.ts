@@ -1,7 +1,9 @@
 import { z } from "zod";
 import {
+  catatanPutRequestSchema,
   dataReferensiSchema,
   galatApiSchema,
+  kandangCreateRequestSchema,
   kesehatanApiSchema,
   pakanHitungRequestSchema,
   pakanHitungResultSchema,
@@ -9,6 +11,8 @@ import {
   pakanJelaskanResponseSchema,
   pakanUraiRequestSchema,
   pakanUraiResponseSchema,
+  sinkronRequestSchema,
+  sinkronResponseSchema,
 } from "@ternakin/shared";
 
 export function buildOpenApiSpec() {
@@ -16,7 +20,7 @@ export function buildOpenApiSpec() {
     openapi: "3.1.0",
     info: {
       title: "Ternakin API",
-      version: "0.2.0",
+      version: "0.3.0",
       description:
         "Kontrak API REST JSON /v1 bersama untuk aplikasi web PWA dan aplikasi mobile Ternakin.",
     },
@@ -108,6 +112,51 @@ export function buildOpenApiSpec() {
               },
             },
           },
+        },
+      },
+      "/v1/kandang": {
+        get: {
+          summary: "Daftar profil kandang untuk perangkat/akun (SDD)",
+          responses: { "200": { description: "Daftar kandang" } },
+        },
+        post: {
+          summary: "Membuat atau memperbarui profil kandang (SDD)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(kandangCreateRequestSchema) } },
+          },
+          responses: { "200": { description: "Kandang tersimpan" } },
+        },
+      },
+      "/v1/catatan/{id}": {
+        put: {
+          summary: "Membuat atau memperbarui catatan harian secara idempoten (SDD)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(catatanPutRequestSchema) } },
+          },
+          responses: { "200": { description: "Catatan tersimpan" } },
+        },
+      },
+      "/v1/sinkron": {
+        post: {
+          summary: "Sinkronisasi outbox idempoten dan ambil perubahan terbaru (SDD)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(sinkronRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Daftar opId terkonfirmasi dan data pemenang terbaru",
+              content: { "application/json": { schema: z.toJSONSchema(sinkronResponseSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/akun": {
+        delete: {
+          summary: "Menghapus seluruh data akun atau mode tamu (SDD)",
+          responses: { "200": { description: "Seluruh data telah dihapus" } },
         },
       },
     },

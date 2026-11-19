@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS kandang (
   jumlah_ekor INTEGER NOT NULL CHECK (jumlah_ekor >= 0),
   umur_minggu INTEGER,
   lokasi TEXT,
+  bahan_tersedia_json TEXT NOT NULL DEFAULT '[]',
   diubah_pada TEXT NOT NULL
 );
 
@@ -27,6 +28,7 @@ CREATE TABLE IF NOT EXISTS catatan_harian (
   kematian INTEGER,
   suhu REAL,
   diubah_pada TEXT NOT NULL,
+  dihapus_pada TEXT,
   UNIQUE (kandang_id, tanggal)
 );
 
@@ -119,4 +121,10 @@ CREATE TABLE IF NOT EXISTS cache_llm (
   kunci TEXT PRIMARY KEY,
   nilai TEXT NOT NULL,
   kedaluwarsa_pada TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS outbox_diproses (
+  op_id TEXT PRIMARY KEY,
+  perangkat_id TEXT NOT NULL,
+  diproses_pada TEXT NOT NULL
 );
