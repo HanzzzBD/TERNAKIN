@@ -1,14 +1,18 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "./App";
 import { TEKS } from "./lib/teks";
+
+beforeEach(() => {
+  window.history.pushState({}, "", "/app");
+});
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
 });
 
-describe("Halaman fondasi PWA", () => {
+describe("Halaman beranda aplikasi PWA (/app)", () => {
   it("menampilkan tautan lewati ke konten dan judul utama", () => {
     render(<App />);
 
