@@ -4,9 +4,13 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { GalatApi, KesehatanApi } from "@ternakin/shared";
-import { generalLimiter } from "./middleware/rateLimit.js";
+import { MockLlmAdapter } from "./adapters/mockLlm.js";
+import { SharedSolverAdapter } from "./adapters/solverAdapter.js";
+import type { LlmAdapter, SolverAdapter } from "./adapters/types.js";
+import { initDatabase, type DatabaseContext } from "./db/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
-import { v1Router } from "./routes/v1.js";
+import { generalLimiter } from "./middleware/rateLimit.js";
+import { createV1Router } from "./routes/v1.js";
 
 const DEFAULT_WEB_DIST = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -18,12 +22,24 @@ const SPA_FALLBACK_PATTERN = /^\/(?!v1(?:\/|$)|health$|sw\.js$|manifest\.webmani
 
 export interface CreateAppOptions {
   webDistDir?: string;
+  databasePath?: string;
+  dbCtx?: DatabaseContext;
+  llmAdapter?: LlmAdapter;
+  solverAdapter?: SolverAdapter;
+  staleDays?: number;
+  dailyLlmLimit?: number;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
   const app = express();
   const webDistDir = options.webDistDir ?? DEFAULT_WEB_DIST;
   const indexHtmlPath = path.join(webDistDir, "index.html");
+  const staleDays = options.staleDays ?? 7;
+  const dailyLlmLimit = options.dailyLlmLimit ?? 20;
+
+  const dbCtx = options.dbCtx ?? initDatabase(options.databasePath ?? ":memory:");
+  const llmAdapter = options.llmAdapter ?? new MockLlmAdapter();
+  const solverAdapter = options.solverAdapter ?? new SharedSolverAdapter(dbCtx, staleDays);
 
   app.disable("x-powered-by");
   app.use(helmet());
@@ -34,7 +50,17 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
     res.status(200).json(body);
   });
 
-  app.use("/v1", generalLimiter, v1Router);
+  app.use(
+    "/v1",
+    generalLimiter,
+    createV1Router({
+      dbCtx,
+      llmAdapter,
+      solverAdapter,
+      staleDays,
+      dailyLlmLimit,
+    }),
+  );
 
   app.use(
     express.static(webDistDir, {

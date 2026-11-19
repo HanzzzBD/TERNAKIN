@@ -1,13 +1,46 @@
 import { Router } from "express";
 import type { GalatApi } from "@ternakin/shared";
+import type { LlmAdapter, SolverAdapter } from "../adapters/types.js";
+import type { DatabaseContext } from "../db/database.js";
+import { buildOpenApiSpec } from "../openapi.js";
+import { createPakanRouter } from "./pakan.js";
+import { createReferensiRouter } from "./referensi.js";
 
-export const v1Router = Router();
+export interface V1RouterDeps {
+  dbCtx: DatabaseContext;
+  llmAdapter: LlmAdapter;
+  solverAdapter: SolverAdapter;
+  staleDays: number;
+  dailyLlmLimit: number;
+}
 
-// Endpoint modul /v1 akan ditambahkan bertahap mulai Fase 2 sampai Fase 5.
-v1Router.use((_req, res) => {
-  const galat: GalatApi = {
-    kode: "TIDAK_DITEMUKAN",
-    pesan: "Jalur API tidak ditemukan.",
-  };
-  res.status(404).json(galat);
-});
+export function createV1Router(deps: V1RouterDeps): Router {
+  const router = Router();
+  const openApiDoc = buildOpenApiSpec();
+
+  router.get("/openapi.json", (_req, res) => {
+    res.status(200).json(openApiDoc);
+  });
+
+  router.use("/", createReferensiRouter({ dbCtx: deps.dbCtx, staleDays: deps.staleDays }));
+  router.use(
+    "/pakan",
+    createPakanRouter({
+      dbCtx: deps.dbCtx,
+      llmAdapter: deps.llmAdapter,
+      solverAdapter: deps.solverAdapter,
+      staleDays: deps.staleDays,
+      dailyLlmLimit: deps.dailyLlmLimit,
+    }),
+  );
+
+  router.use((_req, res) => {
+    const galat: GalatApi = {
+      kode: "TIDAK_DITEMUKAN",
+      pesan: "Jalur API tidak ditemukan.",
+    };
+    res.status(404).json(galat);
+  });
+
+  return router;
+}
