@@ -70,3 +70,15 @@ export function buatTautanWhatsAppKasus(ringkasan: RingkasanKasus): string {
 
   return `https://wa.me/?text=${encodeURIComponent(baris.join("\n"))}`;
 }
+
+/**
+ * Menyusun tautan WhatsApp untuk menghubungi tim Ternakin.
+ * Membaca nomor dari VITE_WA_NUMBER; bila masih kosong (belum diputuskan tim),
+ * membuka wa.me/?text=... tanpa nomor tujuan agar tidak pernah memakai nomor palsu.
+ */
+export function buatTautanWhatsAppTim(teks: string, nomorOverride?: string): string {
+  const sumberNomor = nomorOverride ?? import.meta.env.VITE_WA_NUMBER ?? "";
+  const nomor = sumberNomor.replace(/[^\d]/g, "");
+  const encoded = encodeURIComponent(teks);
+  return nomor ? `https://wa.me/${nomor}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
+}
