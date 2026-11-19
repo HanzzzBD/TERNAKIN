@@ -1,6 +1,6 @@
 # Ternakin: SDD Website (PWA)
 
-Nov 18, 2026 · @Arrival Sentosa
+Nov 18, 2026
 
 ## Tujuan dan prinsip desain
 

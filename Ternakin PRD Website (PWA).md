@@ -1,6 +1,6 @@
 # Ternakin: PRD Website (PWA)
 
-Nov 18, 2026 · @Arrival Sentosa
+Nov 18, 2026
 
 ## Ringkasan dan tujuan
 
