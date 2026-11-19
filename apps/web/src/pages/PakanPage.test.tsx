@@ -103,6 +103,7 @@ const REF_UJI: DataReferensi = {
     },
   ],
   ambangPeringatan: [],
+  gejalaAwalKokok: [],
 };
 
 afterEach(() => {

@@ -22,6 +22,7 @@ const REF_AMBANG: DataReferensi = {
       isDemo: true,
     },
   ],
+  gejalaAwalKokok: [],
 };
 
 afterEach(() => {

@@ -50,5 +50,6 @@ export const dataReferensiSchema = z.object({
   bahan: z.array(bahanMasterSchema),
   kebutuhanGizi: z.array(kebutuhanGiziItemSchema),
   ambangPeringatan: z.array(ambangReferensiSchema).default([]),
+  gejalaAwalKokok: z.array(z.string().min(1)).default([]),
 });
 export type DataReferensi = z.infer<typeof dataReferensiSchema>;
