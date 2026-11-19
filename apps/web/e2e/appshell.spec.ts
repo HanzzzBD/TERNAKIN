@@ -81,6 +81,44 @@ for (const vp of VIEWPORTS) {
   });
 }
 
+test("AppShell desktop: icon rail dapat mengecil/membuka dan menampilkan nama menu saat hover", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/app");
+
+  const rail = page.locator('aside[aria-label="Bilah navigasi samping"]');
+  await expect(rail).toHaveAttribute("data-collapsed", "true");
+
+  const lebarKecil = await rail.evaluate((el) => el.getBoundingClientRect().width);
+  expect(lebarKecil).toBeLessThanOrEqual(90);
+
+  // Saat mengecil, hover item menu memunculkan tooltip nama menu
+  const linkPakan = rail.getByRole("link", { name: "Pakan" });
+  const labelPakan = linkPakan.locator(".tk-nav__label");
+  expect(await labelPakan.evaluate((el) => getComputedStyle(el).visibility)).toBe("hidden");
+
+  await linkPakan.hover();
+  await expect(labelPakan).toBeVisible();
+  await expect(labelPakan).toHaveCSS("opacity", "1");
+
+  // Klik tombol buka -> rail melebar dan label tampil permanen
+  await page.getByRole("button", { name: "Buka bilah navigasi" }).click();
+  await expect(rail).toHaveAttribute("data-collapsed", "false");
+  await expect
+    .poll(() => rail.evaluate((el) => el.getBoundingClientRect().width))
+    .toBeGreaterThanOrEqual(220);
+  await expect(labelPakan).toBeVisible();
+
+  // Audit axe saat rail terbuka
+  const hasilAxeBuka = await new AxeBuilder({ page }).analyze();
+  expect(hasilAxeBuka.violations).toEqual([]);
+
+  // Klik kecilkan kembali -> kembali ke icon rail
+  await page.getByRole("button", { name: "Kecilkan bilah navigasi" }).click();
+  await expect(rail).toHaveAttribute("data-collapsed", "true");
+});
+
 test("AppShell lulus audit axe tanpa pelanggaran di ponsel (360px) dan laptop (1280px)", async ({
   page,
 }) => {

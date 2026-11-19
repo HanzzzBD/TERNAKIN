@@ -227,3 +227,32 @@ export function ArrowUpIcon(props: IconProps) {
     </BaseIcon>
   );
 }
+
+export function UserIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M5 20a7 7 0 0 1 14 0" />
+    </BaseIcon>
+  );
+}
+
+export function SidebarExpandIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M9 4v16" />
+      <path d="m13 9 3 3-3 3" />
+    </BaseIcon>
+  );
+}
+
+export function SidebarCollapseIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M9 4v16" />
+      <path d="m16 9-3 3 3 3" />
+    </BaseIcon>
+  );
+}

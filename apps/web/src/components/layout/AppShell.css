@@ -108,13 +108,48 @@
 .tk-shell__profil-link {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-3);
+  width: 100%;
   min-height: var(--tap-min);
+  min-width: var(--tap-min);
   padding: 0 var(--space-3);
   border-radius: var(--radius-control);
   font-weight: 700;
   color: var(--tk-ink);
   text-decoration: none;
   margin-bottom: var(--space-2);
+  white-space: nowrap;
+}
+
+.tk-shell__profil-link--active {
+  background: var(--tk-peach);
+}
+
+.tk-shell__profil-link--collapsed {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  justify-content: center;
+  padding: 0;
+  gap: 0;
+}
+
+.tk-shell__rail-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tap-min);
+  height: var(--tap-min);
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--tk-border-subtle);
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tk-wordmark--mini {
+  font-size: 1.625rem;
+  text-align: center;
 }
 
 .tk-shell__main {
@@ -177,24 +212,71 @@
     flex-shrink: 0;
     position: sticky;
     top: 0;
+    z-index: var(--z-nav);
     height: 100dvh;
     padding: var(--space-5) var(--space-4);
     border-right: 1.5px solid var(--tk-border-subtle);
     background: var(--tk-white);
-    gap: var(--space-6);
+    gap: var(--space-5);
+    overflow: visible;
+  }
+
+  html[data-motion="on"] .tk-shell__rail {
+    transition: width 180ms ease;
+  }
+
+  .tk-shell__rail--collapsed {
+    width: var(--nav-rail-collapsed-width);
+    padding: var(--space-4) var(--space-2);
+    align-items: center;
+  }
+
+  .tk-shell__rail-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    width: 100%;
+  }
+
+  .tk-shell__rail--collapsed .tk-shell__rail-head {
+    flex-direction: column;
+    gap: var(--space-3);
   }
 
   .tk-shell__rail-brand {
-    padding-inline: var(--space-3);
+    padding-inline: var(--space-2);
+    min-width: 0;
+  }
+
+  .tk-shell__rail--collapsed .tk-shell__rail-brand {
+    padding-inline: 0;
   }
 
   .tk-shell__rail-nav {
     flex: 1;
+    width: 100%;
+    overflow: visible;
   }
 
   .tk-shell__rail-footer {
+    width: 100%;
     padding-top: var(--space-4);
     border-top: 1.5px solid var(--tk-border-subtle);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tk-shell__rail--collapsed .tk-shell__rail-footer {
+    align-items: center;
+  }
+
+  @media (hover: hover) {
+    .tk-shell__rail-toggle:hover,
+    .tk-shell__profil-link:hover {
+      background: var(--tk-peach);
+    }
   }
 
   .tk-shell__mobile-brand,

@@ -51,6 +51,7 @@
   --container-tablet: 640px;
   --container-desktop: 1120px;
   --nav-rail-width: 240px;
+  --nav-rail-collapsed-width: 80px;
   --bottom-nav-height: 72px;
 
   /* Kedalaman lapisan */

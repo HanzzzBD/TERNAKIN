@@ -19,29 +19,42 @@ const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
 
 export interface AppNavProps {
   variant: "bottom" | "rail";
+  collapsed?: boolean;
   items?: readonly NavItem[];
   ariaLabel?: string;
 }
 
 export function AppNav({
   variant,
+  collapsed = false,
   items = DEFAULT_NAV_ITEMS,
   ariaLabel = "Navigasi utama",
 }: AppNavProps) {
+  const isRailCollapsed = variant === "rail" && collapsed;
+
   return (
-    <nav className={`tk-nav tk-nav--${variant}`} aria-label={ariaLabel}>
+    <nav
+      className={`tk-nav tk-nav--${variant} ${isRailCollapsed ? "tk-nav--rail-collapsed" : ""}`.trim()}
+      aria-label={ariaLabel}
+    >
       <ul className="tk-nav__list">
         {items.map((item) => (
           <li key={item.to} className="tk-nav__item">
             <NavLink
               to={item.to}
               end={item.end}
+              aria-label={isRailCollapsed ? item.label : undefined}
               className={({ isActive }) =>
-                `tk-nav__link ${isActive ? "tk-nav__link--active" : ""}`.trim()
+                `tk-nav__link ${isActive ? "tk-nav__link--active" : ""} ${isRailCollapsed ? "tk-rail-tip-host" : ""}`.trim()
               }
             >
               <span className="tk-nav__icon">{item.icon}</span>
-              <span className="tk-nav__label">{item.label}</span>
+              <span
+                className={`tk-nav__label ${isRailCollapsed ? "tk-rail-tip" : ""}`.trim()}
+                aria-hidden={isRailCollapsed ? true : undefined}
+              >
+                {item.label}
+              </span>
             </NavLink>
           </li>
         ))}
