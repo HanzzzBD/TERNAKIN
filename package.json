@@ -1,0 +1,32 @@
+{
+  "name": "ternakin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run build -w @ternakin/shared && concurrently -n shared,api,web -c cyan,green,yellow \"npm run dev -w @ternakin/shared\" \"npm run dev -w @ternakin/api\" \"npm run dev -w @ternakin/web\"",
+    "build": "npm run build -w @ternakin/shared && npm run build -w @ternakin/web && npm run build -w @ternakin/api",
+    "start": "npm run start -w @ternakin/api",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run build -w @ternakin/shared && npm run typecheck -w @ternakin/api && npm run typecheck -w @ternakin/web",
+    "test": "npm run build -w @ternakin/shared && npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@eslint/js": "latest",
+    "concurrently": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-plugin-react-hooks": "latest",
+    "eslint-plugin-react-refresh": "latest",
+    "prettier": "latest",
+    "typescript": "latest",
+    "typescript-eslint": "latest",
+    "vitest": "latest"
+  }
+}
