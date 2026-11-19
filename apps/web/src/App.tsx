@@ -1,8 +1,10 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
 import { ModulSegeraPage } from "./pages/ModulSegeraPage";
 import { PakanPage } from "./pages/PakanPage";
+import { ProfilPage } from "./pages/ProfilPage";
 
 // Halaman /dev/komponen hanya dimuat saat pengembangan; dihapus otomatis dari build produksi.
 const DevKomponenPage = import.meta.env.DEV ? lazy(() => import("./pages/dev/KomponenPage")) : null;
@@ -14,7 +16,8 @@ export function App() {
         <Route path="/" element={<FondasiPage />} />
         <Route path="/app" element={<FondasiPage />} />
         <Route path="/app/pakan" element={<PakanPage />} />
-        <Route path="/app/catatan" element={<ModulSegeraPage namaModul="Catatan harian" />} />
+        <Route path="/app/catatan" element={<CatatanPage />} />
+        <Route path="/app/profil" element={<ProfilPage />} />
         <Route path="/app/tanya" element={<ModulSegeraPage namaModul="Kokok" />} />
         <Route path="/app/toko" element={<ModulSegeraPage namaModul="Toko mitra" />} />
         {DevKomponenPage && (

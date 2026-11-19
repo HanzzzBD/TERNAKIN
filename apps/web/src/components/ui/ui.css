@@ -527,3 +527,38 @@ html[data-motion="on"] .tk-accordion__icon {
     border-radius: var(--radius-control);
   }
 }
+
+/* Sparkline SVG ringan */
+.tk-sparkline {
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--tk-border-subtle);
+  background: var(--tk-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tk-sparkline__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.tk-sparkline__nilai {
+  font-weight: 800;
+  color: var(--tk-ink);
+}
+
+.tk-sparkline__svg {
+  width: 100%;
+  height: 64px;
+}
+
+.tk-sparkline__meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--tk-ink-muted);
+}

@@ -102,6 +102,7 @@ const REF_UJI: DataReferensi = {
       isDemo: true,
     },
   ],
+  ambangPeringatan: [],
 };
 
 afterEach(() => {

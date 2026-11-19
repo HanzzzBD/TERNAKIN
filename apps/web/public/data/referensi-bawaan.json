@@ -233,5 +233,16 @@
       "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
       "isDemo": true
     }
+  ],
+  "ambangPeringatan": [
+    {
+      "jenisAyam": "petelur",
+      "kematianPersenMaks": 0.5,
+      "suhuMinC": 18,
+      "suhuMaksC": 32,
+      "produksiTelurMinPersen": 60,
+      "sumber": "Data contoh — ambang umum sementara (wajib diverifikasi oleh penasihat penyuluh atau dokter hewan sebelum pilot)",
+      "isDemo": true
+    }
   ]
 }

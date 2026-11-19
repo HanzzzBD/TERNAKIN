@@ -14,7 +14,7 @@ describe("Halaman fondasi PWA", () => {
 
     expect(screen.getByRole("link", { name: TEKS.lewatiKeKonten })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1, name: TEKS.judulFondasi })).toBeInTheDocument();
-    expect(screen.getByText(TEKS.statusOnline)).toBeInTheDocument();
+    expect(screen.getByText("Tersinkron")).toBeInTheDocument();
   });
 
   it("menampilkan banner offline dan menonaktifkan cek server saat jaringan putus", () => {

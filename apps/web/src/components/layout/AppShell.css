@@ -93,9 +93,28 @@
   color: var(--tk-green-dark);
 }
 
+.tk-net-chip--pending,
 .tk-net-chip--offline {
   background: var(--tk-amber-soft);
   color: var(--tk-ink);
+}
+
+.tk-shell__kandang-sub {
+  margin: 4px 0 0;
+  font-size: var(--text-xs);
+  color: var(--tk-ink-muted);
+}
+
+.tk-shell__profil-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-control);
+  font-weight: 700;
+  color: var(--tk-ink);
+  text-decoration: none;
+  margin-bottom: var(--space-2);
 }
 
 .tk-shell__main {

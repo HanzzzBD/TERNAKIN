@@ -36,4 +36,5 @@ export {
 } from "./Icons";
 export { MotionToggleButton, type MotionToggleButtonProps } from "./MotionToggleButton";
 export { Skeleton, type SkeletonProps, type SkeletonVariant } from "./Skeleton";
+export { Sparkline, type SparklinePoint, type SparklineProps } from "./Sparkline";
 export { UrgencyChip, type UrgencyChipProps, type UrgencyLevel } from "./UrgencyChip";

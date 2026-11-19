@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { useOnlineStatus } from "../../lib/pwa";
+import { Link } from "react-router";
+import { useSyncStatus } from "../../db/sync";
 import { TEKS } from "../../lib/teks";
 import { PwaStatusBar } from "../PwaStatusBar";
-import { AppNav, Banner, MotionToggleButton, WifiIcon, WifiOffIcon } from "../ui";
+import { AppNav, Banner, MotionToggleButton, RefreshIcon, WifiIcon, WifiOffIcon } from "../ui";
 
 export interface AppShellProps {
   pageTitle?: string;
@@ -10,7 +11,21 @@ export interface AppShellProps {
 }
 
 export function AppShell({ pageTitle, children }: AppShellProps) {
-  const isOnline = useOnlineStatus();
+  const { isOnline, pendingCount, isSyncing, namaKandangAktif } = useSyncStatus();
+
+  const statusChipLabel = !isOnline
+    ? TEKS.statusOffline
+    : isSyncing
+      ? "Menyinkron..."
+      : pendingCount > 0
+        ? `${pendingCount} menunggu`
+        : "Tersinkron";
+
+  const statusChipClass = !isOnline
+    ? "tk-net-chip--offline"
+    : pendingCount > 0
+      ? "tk-net-chip--pending"
+      : "tk-net-chip--online";
 
   return (
     <div className="tk-shell">
@@ -26,6 +41,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
               .
             </span>
           </p>
+          {namaKandangAktif && <p className="tk-shell__kandang-sub">{namaKandangAktif}</p>}
         </div>
 
         <div className="tk-shell__rail-nav">
@@ -33,6 +49,9 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         </div>
 
         <div className="tk-shell__rail-footer">
+          <Link to="/app/profil" className="tk-shell__profil-link">
+            Profil kandang
+          </Link>
           <MotionToggleButton />
         </div>
       </aside>
@@ -47,17 +66,24 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
                   .
                 </span>
               </p>
-              {pageTitle && <p className="tk-shell__page-title">{pageTitle}</p>}
+              {pageTitle && (
+                <p className="tk-shell__page-title">
+                  {pageTitle}
+                  {namaKandangAktif ? ` · ${namaKandangAktif}` : ""}
+                </p>
+              )}
             </div>
 
             <div className="tk-shell__topbar-right">
-              <span
-                className={`tk-net-chip ${isOnline ? "tk-net-chip--online" : "tk-net-chip--offline"}`}
-                role="status"
-                aria-live="polite"
-              >
-                {isOnline ? <WifiIcon size={16} /> : <WifiOffIcon size={16} />}
-                <span>{isOnline ? TEKS.statusOnline : TEKS.statusOffline}</span>
+              <span className={`tk-net-chip ${statusChipClass}`} role="status" aria-live="polite">
+                {!isOnline ? (
+                  <WifiOffIcon size={16} />
+                ) : pendingCount > 0 ? (
+                  <RefreshIcon size={16} />
+                ) : (
+                  <WifiIcon size={16} />
+                )}
+                <span>{statusChipLabel}</span>
               </span>
 
               <div className="tk-shell__mobile-motion">

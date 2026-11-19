@@ -6,7 +6,7 @@ export default defineConfig({
   projects: [
     {
       name: "preview",
-      testMatch: /(offline|appshell|pakan-offline)\.spec\.ts/,
+      testMatch: /(offline|appshell|pakan-offline|catatan-offline)\.spec\.ts/,
       use: {
         baseURL: "http://127.0.0.1:4173",
       },
@@ -21,8 +21,13 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: "npx vite preview --host 127.0.0.1 --port 4173 --strictPort",
-      url: "http://127.0.0.1:4173",
+      command: "node ../api/dist/server.js",
+      env: {
+        PORT: "4173",
+        DATABASE_PATH: ":memory:",
+        NODE_ENV: "test",
+      },
+      url: "http://127.0.0.1:4173/health",
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
     },
