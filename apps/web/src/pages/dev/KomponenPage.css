@@ -1,0 +1,165 @@
+/* Gaya khusus halaman uji komponen /dev/komponen — tidak masuk build produksi */
+
+.tk-dev-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.tk-dev-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tk-dev-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tk-dev-swatch-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+
+.tk-dev-swatch {
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+  border: 1.5px solid var(--tk-border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tk-dev-swatch__name {
+  font-weight: 700;
+}
+
+.tk-dev-swatch__meta {
+  font-size: var(--text-sm);
+}
+
+.tk-dev-swatch--ink-white {
+  background: var(--tk-white);
+  color: var(--tk-ink);
+}
+
+.tk-dev-swatch--ink-peach {
+  background: var(--tk-peach);
+  color: var(--tk-ink);
+}
+
+.tk-dev-swatch--muted-white {
+  background: var(--tk-white);
+  color: var(--tk-ink-muted);
+}
+
+.tk-dev-swatch--muted-peach {
+  background: var(--tk-peach);
+  color: var(--tk-ink-muted);
+}
+
+.tk-dev-swatch--ink-orange {
+  background: var(--tk-orange);
+  color: var(--tk-ink);
+}
+
+.tk-dev-swatch--orangedark-white {
+  background: var(--tk-white);
+  color: var(--tk-orange-dark);
+}
+
+.tk-dev-swatch--white-green {
+  background: var(--tk-green);
+  color: var(--tk-white);
+}
+
+.tk-dev-swatch--greendark-soft {
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+}
+
+.tk-dev-swatch--ink-amber {
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+}
+
+.tk-dev-swatch--white-danger {
+  background: var(--tk-danger);
+  color: var(--tk-white);
+}
+
+.tk-dev-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(112px, 1fr));
+  gap: var(--space-2);
+}
+
+.tk-dev-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--space-3);
+  border: 1.5px solid var(--tk-border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--tk-white);
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.tk-dev-orange-band {
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+}
+
+.tk-dev-dark-band {
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+}
+
+.tk-dev-dark-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-3);
+  font-weight: 700;
+}
+
+.tk-dev-h1 {
+  font-size: var(--text-2xl);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+}
+
+.tk-dev-h1 em {
+  color: var(--tk-orange-dark);
+  font-style: italic;
+}
+
+.tk-dev-h2 {
+  font-size: var(--text-xl);
+  line-height: 1.25;
+  margin-bottom: var(--space-3);
+}
+
+@media (min-width: 640px) {
+  .tk-dev-swatch-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .tk-dev-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tk-dev-swatch-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

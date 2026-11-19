@@ -31,7 +31,13 @@ test("manifest PWA valid tanpa orientasi terkunci dan ikon dapat diakses", async
   }
 });
 
-test("halaman /app tetap terbuka dalam mode offline setelah satu kunjungan", async ({
+test("/dev/komponen tidak tersedia pada build produksi", async ({ page }) => {
+  await page.goto("/dev/komponen");
+  await expect(page).toHaveURL(/\/app$/);
+  await expect(page.getByText(/DESIGN SYSTEM · KHUSUS PENGEMBANGAN/i)).toHaveCount(0);
+});
+
+test("halaman /app dan font Georama tetap tampil dalam mode pesawat setelah satu kunjungan", async ({
   context,
   page,
 }) => {
@@ -41,20 +47,20 @@ test("halaman /app tetap terbuka dalam mode offline setelah satu kunjungan", asy
     page.getByRole("heading", { level: 1, name: /Ternakin siap dibuka walau sinyal hilang/i }),
   ).toBeVisible();
 
-  // Tunggu service worker aktif dan selesai precache aset.
   await page.evaluate(async () => {
     const reg = await navigator.serviceWorker.ready;
     if (!reg.active) {
       throw new Error("Service worker tidak aktif");
     }
+    await document.fonts.ready;
   });
 
-  // Muat ulang sekali saat online agar halaman dikendalikan service worker.
+  // Muat ulang sekali saat daring agar halaman dikendalikan service worker.
   await page.reload();
   const controlled = await page.evaluate(() => Boolean(navigator.serviceWorker.controller));
   expect(controlled).toBe(true);
 
-  // Matikan jaringan (mode pesawat) lalu muat ulang /app.
+  // Mode pesawat: muat ulang /app dan pastikan konten + font Georama tetap termuat.
   await context.setOffline(true);
   await page.reload();
 
@@ -62,4 +68,21 @@ test("halaman /app tetap terbuka dalam mode offline setelah satu kunjungan", asy
     page.getByRole("heading", { level: 1, name: /Ternakin siap dibuka walau sinyal hilang/i }),
   ).toBeVisible();
   await expect(page.getByRole("alert")).toContainText("Anda sedang tanpa sinyal");
+
+  const fontCheck = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const georamaLoaded = Array.from(document.fonts).some(
+      (f) => f.family.replace(/['"]/g, "") === "Georama" && f.status === "loaded",
+    );
+    const bodyStyle = getComputedStyle(document.body);
+    return {
+      georamaLoaded,
+      fontFamily: bodyStyle.fontFamily,
+      fontStretch: bodyStyle.fontStretch,
+    };
+  });
+
+  expect(fontCheck.georamaLoaded).toBe(true);
+  expect(fontCheck.fontFamily).toContain("Georama");
+  expect(fontCheck.fontStretch).toBe("100%");
 });
