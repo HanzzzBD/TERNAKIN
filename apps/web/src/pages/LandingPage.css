@@ -108,6 +108,8 @@
   align-items: center;
   gap: var(--space-2);
   padding-top: var(--space-2);
+  /* Ruang untuk bayangan bawah tombol utama agar tidak terpotong overflow tray */
+  padding-bottom: var(--space-2);
 }
 
 .tk-landing-nav {
@@ -1068,6 +1070,7 @@ html[data-motion="on"] .tk-marquee-row--right {
   .tk-floating-pill {
     flex-direction: row;
     align-items: center;
+    padding: 6px 10px 6px 14px;
     border-radius: var(--radius-pill);
   }
 
@@ -1082,7 +1085,9 @@ html[data-motion="on"] .tk-marquee-row--right {
 
   .tk-floating-pill__tray-inner {
     flex-wrap: nowrap;
-    padding-top: 0;
+    padding-top: 4px;
+    padding-bottom: 8px;
+    padding-right: 4px;
     padding-left: var(--space-3);
   }
 
