@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { kesehatanApiSchema } from "@ternakin/shared";
-import { PwaStatusBar } from "../components/PwaStatusBar";
+import { AppShell } from "../components/layout/AppShell";
+import { Banner, Button, Card, InstallIcon, RefreshIcon } from "../components/ui";
 import { useOnlineStatus, usePwaInstall } from "../lib/pwa";
 import { TEKS } from "../lib/teks";
 
@@ -42,109 +43,84 @@ export function FondasiPage() {
   };
 
   return (
-    <div className="fondasi-shell">
-      <a href="#konten-utama" className="skip-link">
-        {TEKS.lewatiKeKonten}
-      </a>
-
-      <header className="fondasi-header">
-        <p className="wordmark">
-          {TEKS.namaAplikasi}
-          <span className="wordmark-dot" aria-hidden="true">
-            .
-          </span>
-        </p>
-
-        <span
-          className={`status-chip ${isOnline ? "status-chip--online" : "status-chip--offline"}`}
-          role="status"
-          aria-live="polite"
+    <AppShell pageTitle="Beranda">
+      <Card variant="warm">
+        <p className="tk-eyebrow">{TEKS.eyebrowFondasi}</p>
+        <h1
+          style={{ fontSize: "var(--text-2xl)", lineHeight: 1.2, marginBottom: "var(--space-3)" }}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
-            {isOnline ? (
-              <circle cx="8" cy="8" r="6" fill="currentColor" />
-            ) : (
-              <path
-                d="M2 2l12 12M14 2L2 14"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-              />
-            )}
-          </svg>
-          {isOnline ? TEKS.statusOnline : TEKS.statusOffline}
-        </span>
-      </header>
+          {TEKS.judulFondasi}
+        </h1>
+        <p className="tk-muted tk-prose">{TEKS.deskripsiFondasi}</p>
 
-      <PwaStatusBar />
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "var(--space-3)",
+            marginBottom: "var(--space-4)",
+          }}
+        >
+          {!isStandalone ? (
+            <Button
+              variant="primary"
+              iconStart={<InstallIcon size={20} />}
+              onClick={() => void handlePasang()}
+            >
+              {TEKS.tombolPasang}
+            </Button>
+          ) : (
+            <Banner variant="success">{TEKS.sudahTerpasang}</Banner>
+          )}
 
-      {!isOnline && (
-        <div className="offline-banner" role="alert">
-          {TEKS.bannerOffline}
+          <Button
+            variant="secondary"
+            iconStart={<RefreshIcon size={18} />}
+            disabled={statusServer === "memuat" || !isOnline}
+            onClick={() => void cekServer()}
+          >
+            {statusServer === "memuat" ? TEKS.cekServerMemuat : TEKS.tombolCekServer}
+          </Button>
         </div>
-      )}
 
-      <main id="konten-utama">
-        <section className="card card--warm">
-          <p className="eyebrow">{TEKS.eyebrowFondasi}</p>
-          <h1 className="heading">{TEKS.judulFondasi}</h1>
-          <p className="muted">{TEKS.deskripsiFondasi}</p>
+        {!isStandalone && (
+          <p className="tk-muted" style={{ fontSize: "var(--text-sm)", marginBottom: 0 }}>
+            {TEKS.keteranganPasang}
+          </p>
+        )}
 
-          <div className="actions">
-            {!isStandalone ? (
-              <button type="button" className="btn-primary" onClick={() => void handlePasang()}>
-                {TEKS.tombolPasang}
-              </button>
-            ) : (
-              <div className="status-box status-box--ok">{TEKS.sudahTerpasang}</div>
-            )}
-
-            <button
-              type="button"
-              className="btn-secondary"
-              disabled={statusServer === "memuat" || !isOnline}
-              onClick={() => void cekServer()}
-            >
-              {statusServer === "memuat" ? TEKS.cekServerMemuat : TEKS.tombolCekServer}
-            </button>
+        {tampilPanduanPasang && !isStandalone && (
+          <div style={{ marginTop: "var(--space-4)" }}>
+            <Banner variant="info" title={TEKS.panduanIosJudul}>
+              {isIos ? TEKS.panduanIosIsi : TEKS.panduanBrowserLain}
+            </Banner>
           </div>
+        )}
 
-          {!isStandalone && <p className="muted">{TEKS.keteranganPasang}</p>}
+        {statusServer === "aktif" && (
+          <div style={{ marginTop: "var(--space-4)" }}>
+            <Banner variant="success">{TEKS.cekServerBerhasil}</Banner>
+          </div>
+        )}
 
-          {tampilPanduanPasang && !isStandalone && (
-            <div
-              className="status-box status-box--info"
-              role="region"
-              aria-label={TEKS.panduanIosJudul}
-            >
-              <strong>{TEKS.panduanIosJudul}</strong>
-              <p>{isIos ? TEKS.panduanIosIsi : TEKS.panduanBrowserLain}</p>
-            </div>
-          )}
+        {statusServer === "offline" && (
+          <div style={{ marginTop: "var(--space-4)" }}>
+            <Banner variant="info">{TEKS.cekServerOffline}</Banner>
+          </div>
+        )}
 
-          {statusServer === "aktif" && (
-            <div className="status-box status-box--ok" role="status">
-              {TEKS.cekServerBerhasil}
-            </div>
-          )}
+        {statusServer === "galat" && (
+          <div style={{ marginTop: "var(--space-4)" }}>
+            <Banner variant="error">{TEKS.cekServerGagal}</Banner>
+          </div>
+        )}
+      </Card>
 
-          {statusServer === "offline" && (
-            <div className="status-box status-box--info" role="status">
-              {TEKS.cekServerOffline}
-            </div>
-          )}
-
-          {statusServer === "galat" && (
-            <div className="status-box status-box--error" role="alert">
-              {TEKS.cekServerGagal}
-            </div>
-          )}
-        </section>
-
-        <section className="card">
-          <p className="muted">{TEKS.catatanTahap}</p>
-        </section>
-      </main>
-    </div>
+      <Card>
+        <p className="tk-muted tk-prose" style={{ marginBottom: 0 }}>
+          {TEKS.catatanTahap}
+        </p>
+      </Card>
+    </AppShell>
   );
 }

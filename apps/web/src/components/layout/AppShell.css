@@ -1,0 +1,210 @@
+/* Tata letak aplikasi responsif mobile-first:
+ * < 640px  : 1 kolom + bilah tab bawah (5 tab, padding-bottom safe-area)
+ * 640-959px: 1 kolom maksimal 640px di tengah + bilah tab bawah
+ * >= 960px : rel navigasi vertikal di kiri, tanpa bilah bawah, isi maks 1120px
+ */
+
+.tk-shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--tk-white);
+}
+
+.tk-shell__rail {
+  display: none;
+}
+
+.tk-shell__frame {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tk-shell__topbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--tk-white);
+  border-bottom: 1.5px solid var(--tk-border-subtle);
+}
+
+.tk-shell__topbar-inner {
+  width: 100%;
+  margin-inline: auto;
+  padding: var(--space-2) var(--space-4);
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.tk-shell__topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tk-shell__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.tk-wordmark {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--tk-ink);
+}
+
+.tk-wordmark__dot {
+  color: var(--tk-orange-dark);
+}
+
+.tk-shell__page-title {
+  display: none;
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--tk-ink);
+}
+
+.tk-net-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tk-net-chip--online {
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+}
+
+.tk-net-chip--offline {
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+}
+
+.tk-shell__main {
+  flex: 1;
+  width: 100%;
+  padding: var(--space-5) var(--space-4)
+    calc(var(--bottom-nav-height) + var(--space-6) + env(safe-area-inset-bottom));
+}
+
+.tk-shell__content {
+  width: 100%;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tk-shell__offline {
+  width: 100%;
+}
+
+.tk-shell__bottom {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: var(--z-nav);
+  background: var(--tk-white);
+  border-top: 1.5px solid var(--tk-border-subtle);
+  padding: 6px var(--space-2) calc(6px + env(safe-area-inset-bottom));
+}
+
+.tk-shell__bottom-inner {
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* Tablet: 640px sampai 959px -> satu kolom maksimal 640px di tengah */
+@media (min-width: 640px) {
+  .tk-shell__topbar-inner,
+  .tk-shell__content,
+  .tk-shell__bottom-inner {
+    max-width: var(--container-tablet);
+  }
+
+  .tk-shell__main {
+    padding-inline: var(--space-6);
+  }
+}
+
+/* Laptop: 960px ke atas -> rel navigasi vertikal di kiri, tanpa bilah bawah, isi maks 1120px */
+@media (min-width: 960px) {
+  .tk-shell {
+    flex-direction: row;
+  }
+
+  .tk-shell__rail {
+    display: flex;
+    flex-direction: column;
+    width: var(--nav-rail-width);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    padding: var(--space-5) var(--space-4);
+    border-right: 1.5px solid var(--tk-border-subtle);
+    background: var(--tk-white);
+    gap: var(--space-6);
+  }
+
+  .tk-shell__rail-brand {
+    padding-inline: var(--space-3);
+  }
+
+  .tk-shell__rail-nav {
+    flex: 1;
+  }
+
+  .tk-shell__rail-footer {
+    padding-top: var(--space-4);
+    border-top: 1.5px solid var(--tk-border-subtle);
+  }
+
+  .tk-shell__mobile-brand,
+  .tk-shell__mobile-motion,
+  .tk-shell__bottom {
+    display: none;
+  }
+
+  .tk-shell__page-title {
+    display: block;
+  }
+
+  .tk-shell__topbar-inner,
+  .tk-shell__content {
+    max-width: var(--container-desktop);
+  }
+
+  .tk-shell__topbar-inner {
+    padding-inline: var(--space-8);
+  }
+
+  .tk-shell__main {
+    padding: var(--space-6) var(--space-8) var(--space-8);
+  }
+}
+
+/* Layar lebar: 1280px ke atas */
+@media (min-width: 1280px) {
+  .tk-shell__main {
+    padding: var(--space-8);
+  }
+}

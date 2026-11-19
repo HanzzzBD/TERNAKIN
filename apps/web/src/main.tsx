@@ -3,7 +3,8 @@ import { createRoot } from "react-dom/client";
 import "./styles/fonts.css";
 import "./styles/tokens.css";
 import "./styles/base.css";
-import "./styles/fondasi.css";
+import "./components/ui/ui.css";
+import "./components/layout/AppShell.css";
 import { initMotionPreference } from "./lib/motion";
 import { App } from "./App";
 

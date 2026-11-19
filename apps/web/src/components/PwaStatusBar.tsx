@@ -1,5 +1,6 @@
 import { useRegisterSW } from "virtual:pwa-register/react";
 import { TEKS } from "../lib/teks";
+import { Banner, Button } from "./ui";
 
 export function PwaStatusBar() {
   const {
@@ -10,27 +11,26 @@ export function PwaStatusBar() {
 
   if (needRefresh) {
     return (
-      <div className="pwa-toast" role="status" aria-live="polite">
-        <span>{TEKS.pwaVersiBaru}</span>
-        <button
-          type="button"
-          className="btn-secondary"
-          onClick={() => {
-            void updateServiceWorker(true);
-          }}
-        >
-          {TEKS.pwaTombolPerbarui}
-        </button>
-      </div>
+      <Banner
+        variant="success"
+        action={
+          <Button
+            variant="secondary"
+            onClick={() => {
+              void updateServiceWorker(true);
+            }}
+          >
+            {TEKS.pwaTombolPerbarui}
+          </Button>
+        }
+      >
+        {TEKS.pwaVersiBaru}
+      </Banner>
     );
   }
 
   if (offlineReady) {
-    return (
-      <div className="pwa-toast" role="status" aria-live="polite">
-        <span>{TEKS.pwaSiapOffline}</span>
-      </div>
-    );
+    return <Banner variant="success">{TEKS.pwaSiapOffline}</Banner>;
   }
 
   return null;
