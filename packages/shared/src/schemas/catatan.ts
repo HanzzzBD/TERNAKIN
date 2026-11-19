@@ -78,6 +78,17 @@ export const itemOutboxSchema = z.discriminatedUnion("jenis", [
     }),
     dibuatPada: z.string().min(1),
   }),
+  z.object({
+    opId: z.string().uuid(),
+    jenis: z.literal("catat_lead"),
+    payload: z.object({
+      clientId: z.string().uuid(),
+      tokoId: z.string().min(1),
+      src: z.string().max(64).optional(),
+      dibuatPada: z.string().min(1),
+    }),
+    dibuatPada: z.string().min(1),
+  }),
 ]);
 export type ItemOutboxSync = z.infer<typeof itemOutboxSchema>;
 
