@@ -11,7 +11,7 @@ const VIEWPORTS = [
 
 test.describe("Landing page (/) dan Kebijakan Privasi (/privasi)", () => {
   for (const vp of VIEWPORTS) {
-    test(`Landing (${vp.name}): Georama tampil, tanpa gulir horizontal, navigasi responsif tepat`, async ({
+    test(`Landing (${vp.name}): Georama tampil, tanpa gulir horizontal, floating pill navbar melebar saat interaksi`, async ({
       page,
     }) => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
@@ -21,7 +21,6 @@ test.describe("Landing page (/) dan Kebijakan Privasi (/privasi)", () => {
       await expect(
         page.getByRole("heading", { level: 1, name: /Pakan lebih hemat/i }),
       ).toBeVisible();
-      await expect(page.getByRole("link", { name: "Buka aplikasi" })).toBeVisible();
 
       const fontInfo = await page.evaluate(() => {
         const cs = getComputedStyle(document.body);
@@ -40,27 +39,43 @@ test.describe("Landing page (/) dan Kebijakan Privasi (/privasi)", () => {
       );
       expect(overflow, `Overflow horizontal pada ${vp.name}`).toBeLessThanOrEqual(1);
 
+      // Floating pill awalnya hanya menampilkan Maskot Kokok + ternakin. (data-open="false")
+      const pill = page.locator(".tk-floating-pill");
+      await expect(pill).toHaveAttribute("data-open", "false");
+      const lebarAwal = await pill.evaluate((el) => el.getBoundingClientRect().width);
+
       if (vp.isDesktop) {
-        await expect(
-          page.getByRole("navigation", { name: "Navigasi halaman utama" }),
-        ).toBeVisible();
+        // Saat hover di desktop, floating pill melebar dari kiri ke kanan menampilkan navbar
+        await pill.hover();
+        await expect(pill).toHaveAttribute("data-open", "true");
+        await expect(page.getByRole("link", { name: "Buka aplikasi" })).toBeVisible();
+        await expect
+          .poll(() => pill.evaluate((el) => el.getBoundingClientRect().width))
+          .toBeGreaterThan(lebarAwal + 200);
       } else {
-        const tombolMenu = page.getByRole("button", { name: "Buka menu navigasi" });
-        await expect(tombolMenu).toBeVisible();
-        await tombolMenu.click();
-        await expect(page.getByRole("navigation", { name: "Navigasi ponsel" })).toBeVisible();
+        // Di ponsel/tablet, ketuk tombol brand pill untuk membuka menu tanpa overflow horizontal
+        await page
+          .getByRole("button", { name: /ternakin — buka atau tutup menu navigasi/i })
+          .click();
+        await expect(pill).toHaveAttribute("data-open", "true");
+        await expect(page.getByRole("link", { name: "Buka aplikasi" })).toBeVisible();
+        const overflowSaatBuka = await page.evaluate(
+          () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        );
+        expect(overflowSaatBuka).toBeLessThanOrEqual(1);
       }
     });
   }
 
-  test("FAQ terbuka, maskot Kokok interaktif, kartu Toko & Pilot sejajar kiri-kanan di desktop, tanpa Atur animasi, serta lulus axe di 360px & 1280px", async ({
+  test("FAQ terbuka, maskot Kokok interaktif, kartu Toko & Pilot sejajar kiri-kanan di desktop, tangkap ?src, serta lulus axe di 360px & 1280px", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
-    await page.goto("/");
+    await page.goto("/?src=TK-LMB-01");
 
-    // Tombol Atur animasi tidak ada
-    await expect(page.getByRole("button", { name: /Atur animasi/i })).toHaveCount(0);
+    // Pastikan kode ?src dari QR toko ditangkap di localStorage saat masuk lewat landing page
+    const srcTersimpan = await page.evaluate(() => window.localStorage.getItem("tk.src"));
+    expect(srcTersimpan).toBe("TK-LMB-01");
 
     // Maskot Kokok tampil dan merespons klik
     const imgKokok = page.locator('img[src="/images/kokok.webp"]').first();
@@ -94,7 +109,7 @@ test.describe("Landing page (/) dan Kebijakan Privasi (/privasi)", () => {
       page.getByText("Gratis untuk peternak. Pendapatan datang dari toko pakan mitra."),
     ).toBeVisible();
 
-    // Audit axe di ponsel (360px) dan laptop (1280px) untuk landing
+    // Audit axe di ponsel (360px) dan laptop (1280px) untuk landing (baik saat pill tertutup maupun terbuka)
     for (const width of [360, 1280]) {
       await page.setViewportSize({ width, height: 844 });
       const axeLanding = await new AxeBuilder({ page }).analyze();

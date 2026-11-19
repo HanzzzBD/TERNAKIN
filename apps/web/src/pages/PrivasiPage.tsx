@@ -1,39 +1,106 @@
+import { useRef, useState } from "react";
 import { Link } from "react-router";
 import { ArrowRightIcon, Card } from "../components/ui";
+import { animateFloatingPillOpen, usePageTransition } from "../lib/gsapAnimations";
 import { TEKS } from "../lib/teks";
 
 export function PrivasiPage() {
+  const mainRef = useRef<HTMLElement | null>(null);
+  const pillRef = useRef<HTMLDivElement | null>(null);
+  const waktuBukaOtomatisRef = useRef<number>(0);
+  const [pillTerbuka, setPillTerbuka] = useState(false);
+
+  usePageTransition(mainRef, "/privasi");
+
+  const bukaPill = () => {
+    setPillTerbuka((sebelum) => {
+      if (!sebelum) {
+        waktuBukaOtomatisRef.current = Date.now();
+        window.requestAnimationFrame(() => {
+          animateFloatingPillOpen(pillRef.current);
+        });
+      }
+      return true;
+    });
+  };
+
+  const togglePill = () => {
+    setPillTerbuka((sebelum) => {
+      if (sebelum && Date.now() - waktuBukaOtomatisRef.current < 450) {
+        return true;
+      }
+      return !sebelum;
+    });
+  };
+
   return (
     <div className="tk-landing">
       <a className="skip-link" href="#konten-utama">
         {TEKS.lewatiKeKonten}
       </a>
 
-      <header className="tk-landing-header">
-        <div className="tk-landing-container tk-landing-header__inner">
-          <Link to="/" className="tk-brand">
-            <img
-              src="/images/kokok.webp"
-              alt=""
-              aria-hidden="true"
-              className="tk-brand-kokok-avatar"
-              width={32}
-              height={32}
-            />
-            <span>
-              ternakin
-              <span className="tk-brand__dot" aria-hidden="true">
-                .
+      <header className="tk-floating-header">
+        <div className="tk-landing-container tk-floating-header__inner">
+          <div
+            ref={pillRef}
+            className={`tk-floating-pill ${pillTerbuka ? "tk-floating-pill--open" : ""}`.trim()}
+            data-open={pillTerbuka ? "true" : "false"}
+            onMouseEnter={bukaPill}
+            onMouseLeave={() => setPillTerbuka(false)}
+          >
+            <button
+              type="button"
+              className="tk-brand tk-floating-pill__trigger"
+              aria-expanded={pillTerbuka}
+              aria-controls="nav-pill-privasi"
+              aria-label="ternakin — buka atau tutup menu navigasi"
+              onClick={togglePill}
+              onFocus={bukaPill}
+            >
+              <img
+                src="/images/kokok.webp"
+                alt=""
+                aria-hidden="true"
+                className="tk-brand-kokok-avatar"
+                width={34}
+                height={34}
+              />
+              <span>
+                ternakin
+                <span className="tk-brand__dot" aria-hidden="true">
+                  .
+                </span>
               </span>
-            </span>
-          </Link>
-          <Link to="/app" className="tk-btn tk-btn--primary tk-landing-header__cta">
-            Buka aplikasi
-          </Link>
+            </button>
+
+            <div
+              id="nav-pill-privasi"
+              className="tk-floating-pill__tray"
+              aria-hidden={!pillTerbuka}
+            >
+              <div className="tk-floating-pill__tray-inner">
+                <Link
+                  to="/"
+                  tabIndex={pillTerbuka ? 0 : -1}
+                  className="tk-landing-nav__link tk-floating-pill__item"
+                >
+                  Beranda utama
+                </Link>
+                <Link
+                  to="/app"
+                  tabIndex={pillTerbuka ? 0 : -1}
+                  className="tk-btn tk-btn--primary tk-landing-header__cta tk-floating-pill__item"
+                >
+                  Buka aplikasi
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
       <main
+        ref={mainRef}
         id="konten-utama"
         tabIndex={-1}
         className="tk-landing-container"
