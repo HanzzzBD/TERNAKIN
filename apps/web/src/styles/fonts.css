@@ -1,0 +1,18 @@
+/* Georama variable font (sumbu wdth 62.5..150 dan wght 100..900), lisensi SIL OFL (public/fonts/OFL.txt) */
+@font-face {
+  font-family: "Georama";
+  src: url("/fonts/georama-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62.5% 150%;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Georama";
+  src: url("/fonts/georama-italic-var.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62.5% 150%;
+  font-style: italic;
+  font-display: swap;
+}

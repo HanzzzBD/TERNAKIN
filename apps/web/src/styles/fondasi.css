@@ -11,7 +11,7 @@
   --tk-amber-soft: #fbe3a1;
   --tk-danger: #a61b2b;
 
-  --font: system-ui, -apple-system, sans-serif;
+  --font: "Georama", system-ui, sans-serif;
   --text-base: 1.0625rem;
   --radius-card: 20px;
   --radius-pill: 999px;
@@ -31,6 +31,7 @@ html {
 
 body {
   margin: 0;
+  font-stretch: 100%;
   font-size: var(--text-base);
   line-height: 1.55;
   color: var(--tk-ink);
