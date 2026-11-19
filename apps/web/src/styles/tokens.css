@@ -1,0 +1,60 @@
+/* Token desain Ternakin — satu-satunya tempat nilai hex warna.
+ * Palet ini adalah usulan yang mudah diganti lewat variabel di bawah. */
+:root {
+  /* Warna merek dan permukaan */
+  --tk-white: #ffffff;
+  --tk-peach: #fff3e8;
+  --tk-ink: #1d2a1f;
+  --tk-ink-muted: #5b6b5e;
+  --tk-orange: #f97316;
+  --tk-orange-dark: #c2410c;
+  --tk-green: #2f6b3f;
+  --tk-green-dark: #234f2f;
+  --tk-green-soft: #e3f0df;
+  --tk-amber-soft: #fbe3a1;
+  --tk-danger: #a61b2b;
+
+  /* Turunan semantik tanpa menambah hex baru di luar palet usulan */
+  --tk-surface-muted: color-mix(in srgb, var(--tk-ink) 8%, var(--tk-white));
+  --tk-border-subtle: color-mix(in srgb, var(--tk-ink) 16%, var(--tk-white));
+  --tk-danger-soft: color-mix(in srgb, var(--tk-danger) 10%, var(--tk-white));
+
+  /* Tipografi */
+  --font: "Georama", system-ui, sans-serif;
+  --text-xs: 0.8125rem; /* 13px - label eyebrow */
+  --text-sm: 0.875rem; /* 14px - keterangan dan chip */
+  --text-base: 1.0625rem; /* 17px - ukuran teks dasar */
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(1.75rem, 4vw + 0.75rem, 2.5rem);
+  --text-display: clamp(2.25rem, 6vw + 1rem, 4.5rem);
+  --measure-prose: 65ch;
+
+  /* Bentuk dan target sentuh */
+  --radius-control: 12px;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --tap-min: 48px;
+  --tap-primary: 52px;
+
+  /* Jarak dan tata letak */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-section: clamp(64px, 10vw, 120px);
+
+  /* Lebar kontainer dan navigasi responsif */
+  --container-tablet: 640px;
+  --container-desktop: 1120px;
+  --nav-rail-width: 240px;
+  --bottom-nav-height: 72px;
+
+  /* Kedalaman lapisan */
+  --z-sticky: 20;
+  --z-nav: 30;
+  --z-skip: 100;
+}
