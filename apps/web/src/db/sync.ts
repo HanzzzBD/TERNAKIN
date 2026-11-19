@@ -10,6 +10,7 @@ import {
   createClientUuid,
   db,
   getOrCreateDeviceId,
+  getSavedSrcParam,
   type CatatanLokal,
   type KandangLokal,
 } from "./db";
@@ -206,6 +207,36 @@ export async function hapusCatatanLokal(catatan: CatatanLokal): Promise<void> {
   }
 }
 
+export async function catatLeadLokal(tokoId: string): Promise<{ clientId: string }> {
+  const sekarang = new Date().toISOString();
+  const clientId = createClientUuid();
+  const src = getSavedSrcParam();
+
+  const op: ItemOutboxSync = {
+    opId: createClientUuid(),
+    jenis: "catat_lead",
+    payload: {
+      clientId,
+      tokoId,
+      src,
+      dibuatPada: sekarang,
+    },
+    dibuatPada: sekarang,
+  };
+
+  try {
+    await db.outbox.add(op);
+  } catch {
+    // Abaikan bila IndexedDB tidak tersedia
+  }
+
+  emitSyncChange();
+  if (typeof navigator !== "undefined" && navigator.onLine) {
+    void flushOutbox();
+  }
+  return { clientId };
+}
+
 function jadwalkanUlangFlush(): void {
   if (retryTimer !== null) return;
   const jeda = RETRY_DELAYS_MS[Math.min(retryCount, RETRY_DELAYS_MS.length - 1)] ?? 60_000;
@@ -246,6 +277,14 @@ export async function flushOutbox(): Promise<boolean> {
         };
       }
       if (item.jenis === "upsert_catatan") {
+        return {
+          opId: item.opId,
+          jenis: item.jenis,
+          payload: item.payload,
+          dibuatPada: item.dibuatPada,
+        };
+      }
+      if (item.jenis === "hapus_catatan") {
         return {
           opId: item.opId,
           jenis: item.jenis,

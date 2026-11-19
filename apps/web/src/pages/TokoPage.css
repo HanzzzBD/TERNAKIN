@@ -1,0 +1,126 @@
+/* Gaya modul Rujukan Toko (/app/toko) — mobile-first, tanpa nilai hex langsung */
+
+.tk-toko-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.tk-toko-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.tk-toko-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.tk-toko-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tk-toko-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--tk-orange);
+  border: 2px solid var(--tk-orange-dark);
+  color: var(--tk-ink);
+  font-weight: 800;
+  font-size: var(--text-sm);
+  flex-shrink: 0;
+}
+
+.tk-toko-nama {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1.25;
+}
+
+.tk-toko-area {
+  margin: 2px 0 0;
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-toko-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.tk-toko-biaya {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-control);
+  background: var(--tk-peach);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.tk-toko-biaya__utama {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--tk-ink);
+}
+
+.tk-toko-biaya__sub {
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-toko-rincian {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tk-toko-rincian__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--tk-border-subtle);
+  font-size: var(--text-sm);
+}
+
+.tk-toko-rincian__row:last-child {
+  border-bottom: 0;
+}
+
+.tk-toko-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-toko-wa-link {
+  text-decoration: none;
+}
+
+@media (min-width: 960px) {
+  .tk-toko-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}

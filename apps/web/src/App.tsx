@@ -5,6 +5,7 @@ import { FondasiPage } from "./pages/FondasiPage";
 import { ModulSegeraPage } from "./pages/ModulSegeraPage";
 import { PakanPage } from "./pages/PakanPage";
 import { ProfilPage } from "./pages/ProfilPage";
+import { TokoPage } from "./pages/TokoPage";
 
 // Halaman /dev/komponen hanya dimuat saat pengembangan; dihapus otomatis dari build produksi.
 const DevKomponenPage = import.meta.env.DEV ? lazy(() => import("./pages/dev/KomponenPage")) : null;
@@ -19,7 +20,7 @@ export function App() {
         <Route path="/app/catatan" element={<CatatanPage />} />
         <Route path="/app/profil" element={<ProfilPage />} />
         <Route path="/app/tanya" element={<ModulSegeraPage namaModul="Kokok" />} />
-        <Route path="/app/toko" element={<ModulSegeraPage namaModul="Toko mitra" />} />
+        <Route path="/app/toko" element={<TokoPage />} />
         {DevKomponenPage && (
           <Route
             path="/dev/komponen"

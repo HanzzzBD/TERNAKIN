@@ -6,7 +6,7 @@ export default defineConfig({
   projects: [
     {
       name: "preview",
-      testMatch: /(offline|appshell|pakan-offline|catatan-offline)\.spec\.ts/,
+      testMatch: /(offline|appshell|pakan-offline|catatan-offline|toko-offline)\.spec\.ts/,
       use: {
         baseURL: "http://127.0.0.1:4173",
       },
@@ -26,6 +26,7 @@ export default defineConfig({
         PORT: "4173",
         DATABASE_PATH: ":memory:",
         NODE_ENV: "test",
+        ADMIN_KEY: "kunci-admin-e2e",
       },
       url: "http://127.0.0.1:4173/health",
       reuseExistingServer: !process.env.CI,
