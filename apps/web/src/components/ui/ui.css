@@ -1,0 +1,529 @@
+/* Komponen UI dasar Ternakin — tanpa nilai hex langsung, mobile-first */
+
+/* Button */
+.tk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-5);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tk-btn--full {
+  width: 100%;
+}
+
+.tk-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tk-btn--primary {
+  min-height: var(--tap-primary);
+  padding: 0 var(--space-6);
+  color: var(--tk-ink);
+  background: var(--tk-orange);
+  border: 2px solid var(--tk-orange-dark);
+  box-shadow: 0 4px 0 var(--tk-orange-dark);
+}
+
+.on-orange .tk-btn--primary {
+  background: var(--tk-white);
+}
+
+html[data-motion="on"] .tk-btn--primary {
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+.tk-btn--primary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--tk-orange-dark);
+}
+
+.tk-btn--secondary {
+  color: var(--tk-ink);
+  background: var(--tk-white);
+  border: 1.5px solid var(--tk-ink);
+}
+
+.tk-btn--ghost {
+  color: var(--tk-ink);
+  background: transparent;
+  border: 1.5px solid transparent;
+}
+
+.tk-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* IconButton */
+.tk-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.tk-icon-btn--default {
+  color: var(--tk-ink);
+  background: var(--tk-white);
+  border: 1.5px solid var(--tk-ink);
+}
+
+.tk-icon-btn--primary {
+  color: var(--tk-ink);
+  background: var(--tk-orange);
+  border: 2px solid var(--tk-orange-dark);
+  box-shadow: 0 3px 0 var(--tk-orange-dark);
+}
+
+.tk-icon-btn--ghost {
+  color: var(--tk-ink);
+  background: transparent;
+  border: 1.5px solid transparent;
+}
+
+.tk-icon-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* MotionToggleButton */
+.tk-motion-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tk-ink);
+  background: var(--tk-white);
+  border: 1.5px solid var(--tk-border-subtle);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+
+.tk-motion-btn--compact {
+  padding: 0 var(--space-3);
+}
+
+/* Badge */
+.tk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.tk-badge--mitra,
+.tk-badge--solver {
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+}
+
+.tk-badge--usang {
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+}
+
+.tk-badge--offline {
+  background: var(--tk-surface-muted);
+  color: var(--tk-ink);
+}
+
+/* UrgencyChip (selalu ikon + kata + warna) */
+.tk-urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  border: 1.5px solid transparent;
+}
+
+.tk-urgency--rendah {
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+  border-color: var(--tk-green);
+}
+
+.tk-urgency--sedang {
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+  border-color: var(--tk-orange-dark);
+}
+
+.tk-urgency--tinggi {
+  background: var(--tk-danger);
+  color: var(--tk-white);
+  border-color: var(--tk-danger);
+}
+
+/* Card */
+.tk-card {
+  border-radius: var(--radius-card);
+  padding: var(--space-5);
+  border: 1.5px solid var(--tk-border-subtle);
+  background: var(--tk-white);
+}
+
+.tk-card--warm {
+  background: var(--tk-peach);
+  border-color: var(--tk-border-subtle);
+}
+
+.tk-card--trust {
+  background: var(--tk-green-soft);
+  border-color: var(--tk-green);
+}
+
+.tk-card--danger {
+  background: var(--tk-danger-soft);
+  border-color: var(--tk-danger);
+}
+
+/* Field & Input */
+.tk-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tk-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--tk-ink);
+}
+
+.tk-field__required {
+  color: var(--tk-danger);
+}
+
+.tk-field__hint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-field__error {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tk-danger);
+}
+
+.tk-input {
+  width: 100%;
+  min-height: var(--tap-min);
+  padding: 0 var(--space-4);
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  border: 1.5px solid var(--tk-ink-muted);
+  border-radius: var(--radius-control);
+}
+
+.tk-input--error {
+  border-color: var(--tk-danger);
+}
+
+.tk-number-input {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1.5px solid var(--tk-ink-muted);
+  border-radius: var(--radius-control);
+  background: var(--tk-white);
+  overflow: hidden;
+}
+
+.tk-number-input:focus-within {
+  outline: 3px solid var(--tk-ink);
+  outline-offset: 2px;
+}
+
+.tk-number-input--error {
+  border-color: var(--tk-danger);
+}
+
+.tk-number-input__control {
+  border: 0;
+  border-radius: 0;
+  min-width: 0;
+  flex: 1;
+}
+
+.tk-number-input__control:focus-visible {
+  outline: none;
+}
+
+.tk-number-input__unit {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  background: var(--tk-peach);
+  color: var(--tk-ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-left: 1.5px solid var(--tk-border-subtle);
+  flex-shrink: 0;
+}
+
+/* Banner */
+.tk-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-control);
+  border: 1.5px solid transparent;
+}
+
+.tk-banner__icon {
+  display: inline-flex;
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.tk-banner__body {
+  flex: 1 1 180px;
+  min-width: 0;
+}
+
+.tk-banner__title {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tk-banner__text {
+  font-size: var(--text-sm);
+}
+
+.tk-banner__action {
+  flex-shrink: 0;
+}
+
+.tk-banner--offline {
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+  border-color: var(--tk-orange-dark);
+}
+
+.tk-banner--error {
+  background: var(--tk-danger-soft);
+  color: var(--tk-danger);
+  border-color: var(--tk-danger);
+}
+
+.tk-banner--info {
+  background: var(--tk-peach);
+  color: var(--tk-ink);
+  border-color: var(--tk-border-subtle);
+}
+
+.tk-banner--success {
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+  border-color: var(--tk-green);
+}
+
+/* Skeleton (statis saat animasi mati) */
+.tk-skeleton {
+  background: var(--tk-surface-muted);
+  border-radius: 10px;
+}
+
+.tk-skeleton--text {
+  height: 16px;
+  width: 100%;
+}
+
+.tk-skeleton--title {
+  height: 28px;
+  width: 65%;
+}
+
+.tk-skeleton--card {
+  height: 120px;
+  width: 100%;
+  border-radius: var(--radius-card);
+}
+
+.tk-skeleton--button {
+  height: var(--tap-min);
+  width: 160px;
+  border-radius: var(--radius-pill);
+}
+
+@keyframes tk-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+html[data-motion="on"] .tk-skeleton {
+  animation: tk-pulse 1.6s ease-in-out infinite;
+}
+
+/* Accordion berbasis <details> */
+.tk-accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tk-accordion__item {
+  border: 1.5px solid var(--tk-border-subtle);
+  border-radius: var(--radius-control);
+  background: var(--tk-white);
+}
+
+.tk-accordion__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--tap-min);
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+
+.tk-accordion__summary::-webkit-details-marker {
+  display: none;
+}
+
+.tk-accordion__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--tk-orange-dark);
+}
+
+html[data-motion="on"] .tk-accordion__icon {
+  transition: transform 180ms ease;
+}
+
+.tk-accordion__item[open] .tk-accordion__icon {
+  transform: rotate(45deg);
+}
+
+.tk-accordion__content {
+  padding: 0 var(--space-4) var(--space-4);
+  color: var(--tk-ink-muted);
+}
+
+/* AppNav (bilah bawah dan rel kiri) */
+.tk-nav__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tk-nav__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+  text-decoration: none;
+  color: var(--tk-ink-muted);
+  font-weight: 600;
+  border-radius: var(--radius-control);
+}
+
+.tk-nav__link--active {
+  color: var(--tk-ink);
+  background: var(--tk-peach);
+  font-weight: 700;
+}
+
+.tk-nav__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* Varian bilah tab bawah (ponsel dan tablet) */
+.tk-nav--bottom .tk-nav__list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.tk-nav--bottom .tk-nav__link {
+  width: 100%;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 2px;
+  font-size: 0.75rem;
+}
+
+/* Varian rel vertikal kiri (laptop >= 960px) */
+.tk-nav--rail .tk-nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tk-nav--rail .tk-nav__link {
+  width: 100%;
+  justify-content: flex-start;
+  gap: var(--space-3);
+  padding: 0 var(--space-4);
+  font-size: 1rem;
+}
+
+/* Hover hanya untuk perangkat yang benar-benar mendukung hover */
+@media (hover: hover) {
+  .tk-btn--secondary:hover:not(:disabled),
+  .tk-btn--ghost:hover:not(:disabled),
+  .tk-icon-btn--default:hover:not(:disabled),
+  .tk-icon-btn--ghost:hover:not(:disabled),
+  .tk-motion-btn:hover:not(:disabled) {
+    background: var(--tk-peach);
+  }
+
+  .tk-nav__link:hover:not(.tk-nav__link--active) {
+    background: var(--tk-surface-muted);
+    color: var(--tk-ink);
+  }
+
+  .tk-accordion__summary:hover {
+    background: var(--tk-peach);
+    border-radius: var(--radius-control);
+  }
+}

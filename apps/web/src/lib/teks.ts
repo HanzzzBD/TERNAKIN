@@ -3,11 +3,14 @@ export const TEKS = {
   namaAplikasi: "ternakin",
   statusOnline: "Tersambung",
   statusOffline: "Offline",
+  aturAnimasi: "Atur animasi",
+  animasiAktif: "Aktif",
+  animasiMati: "Mati",
   bannerOffline: "Anda sedang tanpa sinyal. Halaman ini tetap bisa dibuka dari penyimpanan ponsel.",
-  eyebrowFondasi: "FONDASI PWA · FASE 0",
+  eyebrowFondasi: "FONDASI PWA · FASE 0–1",
   judulFondasi: "Ternakin siap dibuka walau sinyal hilang.",
   deskripsiFondasi:
-    "Ini adalah halaman uji fondasi untuk memastikan aplikasi bisa dipasang di layar utama dan tetap terbuka dalam mode pesawat.",
+    "Kerangka aplikasi dengan font Georama dan komponen dasar siap dipakai di ponsel maupun laptop, termasuk dalam mode pesawat.",
   tombolCekServer: "Cek sambungan server",
   cekServerMemuat: "Memeriksa sambungan server...",
   cekServerBerhasil: "Server aktif dan menjawab normal.",
@@ -25,5 +28,9 @@ export const TEKS = {
   pwaVersiBaru: "Versi baru siap.",
   pwaTombolPerbarui: "Perbarui",
   catatanTahap:
-    "Versi prototipe awal. Modul penyusun pakan, catatan harian, toko mitra, dan Kokok akan ditambahkan pada fase berikutnya.",
+    "Versi prototipe awal. Modul penyusun pakan, catatan harian, toko mitra, dan Kokok akan dibangun berurutan mulai Fase 2.",
+  modulSegeraJudul: "Modul ini disiapkan pada fase berikutnya",
+  modulSegeraIsi:
+    "Fase 1 hanya membangun sistem desain dan tata letak responsif. Fitur modul ini akan hadir setelah Fase 1 disetujui.",
+  kembaliKeBeranda: "Kembali ke Beranda",
 } as const;
