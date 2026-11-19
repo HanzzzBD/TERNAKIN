@@ -39,6 +39,20 @@ export function TokoPage() {
 
   const [komposisiAktif, setKomposisiAktif] = useState<PakanHitungLayak | null>(null);
   const [pesanLead, setPesanLead] = useState<string | null>(null);
+  const [kodeTersalin, setKodeTersalin] = useState<string | null>(null);
+
+  const salinTautanRujukan = async (kode: string) => {
+    const asal = typeof window !== "undefined" ? window.location.origin : "https://ternakin.id";
+    const tautan = `${asal}/?src=${encodeURIComponent(kode)}`;
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(tautan);
+      }
+      setKodeTersalin(kode);
+    } catch {
+      setKodeTersalin(kode);
+    }
+  };
 
   useEffect(() => {
     let aktif = true;
@@ -119,6 +133,13 @@ export function TokoPage() {
         <Banner variant="info" title="Data contoh">
           Daftar toko dan harga di bawah adalah data contoh Bandung Raya tanpa nomor telepon nyata
           sampai diganti data hasil verifikasi lapangan tim.
+        </Banner>
+      )}
+
+      {srcKode && (
+        <Banner variant="success" title={`Kode rujukan toko tercatat: ${srcKode}`}>
+          Anda membuka aplikasi melalui tautan atau kartu QR toko berkode <strong>{srcKode}</strong>
+          . Kode ini otomatis disertakan saat Anda menghubungi toko.
         </Banner>
       )}
 
@@ -268,6 +289,66 @@ export function TokoPage() {
                   <span>Asal harga: {toko.asalHargaRingkas}</span>
                   <span>Diperbarui: {formatUmurHarga(toko.umurHariTertua)}</span>
                 </div>
+
+                <details className="tk-toko-qr-details">
+                  <summary className="tk-toko-qr-summary">
+                    Kartu QR & tautan rujukan toko ({toko.kode})
+                  </summary>
+                  <div className="tk-toko-qr-body">
+                    <svg
+                      className="tk-toko-qr-svg"
+                      viewBox="0 0 64 64"
+                      width={72}
+                      height={72}
+                      role="img"
+                      aria-label={`Simbol QR contoh untuk kode toko ${toko.kode}`}
+                    >
+                      <rect width="64" height="64" rx="8" fill="currentColor" opacity="0.08" />
+                      <rect
+                        x="8"
+                        y="8"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <rect x="13" y="13" width="6" height="6" fill="currentColor" />
+                      <rect
+                        x="40"
+                        y="8"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <rect x="45" y="13" width="6" height="6" fill="currentColor" />
+                      <rect
+                        x="8"
+                        y="40"
+                        width="16"
+                        height="16"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <rect x="13" y="45" width="6" height="6" fill="currentColor" />
+                      <rect x="28" y="28" width="8" height="8" fill="currentColor" />
+                      <rect x="40" y="40" width="6" height="6" fill="currentColor" />
+                      <rect x="50" y="40" width="6" height="16" fill="currentColor" />
+                      <rect x="30" y="46" width="8" height="10" fill="currentColor" />
+                    </svg>
+                    <div className="tk-toko-qr-copy">
+                      <p className="tk-toko-qr-code">
+                        Tautan kartu QR: <code>{`/?src=${toko.kode}`}</code>
+                      </p>
+                      <Button variant="ghost" onClick={() => void salinTautanRujukan(toko.kode)}>
+                        {kodeTersalin === toko.kode ? "Tautan tersalin" : "Salin tautan toko"}
+                      </Button>
+                    </div>
+                  </div>
+                </details>
 
                 <a
                   href={waUrl}

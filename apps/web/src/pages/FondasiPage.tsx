@@ -17,7 +17,7 @@ import {
   UrgencyChip,
 } from "../components/ui";
 import { db, type CatatanLokal, type KandangLokal } from "../db/db";
-import { flushOutbox, useSyncStatus } from "../db/sync";
+import { flushOutbox, simpanCatatanLokal, simpanKandangLokal, useSyncStatus } from "../db/sync";
 import { usePwaInstall } from "../lib/pwa";
 import { muatReferensiPakan } from "../lib/referensi";
 import { TEKS } from "../lib/teks";
@@ -42,6 +42,53 @@ export function FondasiPage() {
   const [kandang, setKandang] = useState<KandangLokal | null>(null);
   const [catatanList, setCatatanList] = useState<CatatanLokal[]>([]);
   const [referensi, setReferensi] = useState<DataReferensi | null>(null);
+  const [sedangMuatDemo, setSedangMuatDemo] = useState(false);
+
+  const handleMuatDemoJuri = async () => {
+    setSedangMuatDemo(true);
+    try {
+      const kandangDemo = await simpanKandangLokal({
+        nama: "Kandang Contoh Lembang (Demo)",
+        jumlahEkor: 760,
+        umurMinggu: 28,
+        lokasi: "Lembang, Bandung Barat",
+        bahanTersedia: ["jagung_kuning", "dedak_padi", "konsentrat_petelur", "tepung_batu_kapur"],
+      });
+
+      const contoh7Hari = [
+        { selisihHari: 6, pakanKg: 84, telur: 635, kematian: 0, suhu: 26 },
+        { selisihHari: 5, pakanKg: 84, telur: 640, kematian: 0, suhu: 27 },
+        { selisihHari: 4, pakanKg: 83.5, telur: 632, kematian: 1, suhu: 27 },
+        { selisihHari: 3, pakanKg: 84, telur: 628, kematian: 0, suhu: 28 },
+        { selisihHari: 2, pakanKg: 82, telur: 615, kematian: 1, suhu: 29 },
+        { selisihHari: 1, pakanKg: 80, telur: 590, kematian: 2, suhu: 31 },
+        { selisihHari: 0, pakanKg: 79, telur: 575, kematian: 5, suhu: 33 },
+      ];
+
+      const msPerHari = 24 * 60 * 60 * 1000;
+      const catatanBaru: CatatanLokal[] = [];
+      for (const item of contoh7Hari) {
+        const tgl = new Date(Date.now() - item.selisihHari * msPerHari);
+        const y = tgl.getFullYear();
+        const m = String(tgl.getMonth() + 1).padStart(2, "0");
+        const d = String(tgl.getDate()).padStart(2, "0");
+        const c = await simpanCatatanLokal({
+          kandangId: kandangDemo.id,
+          tanggal: `${y}-${m}-${d}`,
+          pakanKg: item.pakanKg,
+          telur: item.telur,
+          kematian: item.kematian,
+          suhu: item.suhu,
+        });
+        catatanBaru.push(c);
+      }
+
+      setKandang(kandangDemo);
+      setCatatanList(catatanBaru);
+    } finally {
+      setSedangMuatDemo(false);
+    }
+  };
 
   useEffect(() => {
     let aktif = true;
@@ -215,6 +262,35 @@ export function FondasiPage() {
           )}
         </div>
       </Card>
+
+      {!kandang && (
+        <Card>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "var(--space-2)",
+              marginBottom: "var(--space-2)",
+            }}
+          >
+            <strong>Pintasan Demo Juri IDTC 2026</strong>
+            <Badge variant="usang" label="Data contoh" />
+          </div>
+          <p className="tk-muted tk-prose" style={{ marginBottom: "var(--space-3)" }}>
+            Ingin langsung mencoba grafik tren 7 hari, peringatan dini, dan konteks Kokok tanpa
+            mengisi satu per satu? Muat profil kandang contoh (760 ekor ayam petelur).
+          </p>
+          <Button
+            variant="secondary"
+            disabled={sedangMuatDemo}
+            onClick={() => void handleMuatDemoJuri()}
+          >
+            {sedangMuatDemo ? "Menyiapkan data..." : "Isi contoh demo (760 ekor)"}
+          </Button>
+        </Card>
+      )}
 
       {peringatanAktif.length > 0 && (
         <Card variant="danger">

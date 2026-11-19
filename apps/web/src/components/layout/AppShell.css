@@ -20,6 +20,12 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--tk-peach) 60%, var(--tk-white)) 0%,
+    var(--tk-white) 320px,
+    color-mix(in srgb, var(--tk-peach) 45%, var(--tk-white)) 100%
+  );
 }
 
 .tk-shell__topbar {

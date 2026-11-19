@@ -117,6 +117,49 @@
   text-decoration: none;
 }
 
+.tk-toko-qr-details {
+  border-radius: var(--radius-control);
+  border: 1px dashed var(--tk-border-subtle);
+  background: var(--tk-peach);
+  padding: var(--space-2) var(--space-3);
+}
+
+.tk-toko-qr-summary {
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--tk-ink);
+  min-height: var(--tap-min);
+  display: flex;
+  align-items: center;
+}
+
+.tk-toko-qr-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.tk-toko-qr-svg {
+  color: var(--tk-ink);
+  flex-shrink: 0;
+}
+
+.tk-toko-qr-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.tk-toko-qr-code {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--tk-ink);
+}
+
 @media (min-width: 960px) {
   .tk-toko-list {
     display: grid;

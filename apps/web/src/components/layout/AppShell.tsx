@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from "react";
-import { NavLink } from "react-router";
+import { useRef, useState, type ReactNode } from "react";
+import { NavLink, useLocation } from "react-router";
 import { useSyncStatus } from "../../db/sync";
+import { usePageTransition } from "../../lib/gsapAnimations";
 import { TEKS } from "../../lib/teks";
 import { PwaStatusBar } from "../PwaStatusBar";
 import {
@@ -35,6 +36,10 @@ export interface AppShellProps {
 export function AppShell({ pageTitle, children }: AppShellProps) {
   const { isOnline, pendingCount, isSyncing, namaKandangAktif } = useSyncStatus();
   const [isRailCollapsed, setIsRailCollapsed] = useState<boolean>(bacaStatusRailAwal);
+  const location = useLocation();
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  usePageTransition(contentRef, location.pathname);
 
   const handleToggleRail = () => {
     setIsRailCollapsed((prev) => {
@@ -188,7 +193,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         </header>
 
         <main id="konten-utama" className="tk-shell__main" tabIndex={-1}>
-          <div className="tk-shell__content">
+          <div ref={contentRef} className="tk-shell__content">
             <PwaStatusBar />
 
             {!isOnline && (

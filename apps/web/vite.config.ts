@@ -64,4 +64,18 @@ export default defineConfig({
       "/health": "http://localhost:3000",
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/gsap")) return "gsap";
+          if (id.includes("node_modules/dexie")) return "dexie";
+          if (id.includes("node_modules/react") || id.includes("node_modules/scheduler")) {
+            return "react-vendor";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
 });

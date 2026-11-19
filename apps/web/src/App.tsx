@@ -1,5 +1,6 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import { lazy, Suspense, useEffect } from "react";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
+import { captureSrcParam } from "./db/db";
 import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
 import { KokokPage } from "./pages/KokokPage";
@@ -12,9 +13,21 @@ import { TokoPage } from "./pages/TokoPage";
 // Halaman /dev/komponen hanya dimuat saat pengembangan; dihapus otomatis dari build produksi.
 const DevKomponenPage = import.meta.env.DEV ? lazy(() => import("./pages/dev/KomponenPage")) : null;
 
+function RouteTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    captureSrcParam();
+    if (typeof window !== "undefined" && !location.hash) {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+    }
+  }, [location.pathname, location.search, location.hash]);
+  return null;
+}
+
 export function App() {
   return (
     <BrowserRouter>
+      <RouteTracker />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privasi" element={<PrivasiPage />} />
