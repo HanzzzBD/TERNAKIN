@@ -425,13 +425,14 @@ export async function hapusSemuaDataPengguna(): Promise<{ serverDihapus: boolean
   try {
     await db.transaction(
       "rw",
-      [db.kandang, db.catatan, db.outbox, db.draf, db.komposisi, db.meta],
+      [db.kandang, db.catatan, db.outbox, db.draf, db.komposisi, db.kokok, db.meta],
       async () => {
         await db.kandang.clear();
         await db.catatan.clear();
         await db.outbox.clear();
         await db.draf.clear();
         await db.komposisi.clear();
+        await db.kokok.clear();
         await db.meta.clear();
       },
     );

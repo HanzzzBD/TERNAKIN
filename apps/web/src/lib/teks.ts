@@ -86,3 +86,41 @@ export const TEKS_PAKAN = {
   tombolTambahSaran: "Tambahkan",
   labelDataContoh: "Data contoh",
 } as const;
+
+export const TEKS_KOKOK = {
+  judulHalaman: "Kokok",
+  eyebrow: "KOKOK · TRIASE GEJALA · UJI COBA",
+  judul: "Cek cepat tingkat urgensi gejala ayam Anda.",
+  penafianPermanen: "Bukan diagnosis dan tidak memberi dosis obat.",
+  catatanUjiCoba:
+    "Uji coba — pedoman contoh ini belum ditinjau penasihat penyuluh atau dokter hewan. Selalu pastikan ke tenaga ahli untuk pemeriksaan langsung.",
+  slotMaskot: "Slot maskot Kokok (belum ditentukan)",
+  labelGejalaCepat: "Atau pilih gejala yang paling dekat:",
+  labelTextarea: "Ceritakan gejala yang Anda lihat di kandang",
+  placeholderTextarea:
+    "Contoh: 3 ekor ayam mulai ngorok, bersin, dan nafsu makan turun sejak kemarin sore.",
+  labelSejakKapan: "Sejak kapan muncul? (opsional)",
+  placeholderSejakKapan: "Contoh: Pagi ini / 2 hari lalu",
+  tombolKirim: "Tanya Kokok",
+  tombolMengirim: "Memeriksa pedoman...",
+  bannerOffline:
+    "Anda sedang tanpa sinyal. Pertanyaan baru butuh sambungan, namun tulisan Anda otomatis tersimpan sebagai draf dan riwayat tanya sebelumnya tetap bisa dibaca di bawah.",
+  alasanOffline: "Tanya baru butuh sinyal. Draf Anda tersimpan di perangkat.",
+  galatMinimalGejala: "Ceritakan gejala minimal 3 karakter agar Kokok dapat memeriksa pedoman.",
+  galatServer: "Kokok belum bisa menjawab sekarang. Coba lagi sebentar lagi.",
+  judulUrgensiTinggi: "Urgensi tinggi — segera hubungi dokter hewan",
+  judulRiwayat: "Riwayat tanya Kokok",
+  kosongRiwayat:
+    "Belum ada percakapan tersimpan. Pilih salah satu gejala di atas atau tulis kondisi ayam Anda untuk memulai.",
+  judulPanduanUmum: "Langkah aman yang bisa dilakukan sekarang",
+  judulSumber: "Lihat sumber pedoman yang dipakai",
+  tanpaSumber:
+    "Tidak ada pedoman di basis data yang cocok dengan pertanyaan ini. Konsultasikan langsung dengan penyuluh, puskeswan, atau dokter hewan.",
+  judulRingkasanKasus: "Ringkasan kasus untuk dibagikan",
+  tombolKirimWa: "Kirim lewat WhatsApp",
+  catatanWaTanpaNomor:
+    "WhatsApp akan terbuka tanpa nomor tujuan agar Anda bisa memilih kontak dokter hewan, puskeswan, atau penyuluh Anda sendiri.",
+  badgeUjiCoba: "Uji coba",
+  badgeTerfilter: "Jawaban aman",
+  badgeTidakTahu: "Di luar pedoman",
+} as const;

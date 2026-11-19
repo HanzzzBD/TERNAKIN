@@ -5,6 +5,7 @@ import type {
   ItemOutboxSync,
   Kandang,
   PakanHitungLayak,
+  PercakapanKokokLokal,
   Toko,
 } from "@ternakin/shared";
 
@@ -50,6 +51,7 @@ export class TernakinDB extends Dexie {
   catatan!: Table<CatatanLokal, string>;
   referensi!: Table<ReferensiLokal, string>;
   toko!: Table<TokoLokal, string>;
+  kokok!: Table<PercakapanKokokLokal, string>;
   draf!: Table<DrafTeks, string>;
   komposisi!: Table<KomposisiTersimpan, string>;
   meta!: Table<MetaLokal, string>;
@@ -77,6 +79,17 @@ export class TernakinDB extends Dexie {
       catatan: "id, kandangId, tanggal, syncState",
       referensi: "kunci",
       toko: "id, fetchedAt",
+      draf: "kunci",
+      komposisi: "kunci",
+      meta: "kunci",
+      outbox: "++seq, opId, jenis",
+    });
+    this.version(4).stores({
+      kandang: "id",
+      catatan: "id, kandangId, tanggal, syncState",
+      referensi: "kunci",
+      toko: "id, fetchedAt",
+      kokok: "id, dibuatPada",
       draf: "kunci",
       komposisi: "kunci",
       meta: "kunci",

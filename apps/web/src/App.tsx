@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
-import { ModulSegeraPage } from "./pages/ModulSegeraPage";
+import { KokokPage } from "./pages/KokokPage";
 import { PakanPage } from "./pages/PakanPage";
 import { ProfilPage } from "./pages/ProfilPage";
 import { TokoPage } from "./pages/TokoPage";
@@ -19,7 +19,7 @@ export function App() {
         <Route path="/app/pakan" element={<PakanPage />} />
         <Route path="/app/catatan" element={<CatatanPage />} />
         <Route path="/app/profil" element={<ProfilPage />} />
-        <Route path="/app/tanya" element={<ModulSegeraPage namaModul="Kokok" />} />
+        <Route path="/app/tanya" element={<KokokPage />} />
         <Route path="/app/toko" element={<TokoPage />} />
         {DevKomponenPage && (
           <Route
