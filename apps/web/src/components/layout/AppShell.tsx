@@ -6,7 +6,6 @@ import { PwaStatusBar } from "../PwaStatusBar";
 import {
   AppNav,
   Banner,
-  MotionToggleButton,
   RefreshIcon,
   SidebarCollapseIcon,
   SidebarExpandIcon,
@@ -63,7 +62,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
       ? "tk-net-chip--pending"
       : "tk-net-chip--online";
 
-  const labelToggleRail = isRailCollapsed ? "Buka bilah navigasi" : "Kecilkan bilah navigasi";
+  const labelToggleRail = isRailCollapsed ? "Buka menu" : "Kecilkan menu";
 
   return (
     <div className="tk-shell">
@@ -76,42 +75,26 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         aria-label="Bilah navigasi samping"
         data-collapsed={isRailCollapsed ? "true" : "false"}
       >
-        <div className="tk-shell__rail-head">
-          <div className="tk-shell__rail-brand">
-            {isRailCollapsed ? (
-              <p className="tk-wordmark tk-wordmark--mini" aria-label={TEKS.namaAplikasi}>
-                t
+        <div className="tk-shell__rail-brand">
+          <img
+            src="/images/kokok.webp"
+            alt=""
+            aria-hidden="true"
+            className="tk-brand-kokok-avatar"
+            width={36}
+            height={36}
+          />
+          {!isRailCollapsed && (
+            <div className="tk-shell__rail-brand-text">
+              <p className="tk-wordmark">
+                {TEKS.namaAplikasi}
                 <span className="tk-wordmark__dot" aria-hidden="true">
                   .
                 </span>
               </p>
-            ) : (
-              <>
-                <p className="tk-wordmark">
-                  {TEKS.namaAplikasi}
-                  <span className="tk-wordmark__dot" aria-hidden="true">
-                    .
-                  </span>
-                </p>
-                {namaKandangAktif && <p className="tk-shell__kandang-sub">{namaKandangAktif}</p>}
-              </>
-            )}
-          </div>
-
-          <button
-            type="button"
-            className={`tk-shell__rail-toggle ${isRailCollapsed ? "tk-rail-tip-host" : ""}`.trim()}
-            aria-expanded={!isRailCollapsed}
-            aria-label={labelToggleRail}
-            onClick={handleToggleRail}
-          >
-            {isRailCollapsed ? <SidebarExpandIcon size={20} /> : <SidebarCollapseIcon size={20} />}
-            {isRailCollapsed && (
-              <span className="tk-rail-tip" aria-hidden="true">
-                {labelToggleRail}
-              </span>
-            )}
-          </button>
+              {namaKandangAktif && <p className="tk-shell__kandang-sub">{namaKandangAktif}</p>}
+            </div>
+          )}
         </div>
 
         <div className="tk-shell__rail-nav">
@@ -136,7 +119,28 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
               Profil kandang
             </span>
           </NavLink>
-          <MotionToggleButton iconOnly={isRailCollapsed} />
+
+          <button
+            type="button"
+            className={`tk-shell__rail-toggle ${isRailCollapsed ? "tk-shell__rail-toggle--collapsed tk-rail-tip-host" : ""}`.trim()}
+            aria-expanded={!isRailCollapsed}
+            aria-label={isRailCollapsed ? labelToggleRail : undefined}
+            onClick={handleToggleRail}
+          >
+            <span className="tk-nav__icon">
+              {isRailCollapsed ? (
+                <SidebarExpandIcon size={20} />
+              ) : (
+                <SidebarCollapseIcon size={20} />
+              )}
+            </span>
+            <span
+              className={isRailCollapsed ? "tk-rail-tip" : ""}
+              aria-hidden={isRailCollapsed ? true : undefined}
+            >
+              {labelToggleRail}
+            </span>
+          </button>
         </div>
       </aside>
 
@@ -144,12 +148,22 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         <header className="tk-shell__topbar">
           <div className="tk-shell__topbar-inner">
             <div className="tk-shell__topbar-left">
-              <p className="tk-wordmark tk-shell__mobile-brand">
-                {TEKS.namaAplikasi}
-                <span className="tk-wordmark__dot" aria-hidden="true">
-                  .
-                </span>
-              </p>
+              <div className="tk-shell__mobile-brand">
+                <img
+                  src="/images/kokok.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="tk-brand-kokok-avatar"
+                  width={32}
+                  height={32}
+                />
+                <p className="tk-wordmark">
+                  {TEKS.namaAplikasi}
+                  <span className="tk-wordmark__dot" aria-hidden="true">
+                    .
+                  </span>
+                </p>
+              </div>
               {pageTitle && (
                 <p className="tk-shell__page-title">
                   {pageTitle}
@@ -169,10 +183,6 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
                 )}
                 <span>{statusChipLabel}</span>
               </span>
-
-              <div className="tk-shell__mobile-motion">
-                <MotionToggleButton compact />
-              </div>
             </div>
           </div>
         </header>

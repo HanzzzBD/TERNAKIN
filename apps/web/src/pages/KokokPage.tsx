@@ -18,6 +18,7 @@ import {
   Card,
   ChatIcon,
   Field,
+  KokokMascot,
   Skeleton,
   TextInput,
   UrgencyChip,
@@ -392,9 +393,15 @@ export function KokokPage() {
     <AppShell pageTitle={TEKS_KOKOK.judulHalaman}>
       <Card variant="warm">
         <div className="tk-kokok-header">
-          <div className="tk-kokok-mascot-slot" role="img" aria-label={TEKS_KOKOK.slotMaskot}>
-            <span className="tk-kokok-mascot-label">Maskot Kokok</span>
-          </div>
+          <KokokMascot
+            size="md"
+            interactive
+            messages={[
+              "Halo, saya Kokok! Ceritakan gejala ayam Anda untuk cek urgensi.",
+              "Pisahkan ayam sakit sejak dini agar tidak menular ke seluruh kandang.",
+              "Saya membantu menyusun ringkasan kasus untuk dikirim ke dokter hewan atau penyuluh.",
+            ]}
+          />
           <div>
             <p className="tk-eyebrow">{TEKS_KOKOK.eyebrow}</p>
             <h1 className="tk-kokok-title">{TEKS_KOKOK.judul}</h1>

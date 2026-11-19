@@ -17,8 +17,8 @@ import {
   HomeIcon,
   IconButton,
   InstallIcon,
+  KokokMascot,
   MotionIcon,
-  MotionToggleButton,
   NumberInput,
   PlusIcon,
   RefreshIcon,
@@ -138,7 +138,7 @@ export default function KomponenPage() {
           <strong className="tk-tabular">Rp 9.754 / kg</strong>.
         </p>
         <div className="tk-dev-row">
-          <MotionToggleButton />
+          <KokokMascot size="md" interactive />
         </div>
       </Card>
 

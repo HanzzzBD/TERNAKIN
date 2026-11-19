@@ -12,6 +12,7 @@ import {
   ClipboardIcon,
   FeedIcon,
   InstallIcon,
+  KokokMascot,
   RefreshIcon,
   UrgencyChip,
 } from "../components/ui";
@@ -128,6 +129,10 @@ export function FondasiPage() {
           {TEKS.judulFondasi}
         </h1>
         <p className="tk-muted tk-prose">{TEKS.deskripsiFondasi}</p>
+
+        <div style={{ marginBottom: "var(--space-4)" }}>
+          <KokokMascot size="md" interactive />
+        </div>
 
         <div
           style={{

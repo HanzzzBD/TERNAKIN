@@ -69,15 +69,21 @@ test("rujukan toko urut murni dari biaya, harga usang bertanda, dan lead offline
   await context.setOffline(false);
   await expect(page.getByText("Tersinkron")).toBeVisible({ timeout: 10_000 });
 
-  const adminRes = await request.get("/v1/admin/lead", {
-    headers: { "x-admin-key": "kunci-admin-e2e" },
-  });
-  expect(adminRes.status()).toBe(200);
-  const adminJson = (await adminRes.json()) as {
-    rekap: Array<{ tokoId: string; totalLead: number }>;
-  };
-  const soreang = adminJson.rekap.find((r) => r.tokoId === "toko-tani-soreang");
-  expect(soreang?.totalLead).toBeGreaterThanOrEqual(1);
+  await expect
+    .poll(
+      async () => {
+        const adminRes = await request.get("/v1/admin/lead", {
+          headers: { "x-admin-key": "kunci-admin-e2e" },
+        });
+        if (adminRes.status() !== 200) return 0;
+        const adminJson = (await adminRes.json()) as {
+          rekap: Array<{ tokoId: string; totalLead: number }>;
+        };
+        return adminJson.rekap.find((r) => r.tokoId === "toko-tani-soreang")?.totalLead ?? 0;
+      },
+      { timeout: 10_000 },
+    )
+    .toBeGreaterThanOrEqual(1);
 });
 
 test("/app/toko lulus audit axe tanpa pelanggaran di ponsel (360px) dan laptop (1280px)", async ({

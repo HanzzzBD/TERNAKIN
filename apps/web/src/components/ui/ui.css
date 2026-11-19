@@ -641,3 +641,134 @@ html[data-motion="on"] .tk-rail-tip {
   font-size: var(--text-xs);
   color: var(--tk-ink-muted);
 }
+
+/* Maskot Kokok interaktif (identitas Ternakin) */
+.tk-kokok-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.tk-kokok-widget--md {
+  align-items: flex-start;
+}
+
+.tk-kokok-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-width: var(--tap-min);
+  min-height: var(--tap-min);
+  padding: var(--space-2);
+  border-radius: var(--radius-card);
+  border: 2px solid var(--tk-border-subtle);
+  background: var(--tk-white);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 140ms ease;
+}
+
+.tk-kokok-btn:active {
+  transform: scale(0.96);
+}
+
+@media (hover: hover) {
+  .tk-kokok-btn:hover {
+    border-color: var(--tk-orange-dark);
+    transform: translateY(-2px);
+  }
+}
+
+.tk-kokok-mascot__img {
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.tk-kokok-widget--sm .tk-kokok-mascot__img {
+  width: 48px;
+  height: 48px;
+}
+
+.tk-kokok-widget--md .tk-kokok-mascot__img {
+  width: 88px;
+  height: 88px;
+}
+
+.tk-kokok-widget--lg .tk-kokok-mascot__img {
+  width: 148px;
+  height: 148px;
+}
+
+.tk-kokok-name-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tk-orange);
+  color: var(--tk-ink);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.tk-kokok-speech {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--tk-white);
+  border: 1.5px solid var(--tk-border-subtle);
+  color: var(--tk-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tk-kokok-speech__text {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--tk-ink);
+}
+
+.tk-kokok-speech__hint {
+  font-size: var(--text-xs);
+  color: var(--tk-ink-muted);
+}
+
+@keyframes tk-kokok-hop {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-8px) rotate(-4deg);
+  }
+  70% {
+    transform: translateY(-3px) rotate(3deg);
+  }
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+.tk-kokok-btn--hop {
+  animation: tk-kokok-hop 360ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tk-kokok-btn,
+  .tk-kokok-btn--hop {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .tk-kokok-widget--md {
+    flex-direction: row;
+    align-items: center;
+  }
+}

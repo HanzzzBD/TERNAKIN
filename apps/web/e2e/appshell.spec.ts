@@ -81,17 +81,31 @@ for (const vp of VIEWPORTS) {
   });
 }
 
-test("AppShell desktop: icon rail dapat mengecil/membuka dan menampilkan nama menu saat hover", async ({
+test("AppShell desktop: icon rail dapat mengecil/membuka di bawah Profil kandang dan menampilkan nama menu saat hover", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/app");
+
+  // Tombol Atur animasi sudah dihapus
+  await expect(page.getByRole("button", { name: /Atur animasi/i })).toHaveCount(0);
 
   const rail = page.locator('aside[aria-label="Bilah navigasi samping"]');
   await expect(rail).toHaveAttribute("data-collapsed", "true");
 
   const lebarKecil = await rail.evaluate((el) => el.getBoundingClientRect().width);
   expect(lebarKecil).toBeLessThanOrEqual(90);
+
+  // Tombol buka/tutup berada di bawah Profil kandang
+  const linkProfil = rail.getByRole("link", { name: "Profil kandang" });
+  const tombolToggle = rail.getByRole("button", { name: "Buka menu" });
+  const boxProfil = await linkProfil.boundingBox();
+  const boxToggle = await tombolToggle.boundingBox();
+  expect(boxProfil).not.toBeNull();
+  expect(boxToggle).not.toBeNull();
+  if (boxProfil && boxToggle) {
+    expect(boxToggle.y).toBeGreaterThan(boxProfil.y);
+  }
 
   // Saat mengecil, hover item menu memunculkan tooltip nama menu
   const linkPakan = rail.getByRole("link", { name: "Pakan" });
@@ -102,12 +116,11 @@ test("AppShell desktop: icon rail dapat mengecil/membuka dan menampilkan nama me
   await expect(labelPakan).toBeVisible();
   await expect(labelPakan).toHaveCSS("opacity", "1");
 
-  // Klik tombol buka -> rail melebar dan label tampil permanen
-  await page.getByRole("button", { name: "Buka bilah navigasi" }).click();
+  // Klik tombol buka -> rail melebar instan dan label tampil permanen
+  await tombolToggle.click();
   await expect(rail).toHaveAttribute("data-collapsed", "false");
-  await expect
-    .poll(() => rail.evaluate((el) => el.getBoundingClientRect().width))
-    .toBeGreaterThanOrEqual(220);
+  const lebarBuka = await rail.evaluate((el) => el.getBoundingClientRect().width);
+  expect(lebarBuka).toBeGreaterThanOrEqual(220);
   await expect(labelPakan).toBeVisible();
 
   // Audit axe saat rail terbuka
@@ -115,7 +128,7 @@ test("AppShell desktop: icon rail dapat mengecil/membuka dan menampilkan nama me
   expect(hasilAxeBuka.violations).toEqual([]);
 
   // Klik kecilkan kembali -> kembali ke icon rail
-  await page.getByRole("button", { name: "Kecilkan bilah navigasi" }).click();
+  await page.getByRole("button", { name: "Kecilkan menu" }).click();
   await expect(rail).toHaveAttribute("data-collapsed", "true");
 });
 

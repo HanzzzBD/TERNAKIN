@@ -33,7 +33,7 @@ export default defineConfig({
       workbox: {
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/v1\//, /^\/health$/],
-        globPatterns: ["**/*.{js,css,html,svg,woff2,png,json}"],
+        globPatterns: ["**/*.{js,css,html,svg,woff2,png,webp,json}"],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname === "/v1/toko",

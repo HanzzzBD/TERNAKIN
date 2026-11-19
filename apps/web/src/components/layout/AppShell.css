@@ -64,6 +64,20 @@
   color: var(--tk-ink);
 }
 
+.tk-brand-kokok-avatar {
+  display: block;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.tk-shell__mobile-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .tk-wordmark__dot {
   color: var(--tk-orange-dark);
 }
@@ -136,20 +150,28 @@
 .tk-shell__rail-toggle {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: var(--tap-min);
-  height: var(--tap-min);
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap-min);
+  min-width: var(--tap-min);
+  padding: 0 var(--space-3);
   border-radius: var(--radius-control);
   border: 1.5px solid var(--tk-border-subtle);
   background: var(--tk-white);
   color: var(--tk-ink);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  white-space: nowrap;
   cursor: pointer;
   flex-shrink: 0;
 }
 
-.tk-wordmark--mini {
-  font-size: 1.625rem;
-  text-align: center;
+.tk-shell__rail-toggle--collapsed {
+  width: var(--tap-min);
+  height: var(--tap-min);
+  justify-content: center;
+  padding: 0;
+  gap: 0;
 }
 
 .tk-shell__main {
@@ -221,36 +243,28 @@
     overflow: visible;
   }
 
-  html[data-motion="on"] .tk-shell__rail {
-    transition: width 180ms ease;
-  }
-
   .tk-shell__rail--collapsed {
     width: var(--nav-rail-collapsed-width);
     padding: var(--space-4) var(--space-2);
     align-items: center;
   }
 
-  .tk-shell__rail-head {
+  .tk-shell__rail-brand {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-2);
-    width: 100%;
-  }
-
-  .tk-shell__rail--collapsed .tk-shell__rail-head {
-    flex-direction: column;
-    gap: var(--space-3);
-  }
-
-  .tk-shell__rail-brand {
     padding-inline: var(--space-2);
     min-width: 0;
+    min-height: 44px;
   }
 
   .tk-shell__rail--collapsed .tk-shell__rail-brand {
     padding-inline: 0;
+    justify-content: center;
+  }
+
+  .tk-shell__rail-brand-text {
+    min-width: 0;
   }
 
   .tk-shell__rail-nav {
@@ -280,7 +294,6 @@
   }
 
   .tk-shell__mobile-brand,
-  .tk-shell__mobile-motion,
   .tk-shell__bottom {
     display: none;
   }

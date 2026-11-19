@@ -13,6 +13,7 @@ export {
   type TextInputProps,
 } from "./Field";
 export { IconButton, type IconButtonProps } from "./IconButton";
+export { KokokMascot, type KokokMascotProps, type KokokMascotSize } from "./KokokMascot";
 export {
   AlertOctagonIcon,
   AlertTriangleIcon,
