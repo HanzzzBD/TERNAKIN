@@ -151,6 +151,7 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
         tokenMasuk: 10,
         tokenKeluar: 15,
       }),
+      triageKokok: (input, guidelines) => new MockLlmAdapter().triageKokok(input, guidelines),
     };
 
     const appCurang = createApp({ llmAdapter: mockCurang });

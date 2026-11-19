@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import type { GalatApi, KesehatanApi } from "@ternakin/shared";
 import { MockLlmAdapter } from "./adapters/mockLlm.js";
 import { SharedSolverAdapter } from "./adapters/solverAdapter.js";
-import type { LlmAdapter, SolverAdapter } from "./adapters/types.js";
+import { SqliteGuidelineRetriever } from "./adapters/sqliteGuidelineRetriever.js";
+import type { GuidelineRetriever, LlmAdapter, SolverAdapter } from "./adapters/types.js";
 import { initDatabase, type DatabaseContext } from "./db/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { generalLimiter } from "./middleware/rateLimit.js";
@@ -26,6 +27,7 @@ export interface CreateAppOptions {
   dbCtx?: DatabaseContext;
   llmAdapter?: LlmAdapter;
   solverAdapter?: SolverAdapter;
+  guidelineRetriever?: GuidelineRetriever;
   staleDays?: number;
   dailyLlmLimit?: number;
   adminKey?: string;
@@ -42,6 +44,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   const dbCtx = options.dbCtx ?? initDatabase(options.databasePath ?? ":memory:");
   const llmAdapter = options.llmAdapter ?? new MockLlmAdapter();
   const solverAdapter = options.solverAdapter ?? new SharedSolverAdapter(dbCtx, staleDays);
+  const guidelineRetriever = options.guidelineRetriever ?? new SqliteGuidelineRetriever(dbCtx.db);
 
   app.disable("x-powered-by");
   app.use(helmet());
@@ -59,6 +62,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       dbCtx,
       llmAdapter,
       solverAdapter,
+      guidelineRetriever,
       staleDays,
       dailyLlmLimit,
       adminKey,

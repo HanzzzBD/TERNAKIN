@@ -244,5 +244,13 @@
       "sumber": "Data contoh — ambang umum sementara (wajib diverifikasi oleh penasihat penyuluh atau dokter hewan sebelum pilot)",
       "isDemo": true
     }
+  ],
+  "gejalaAwalKokok": [
+    "Ayam lesu dan nafsu makan turun",
+    "Ngorok, bersin, atau sesak napas",
+    "Kematian mendadak beberapa ekor",
+    "Diare encer atau berdarah",
+    "Produksi telur turun mendadak",
+    "Jengger bengkak atau kebiruan"
   ]
 }

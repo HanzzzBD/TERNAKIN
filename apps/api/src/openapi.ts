@@ -7,6 +7,8 @@ import {
   galatApiSchema,
   kandangCreateRequestSchema,
   kesehatanApiSchema,
+  kokokTriaseRequestSchema,
+  kokokTriaseResponseSchema,
   leadCreateRequestSchema,
   pakanHitungRequestSchema,
   pakanHitungResultSchema,
@@ -23,7 +25,7 @@ export function buildOpenApiSpec() {
     openapi: "3.1.0",
     info: {
       title: "Ternakin API",
-      version: "0.4.0",
+      version: "0.5.0",
       description:
         "Kontrak API REST JSON /v1 bersama untuk aplikasi web PWA dan aplikasi mobile Ternakin.",
     },
@@ -152,6 +154,31 @@ export function buildOpenApiSpec() {
             "200": {
               description: "Daftar opId terkonfirmasi dan data pemenang terbaru",
               content: { "application/json": { schema: z.toJSONSchema(sinkronResponseSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/kokok/triase": {
+        post: {
+          summary: "Triase gejala ayam berbasis panduan dengan tiga tingkat urgensi (SDD)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(kokokTriaseRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Hasil triase terstruktur, sumber panduan, dan ringkasan kasus",
+              content: {
+                "application/json": { schema: z.toJSONSchema(kokokTriaseResponseSchema) },
+              },
+            },
+            "400": {
+              description: "Masukan tidak valid",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
+            },
+            "429": {
+              description: "Batas harian pertanyaan Kokok tercapai",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
             },
           },
         },

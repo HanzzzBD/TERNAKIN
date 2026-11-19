@@ -1,0 +1,44 @@
+[
+  {
+    "id": "panduan_kematian_mendadak",
+    "judul": "Kewaspadaan Kematian Mendadak dan Gejala Berat Unggas",
+    "sumber": "Pedoman Uji Coba Ternakin — Ringkasan Kewaspadaan Penyakit Menular Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.1",
+    "isi": "Kematian mendadak beberapa ekor ayam dalam waktu singkat, jengger dan pial bengkak atau kebiruan, leher terpuntir, kejang, lumpuh, atau sesak napas berat merupakan tanda bahaya dengan tingkat kewaspadaan tinggi. Jangan menunda pemeriksaan dan jangan memindahkan ayam hidup atau bangkai keluar area kandang. Segera laporkan kepada dokter hewan, puskeswan, atau dinas peternakan setempat dalam 24 jam. Pisahkan ayam sakit, batasi lalu lintas orang dan kendaraan, serta tangani bangkai secara aman di lokasi terpisah sesuai arahan petugas."
+  },
+  {
+    "id": "panduan_pernapasan",
+    "judul": "Penanganan Awal Gejala Pernapasan (Ngorok, Bersin, Mata Berair)",
+    "sumber": "Pedoman Uji Coba Ternakin — Panduan Biosekuriti dan Observasi Pernapasan Unggas (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.1",
+    "isi": "Gejala seperti ngorok, bersin berulang, keluar lendir dari hidung, mata berair, atau pembengkakan di sekitar wajah dan sinus perlu dipantau ketat karena mudah menyebar antar kandang. Pisahkan ayam yang bergejala ke kandang karantina terpisah. Periksa sirkulasi udara, bau amonia, serta kelembapan litter agar udara kandang tetap segar dan tidak pengap. Bersihkan tempat minum dan tempat pakan setiap hari, catat jumlah ekor terdampak, lalu hubungi penyuluh peternakan atau puskeswan untuk pemeriksaan lebih lanjut."
+  },
+  {
+    "id": "panduan_diare",
+    "judul": "Langkah Awal Menghadapi Diare Encer atau Kotoran Berdarah",
+    "sumber": "Pedoman Uji Coba Ternakin — Panduan Sanitasi Pencernaan Ayam Petelur (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.1",
+    "isi": "Kotoran encer, berdarah, kehijauan, atau keputihan menempel di sekitar kloaka menandakan gangguan saluran cerna yang dapat menurunkan bobot dan produksi telur. Segera isolasi ayam yang tampak lemah dan periksa kebersihan air minum serta penyimpanan pakan dari jamur atau basah. Jaga alas kandang tetap kering agar tidak memicu penularan lewat kotoran. Dokumentasikan warna kotoran serta jumlah ayam terdampak dan konsultasikan ke penyuluh atau puskeswan."
+  },
+  {
+    "id": "panduan_stres_panas",
+    "judul": "Mengurangi Stres Panas pada Ayam Petelur",
+    "sumber": "Pedoman Uji Coba Ternakin — Manajemen Lingkungan dan Ventilasi Kandang (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.1",
+    "isi": "Saat suhu kandang terlalu panas di siang hari, ayam sering tampak megap-megap atau panting, sayap menggantung melebar, minum jauh lebih banyak, dan makan berkurang. Bila tidak disertai kematian mendadak atau gejala berat lain, kondisi ringan ini dapat ditangani awal dengan memperbaiki aliran udara, membuka tirai sesuai arah angin, menambah ketersediaan air minum bersih dan sejuk, serta menjadwalkan pemberian pakan pada jam lebih teduh pagi dan sore. Tetap pantau suhu kandang dan kondisi ayam dalam 24 jam."
+  },
+  {
+    "id": "panduan_lesu_telur_turun",
+    "judul": "Evaluasi Ayam Lesu, Nafsu Makan Turun, dan Produksi Telur Merosot",
+    "sumber": "Pedoman Uji Coba Ternakin — Pemeriksaan Rutin Produktivitas Petelur (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.1",
+    "isi": "Ayam yang tampak lesu, menyendiri, bulu kusam, nafsu makan turun, atau produksi telur turun mendadak perlu segera ditelusuri penyebabnya. Periksa catatan harian tujuh hari terakhir: kecukupan pakan, kualitas air minum, perubahan bahan pakan, suhu ekstrem, dan gangguan pencahayaan. Pisahkan ekor yang tampak lemah untuk pemantauan ketat. Bila penurunan berlangsung lebih dari dua hari atau disertai gejala lain, segera konsultasikan ringkasan catatan ke penyuluh peternakan atau puskeswan."
+  },
+  {
+    "id": "panduan_biosekuriti_dasar",
+    "judul": "Prinsip Isolasi dan Biosekuriti Dasar Kandang Petelur",
+    "sumber": "Pedoman Uji Coba Ternakin — Prosedur Pencegahan Penularan di Kandang Mandiri (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.1",
+    "isi": "Pencegahan penularan penyakit dimulai dari memisahkan ayam sakit di ruang karantina, merawat ayam sehat terlebih dahulu sebelum ayam sakit, mencuci tangan serta alas kaki setiap masuk dan keluar kandang, serta membatasi tamu dan unggas liar di sekitar area ternak. Catat perubahan harian jumlah pakan, telur, kematian, dan suhu agar tanda bahaya terlihat lebih cepat."
+  }
+]

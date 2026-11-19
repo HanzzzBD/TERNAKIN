@@ -18,6 +18,17 @@ const API_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const MIGRATION_001 = path.join(API_ROOT, "migrations", "001_init.sql");
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
 const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
+const DEFAULT_SEED_PANDUAN = path.join(API_ROOT, "seed", "panduan.json");
+
+const seedPanduanItemSchema = z.object({
+  id: z.string().min(1),
+  judul: z.string().min(1),
+  sumber: z.string().min(1),
+  versi: z.string().min(1),
+  isi: z.string().min(1),
+});
+
+type SeedPanduanItem = z.infer<typeof seedPanduanItemSchema>;
 
 const seedTokoItemSchema = z.object({
   id: z.string().min(1),
@@ -41,6 +52,7 @@ const seedReferensiFileSchema = z.object({
   bahan: z.array(bahanMasterSchema),
   kebutuhanGizi: z.array(kebutuhanGiziItemSchema),
   ambangPeringatan: z.array(ambangPeringatanSchema).default([]),
+  gejalaAwalKokok: z.array(z.string().min(1)).default([]),
 });
 
 type SeedReferensiFile = z.infer<typeof seedReferensiFileSchema>;
@@ -52,6 +64,7 @@ export interface DatabaseContext {
     isDemo: boolean;
     catatanData: string;
     ambangPeringatan: AmbangPeringatan[];
+    gejalaAwalKokok: string[];
   };
   close: () => void;
 }
@@ -88,6 +101,12 @@ export function initDatabase(
     seedToko(db, seedTokoList);
   }
 
+  if (fs.existsSync(DEFAULT_SEED_PANDUAN)) {
+    const rawPanduan: unknown = JSON.parse(fs.readFileSync(DEFAULT_SEED_PANDUAN, "utf-8"));
+    const seedPanduanList = z.array(seedPanduanItemSchema).parse(rawPanduan);
+    seedPanduan(db, seedPanduanList);
+  }
+
   return {
     db,
     referensiMeta: {
@@ -95,6 +114,7 @@ export function initDatabase(
       isDemo: seed.isDemo,
       catatanData: seed.catatanData,
       ambangPeringatan: seed.ambangPeringatan,
+      gejalaAwalKokok: seed.gejalaAwalKokok,
     },
     close: () => db.close(),
   };
@@ -211,6 +231,21 @@ function seedToko(db: Database.Database, list: readonly SeedTokoItem[]): void {
   run();
 }
 
+function seedPanduan(db: Database.Database, list: readonly SeedPanduanItem[]): void {
+  const upsertPanduan = db.prepare(`
+    INSERT OR REPLACE INTO dokumen_panduan (id, judul, sumber, isi, versi)
+    VALUES (@id, @judul, @sumber, @isi, @versi)
+  `);
+
+  const run = db.transaction(() => {
+    for (const p of list) {
+      upsertPanduan.run(p);
+    }
+  });
+
+  run();
+}
+
 interface BahanRow {
   id: string;
   nama: string;
@@ -294,5 +329,6 @@ export function getReferensiData(ctx: DatabaseContext, staleDays: number): DataR
     bahan,
     kebutuhanGizi,
     ambangPeringatan: ctx.referensiMeta.ambangPeringatan,
+    gejalaAwalKokok: ctx.referensiMeta.gejalaAwalKokok,
   });
 }
