@@ -28,6 +28,7 @@ export interface CreateAppOptions {
   solverAdapter?: SolverAdapter;
   staleDays?: number;
   dailyLlmLimit?: number;
+  adminKey?: string;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
@@ -36,6 +37,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   const indexHtmlPath = path.join(webDistDir, "index.html");
   const staleDays = options.staleDays ?? 7;
   const dailyLlmLimit = options.dailyLlmLimit ?? 20;
+  const adminKey = options.adminKey ?? process.env.ADMIN_KEY ?? "";
 
   const dbCtx = options.dbCtx ?? initDatabase(options.databasePath ?? ":memory:");
   const llmAdapter = options.llmAdapter ?? new MockLlmAdapter();
@@ -59,6 +61,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       solverAdapter,
       staleDays,
       dailyLlmLimit,
+      adminKey,
     }),
   );
 

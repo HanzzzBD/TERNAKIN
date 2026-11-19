@@ -17,6 +17,22 @@ import {
 const API_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const MIGRATION_001 = path.join(API_ROOT, "migrations", "001_init.sql");
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
+const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
+
+const seedTokoItemSchema = z.object({
+  id: z.string().min(1),
+  kode: z.string().min(1),
+  nama: z.string().min(1),
+  area: z.string().min(1),
+  statusMitra: z.boolean(),
+  isDemo: z.boolean().default(true),
+  nomorWa: z.string().nullable().optional(),
+  umurHariContoh: z.number().int().min(0).default(1),
+  asalHarga: z.string().min(1),
+  harga: z.record(z.string(), z.number().positive()),
+});
+
+type SeedTokoItem = z.infer<typeof seedTokoItemSchema>;
 
 const seedReferensiFileSchema = z.object({
   versi: z.string().min(1),
@@ -59,10 +75,18 @@ export function initDatabase(
   db.exec(sql);
   ensureColumn(db, "kandang", "bahan_tersedia_json", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "catatan_harian", "dihapus_pada", "TEXT");
+  ensureColumn(db, "toko", "kode", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "toko", "nomor_wa", "TEXT");
 
   const rawSeed: unknown = JSON.parse(fs.readFileSync(seedReferensiPath, "utf-8"));
   const seed = seedReferensiFileSchema.parse(rawSeed);
   seedReferensi(db, seed);
+
+  if (fs.existsSync(DEFAULT_SEED_TOKO)) {
+    const rawToko: unknown = JSON.parse(fs.readFileSync(DEFAULT_SEED_TOKO, "utf-8"));
+    const seedTokoList = z.array(seedTokoItemSchema).parse(rawToko);
+    seedToko(db, seedTokoList);
+  }
 
   return {
     db,
@@ -145,6 +169,46 @@ function seedReferensi(db: Database.Database, seed: SeedReferensiFile): void {
   });
 
   runSeed();
+}
+
+function seedToko(db: Database.Database, list: readonly SeedTokoItem[]): void {
+  const insertToko = db.prepare(`
+    INSERT OR IGNORE INTO toko (id, kode, nama, area, status_mitra, is_demo, nomor_wa)
+    VALUES (@id, @kode, @nama, @area, @statusMitra, @isDemo, @nomorWa)
+  `);
+
+  const insertHarga = db.prepare(`
+    INSERT OR IGNORE INTO harga_toko (toko_id, bahan_id, harga, asal_harga, diperbarui_pada)
+    VALUES (@tokoId, @bahanId, @harga, @asalHarga, @diperbaruiPada)
+  `);
+
+  const msPerHari = 24 * 60 * 60 * 1000;
+  const run = db.transaction(() => {
+    for (const t of list) {
+      insertToko.run({
+        id: t.id,
+        kode: t.kode,
+        nama: t.nama,
+        area: t.area,
+        statusMitra: t.statusMitra ? 1 : 0,
+        isDemo: t.isDemo ? 1 : 0,
+        nomorWa: t.nomorWa ?? null,
+      });
+
+      const diperbaruiPada = new Date(Date.now() - t.umurHariContoh * msPerHari).toISOString();
+      for (const [bahanId, harga] of Object.entries(t.harga)) {
+        insertHarga.run({
+          tokoId: t.id,
+          bahanId,
+          harga,
+          asalHarga: t.asalHarga,
+          diperbaruiPada,
+        });
+      }
+    }
+  });
+
+  run();
 }
 
 interface BahanRow {

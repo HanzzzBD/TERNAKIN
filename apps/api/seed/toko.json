@@ -1,0 +1,97 @@
+[
+  {
+    "id": "toko-sari-lembang",
+    "kode": "TK-BDG-01",
+    "nama": "Toko Pakan Sari Lembang (Contoh)",
+    "area": "Lembang, Bandung Barat",
+    "statusMitra": true,
+    "isDemo": true,
+    "nomorWa": null,
+    "umurHariContoh": 1,
+    "asalHarga": "Dikirim toko lewat WhatsApp",
+    "harga": {
+      "jagung_kuning": 6600,
+      "dedak_padi": 4100,
+      "konsentrat_petelur": 12200,
+      "bungkil_kedelai": 10800,
+      "tepung_ikan": 14500,
+      "tepung_batu_kapur": 1600
+    }
+  },
+  {
+    "id": "toko-tani-soreang",
+    "kode": "TK-BDG-02",
+    "nama": "Kios Pakan Tani Soreang (Contoh)",
+    "area": "Soreang, Kab. Bandung",
+    "statusMitra": false,
+    "isDemo": true,
+    "nomorWa": null,
+    "umurHariContoh": 2,
+    "asalHarga": "Dicatat tim",
+    "harga": {
+      "jagung_kuning": 6300,
+      "dedak_padi": 3900,
+      "konsentrat_petelur": 11800,
+      "bungkil_kedelai": 10400,
+      "tepung_ikan": 14200,
+      "tepung_batu_kapur": 1450
+    }
+  },
+  {
+    "id": "toko-berkah-banjaran",
+    "kode": "TK-BDG-03",
+    "nama": "Toko Pakan Berkah Banjaran (Contoh)",
+    "area": "Banjaran, Kab. Bandung",
+    "statusMitra": true,
+    "isDemo": true,
+    "nomorWa": null,
+    "umurHariContoh": 3,
+    "asalHarga": "Dikirim toko lewat WhatsApp",
+    "harga": {
+      "jagung_kuning": 6450,
+      "dedak_padi": 4000,
+      "konsentrat_petelur": 11950,
+      "bungkil_kedelai": 10600,
+      "tepung_ikan": 14400,
+      "tepung_batu_kapur": 1500
+    }
+  },
+  {
+    "id": "toko-makmur-cicalengka",
+    "kode": "TK-BDG-04",
+    "nama": "UD Pakan Makmur Cicalengka (Contoh)",
+    "area": "Cicalengka, Kab. Bandung",
+    "statusMitra": true,
+    "isDemo": true,
+    "nomorWa": null,
+    "umurHariContoh": 11,
+    "asalHarga": "Dikirim toko lewat WhatsApp",
+    "harga": {
+      "jagung_kuning": 6500,
+      "dedak_padi": 4050,
+      "konsentrat_petelur": 12000,
+      "bungkil_kedelai": 10700,
+      "tepung_ikan": 14300,
+      "tepung_batu_kapur": 1550
+    }
+  },
+  {
+    "id": "toko-mandiri-padalarang",
+    "kode": "TK-BDG-05",
+    "nama": "Poultry Shop Mandiri Padalarang (Contoh)",
+    "area": "Padalarang, Bandung Barat",
+    "statusMitra": false,
+    "isDemo": true,
+    "nomorWa": null,
+    "umurHariContoh": 4,
+    "asalHarga": "Dicatat tim",
+    "harga": {
+      "jagung_kuning": 6750,
+      "dedak_padi": 4200,
+      "konsentrat_petelur": 12400,
+      "bungkil_kedelai": 10900,
+      "tepung_ikan": 14800,
+      "tepung_batu_kapur": 1650
+    }
+  }
+]

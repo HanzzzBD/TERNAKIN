@@ -1,10 +1,13 @@
 import { z } from "zod";
 import {
+  adminUpdateHargaRequestSchema,
   catatanPutRequestSchema,
+  daftarTokoResponseSchema,
   dataReferensiSchema,
   galatApiSchema,
   kandangCreateRequestSchema,
   kesehatanApiSchema,
+  leadCreateRequestSchema,
   pakanHitungRequestSchema,
   pakanHitungResultSchema,
   pakanJelaskanRequestSchema,
@@ -20,7 +23,7 @@ export function buildOpenApiSpec() {
     openapi: "3.1.0",
     info: {
       title: "Ternakin API",
-      version: "0.3.0",
+      version: "0.4.0",
       description:
         "Kontrak API REST JSON /v1 bersama untuk aplikasi web PWA dan aplikasi mobile Ternakin.",
     },
@@ -157,6 +160,51 @@ export function buildOpenApiSpec() {
         delete: {
           summary: "Menghapus seluruh data akun atau mode tamu (SDD)",
           responses: { "200": { description: "Seluruh data telah dihapus" } },
+        },
+      },
+      "/v1/toko": {
+        get: {
+          summary: "[Tambahan di luar SDD] Daftar toko beserta harga untuk cache offline",
+          responses: {
+            "200": {
+              description: "Daftar toko beserta harga, asal harga, dan waktu pembaruan",
+              content: { "application/json": { schema: z.toJSONSchema(daftarTokoResponseSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/toko/rujukan": {
+        get: {
+          summary: "Toko berurut murni berdasarkan total biaya untuk suatu campuran (SDD)",
+          responses: { "200": { description: "Daftar toko berurut biaya termurah" } },
+        },
+      },
+      "/v1/lead": {
+        post: {
+          summary: "[Tambahan di luar SDD] Mencatat peternak menghubungi toko secara idempoten",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(leadCreateRequestSchema) } },
+          },
+          responses: { "200": { description: "Lead tercatat" } },
+        },
+      },
+      "/v1/admin/toko/{id}/harga": {
+        put: {
+          summary: "[Tambahan di luar SDD] Memperbarui harga mingguan toko (header X-Admin-Key)",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": { schema: z.toJSONSchema(adminUpdateHargaRequestSchema) },
+            },
+          },
+          responses: { "200": { description: "Harga toko diperbarui" } },
+        },
+      },
+      "/v1/admin/lead": {
+        get: {
+          summary: "[Tambahan di luar SDD] Rekap lead mingguan per toko dalam JSON atau CSV",
+          responses: { "200": { description: "Rekap lead per toko" } },
         },
       },
     },
