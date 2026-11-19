@@ -1,0 +1,237 @@
+{
+  "versi": "2026.11.demo-1",
+  "isDemo": true,
+  "catatanData": "Data contoh — angka kandungan bahan dan kebutuhan gizi perlu diverifikasi ke naskah resmi SNI pakan ayam petelur dan penasihat peternakan sebelum pilot lapangan.",
+  "bahan": [
+    {
+      "id": "jagung_kuning",
+      "nama": "Jagung kuning giling",
+      "satuan": "kg",
+      "sinonim": ["jagung", "jagung kuning", "jagung giling", "jagung pipil"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 65,
+      "nutrisi": {
+        "protein_kasar": 8.8,
+        "energi_metabolis": 3350,
+        "kalsium": 0.02,
+        "fosfor": 0.28
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi tabel komposisi bahan pakan Indonesia / SNI",
+      "isDemo": true
+    },
+    {
+      "id": "dedak_padi",
+      "nama": "Dedak padi halus",
+      "satuan": "kg",
+      "sinonim": ["dedak", "dedak padi", "bekatul", "katul"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 20,
+      "nutrisi": {
+        "protein_kasar": 12.0,
+        "energi_metabolis": 2400,
+        "kalsium": 0.08,
+        "fosfor": 1.4
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi tabel komposisi bahan pakan Indonesia / SNI",
+      "isDemo": true
+    },
+    {
+      "id": "konsentrat_petelur",
+      "nama": "Konsentrat ayam petelur",
+      "satuan": "kg",
+      "sinonim": ["konsentrat", "konsentrat petelur", "konsentrat layer", "klt"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 45,
+      "nutrisi": {
+        "protein_kasar": 36.0,
+        "energi_metabolis": 2700,
+        "kalsium": 6.5,
+        "fosfor": 1.3
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi label pabrikan dan SNI",
+      "isDemo": true
+    },
+    {
+      "id": "bungkil_kedelai",
+      "nama": "Bungkil kedelai (SBM)",
+      "satuan": "kg",
+      "sinonim": ["bungkil kedelai", "sbm", "kedelai"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 30,
+      "nutrisi": {
+        "protein_kasar": 44.0,
+        "energi_metabolis": 2230,
+        "kalsium": 0.29,
+        "fosfor": 0.65
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi tabel komposisi bahan pakan Indonesia / SNI",
+      "isDemo": true
+    },
+    {
+      "id": "tepung_ikan",
+      "nama": "Tepung ikan lokal",
+      "satuan": "kg",
+      "sinonim": ["tepung ikan", "ikan"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 12,
+      "nutrisi": {
+        "protein_kasar": 55.0,
+        "energi_metabolis": 2820,
+        "kalsium": 5.0,
+        "fosfor": 2.8
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi tabel komposisi bahan pakan Indonesia / SNI",
+      "isDemo": true
+    },
+    {
+      "id": "tepung_batu_kapur",
+      "nama": "Tepung batu kapur (CaCO3)",
+      "satuan": "kg",
+      "sinonim": ["kapur", "batu kapur", "tepung kapur", "kalsium", "grit"],
+      "batasMinPersen": 0,
+      "batasMaksPersen": 10,
+      "nutrisi": {
+        "protein_kasar": 0.0,
+        "energi_metabolis": 0,
+        "kalsium": 38.0,
+        "fosfor": 0.02
+      },
+      "sumberNutrisi": "Data contoh — perlu verifikasi tabel komposisi bahan pakan Indonesia / SNI",
+      "isDemo": true
+    }
+  ],
+  "kebutuhanGizi": [
+    {
+      "jenisAyam": "petelur",
+      "fase": "starter",
+      "zatGizi": "protein_kasar",
+      "label": "Protein kasar",
+      "satuan": "%",
+      "batasMin": 19.0,
+      "batasMaks": 23.0,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur starter (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "starter",
+      "zatGizi": "energi_metabolis",
+      "label": "Energi metabolis",
+      "satuan": "kkal/kg",
+      "batasMin": 2800,
+      "batasMaks": 3100,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur starter (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "starter",
+      "zatGizi": "kalsium",
+      "label": "Kalsium",
+      "satuan": "%",
+      "batasMin": 0.9,
+      "batasMaks": 1.3,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur starter (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "starter",
+      "zatGizi": "fosfor",
+      "label": "Fosfor",
+      "satuan": "%",
+      "batasMin": 0.45,
+      "batasMaks": 1.0,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur starter (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "grower",
+      "zatGizi": "protein_kasar",
+      "label": "Protein kasar",
+      "satuan": "%",
+      "batasMin": 15.0,
+      "batasMaks": 18.5,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur grower (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "grower",
+      "zatGizi": "energi_metabolis",
+      "label": "Energi metabolis",
+      "satuan": "kkal/kg",
+      "batasMin": 2650,
+      "batasMaks": 3000,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur grower (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "grower",
+      "zatGizi": "kalsium",
+      "label": "Kalsium",
+      "satuan": "%",
+      "batasMin": 0.9,
+      "batasMaks": 2.2,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur grower (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "grower",
+      "zatGizi": "fosfor",
+      "label": "Fosfor",
+      "satuan": "%",
+      "batasMin": 0.45,
+      "batasMaks": 1.0,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur grower (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "layer",
+      "zatGizi": "protein_kasar",
+      "label": "Protein kasar",
+      "satuan": "%",
+      "batasMin": 16.5,
+      "batasMaks": 21.0,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "layer",
+      "zatGizi": "energi_metabolis",
+      "label": "Energi metabolis",
+      "satuan": "kkal/kg",
+      "batasMin": 2650,
+      "batasMaks": 3050,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "layer",
+      "zatGizi": "kalsium",
+      "label": "Kalsium",
+      "satuan": "%",
+      "batasMin": 3.25,
+      "batasMaks": 4.25,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
+      "isDemo": true
+    },
+    {
+      "jenisAyam": "petelur",
+      "fase": "layer",
+      "zatGizi": "fosfor",
+      "label": "Fosfor",
+      "satuan": "%",
+      "batasMin": 0.45,
+      "batasMaks": 1.1,
+      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
+      "isDemo": true
+    }
+  ]
+}

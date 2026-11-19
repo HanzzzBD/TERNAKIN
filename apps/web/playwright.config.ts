@@ -6,7 +6,7 @@ export default defineConfig({
   projects: [
     {
       name: "preview",
-      testMatch: /(offline|appshell)\.spec\.ts/,
+      testMatch: /(offline|appshell|pakan-offline)\.spec\.ts/,
       use: {
         baseURL: "http://127.0.0.1:4173",
       },

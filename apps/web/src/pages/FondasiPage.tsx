@@ -1,7 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import { kesehatanApiSchema } from "@ternakin/shared";
 import { AppShell } from "../components/layout/AppShell";
-import { Banner, Button, Card, InstallIcon, RefreshIcon } from "../components/ui";
+import {
+  ArrowRightIcon,
+  Banner,
+  Button,
+  Card,
+  FeedIcon,
+  InstallIcon,
+  RefreshIcon,
+} from "../components/ui";
 import { useOnlineStatus, usePwaInstall } from "../lib/pwa";
 import { TEKS } from "../lib/teks";
 
@@ -9,6 +18,7 @@ type StatusServer = "diam" | "memuat" | "aktif" | "offline" | "galat";
 
 export function FondasiPage() {
   const isOnline = useOnlineStatus();
+  const navigate = useNavigate();
   const { bisaPasangLangsung, isStandalone, isIos, pasangSekarang } = usePwaInstall();
   const [statusServer, setStatusServer] = useState<StatusServer>("diam");
   const [tampilPanduanPasang, setTampilPanduanPasang] = useState(false);
@@ -61,9 +71,20 @@ export function FondasiPage() {
             marginBottom: "var(--space-4)",
           }}
         >
+          <Button
+            variant="primary"
+            iconStart={<FeedIcon size={20} />}
+            iconEnd={<ArrowRightIcon size={18} />}
+            onClick={() => {
+              void navigate("/app/pakan");
+            }}
+          >
+            {TEKS.tombolMulaiPakan}
+          </Button>
+
           {!isStandalone ? (
             <Button
-              variant="primary"
+              variant="secondary"
               iconStart={<InstallIcon size={20} />}
               onClick={() => void handlePasang()}
             >
