@@ -9,7 +9,7 @@ export function FieldProof() {
 
   if (BUKTI_LAPANGAN.length === 0) {
     return (
-      <Card variant="warm" className="tk-pilot-card">
+      <Card variant="warm" className="tk-pilot-card tk-partner-pilot-card">
         <p className="tk-eyebrow">BUKTI DARI LAPANGAN</p>
         <h2 className="tk-landing-h2">
           Kami sedang mencari peternak dan toko untuk pilot di Bandung dan sekitarnya.
@@ -19,15 +19,17 @@ export function FieldProof() {
           peternak ayam petelur mandiri atau pengelola toko pakan di Bandung Raya dan ingin ikut
           menguji langsung, hubungi kami lewat WhatsApp.
         </p>
-        <a
-          className="tk-btn tk-btn--secondary tk-landing-inline-btn"
-          href={tautanWaPilot}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <WhatsAppIcon size={20} />
-          <span>Ikut pilot lewat WhatsApp</span>
-        </a>
+        <div className="tk-partner-pilot-card__action">
+          <a
+            className="tk-btn tk-btn--secondary tk-landing-inline-btn"
+            href={tautanWaPilot}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <WhatsAppIcon size={20} />
+            <span>Ikut pilot lewat WhatsApp</span>
+          </a>
+        </div>
       </Card>
     );
   }

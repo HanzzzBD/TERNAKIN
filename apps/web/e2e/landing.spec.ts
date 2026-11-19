@@ -53,31 +53,46 @@ test.describe("Landing page (/) dan Kebijakan Privasi (/privasi)", () => {
     });
   }
 
-  test("FAQ terbuka, Atur animasi menghentikan marquee, tautan WhatsApp dan /privasi berfungsi, serta lulus axe di 360px & 1280px", async ({
+  test("FAQ terbuka, maskot Kokok interaktif, kartu Toko & Pilot sejajar kiri-kanan di desktop, tanpa Atur animasi, serta lulus axe di 360px & 1280px", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto("/");
+
+    // Tombol Atur animasi tidak ada
+    await expect(page.getByRole("button", { name: /Atur animasi/i })).toHaveCount(0);
+
+    // Maskot Kokok tampil dan merespons klik
+    const imgKokok = page.locator('img[src="/images/kokok.webp"]').first();
+    await expect(imgKokok).toBeVisible();
+    const lebarImg = await imgKokok.evaluate((el) => (el as HTMLImageElement).naturalWidth);
+    expect(lebarImg).toBeGreaterThan(0);
+
+    const tombolKokok = page.getByRole("button", { name: /Sapa Kokok/i }).first();
+    await tombolKokok.click();
+    await expect(
+      page.getByText(/Hitung pakan dan catatan harian tetap jalan walau sinyal/i),
+    ).toBeVisible();
+
+    // Kartu Toko Pakan dan Pilot Bandung sejajar kiri-kanan di 1280px
+    const kartuGrid = page.locator(".tk-partner-pilot-grid > *");
+    await expect(kartuGrid).toHaveCount(2);
+    const [boxKiri, boxKanan] = await Promise.all([
+      kartuGrid.nth(0).boundingBox(),
+      kartuGrid.nth(1).boundingBox(),
+    ]);
+    expect(boxKiri).not.toBeNull();
+    expect(boxKanan).not.toBeNull();
+    if (boxKiri && boxKanan) {
+      expect(Math.abs(boxKiri.y - boxKanan.y)).toBeLessThanOrEqual(4);
+      expect(boxKanan.x).toBeGreaterThan(boxKiri.x + 200);
+    }
 
     // Buka salah satu FAQ berbasis <details>
     await page.getByText("Bayar berapa?").click();
     await expect(
       page.getByText("Gratis untuk peternak. Pendapatan datang dari toko pakan mitra."),
     ).toBeVisible();
-
-    // Pastikan tombol Atur animasi dapat mematikan gerakan marquee
-    await page.evaluate(() => {
-      document.documentElement.dataset.motion = "on";
-    });
-    const tombolAnimasi = page.getByRole("button", { name: /Atur animasi/i }).first();
-    await tombolAnimasi.click();
-    const stateMotion = await page.evaluate(() => document.documentElement.dataset.motion);
-    expect(stateMotion).toBe("off");
-
-    const animMarquee = await page
-      .locator(".tk-marquee-row--left")
-      .evaluate((el) => getComputedStyle(el).animationName);
-    expect(animMarquee).toBe("none");
 
     // Audit axe di ponsel (360px) dan laptop (1280px) untuk landing
     for (const width of [360, 1280]) {

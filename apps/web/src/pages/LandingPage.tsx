@@ -13,8 +13,8 @@ import {
   CloseIcon,
   FeedIcon,
   InstallIcon,
+  KokokMascot,
   MenuIcon,
-  MotionToggleButton,
   ShieldCheckIcon,
   StoreIcon,
   WhatsAppIcon,
@@ -105,16 +105,26 @@ export function LandingPage() {
 
   return (
     <div className="tk-landing" id="atas">
-      <a className="tk-skip-link" href="#konten-utama">
+      <a className="skip-link" href="#konten-utama">
         {TEKS.lewatiKeKonten}
       </a>
 
       <header className="tk-landing-header">
         <div className="tk-landing-container tk-landing-header__inner">
           <a href="#atas" className="tk-brand">
-            ternakin
-            <span className="tk-brand__dot" aria-hidden="true">
-              .
+            <img
+              src="/images/kokok.webp"
+              alt=""
+              aria-hidden="true"
+              className="tk-brand-kokok-avatar"
+              width={32}
+              height={32}
+            />
+            <span>
+              ternakin
+              <span className="tk-brand__dot" aria-hidden="true">
+                .
+              </span>
             </span>
           </a>
 
@@ -127,9 +137,6 @@ export function LandingPage() {
           </nav>
 
           <div className="tk-landing-header__actions">
-            <div className="tk-landing-header__motion-desktop">
-              <MotionToggleButton />
-            </div>
             <Link to="/app" className="tk-btn tk-btn--primary tk-landing-header__cta">
               Buka aplikasi
             </Link>
@@ -160,9 +167,6 @@ export function LandingPage() {
                 </a>
               ))}
             </nav>
-            <div className="tk-landing-mobile-panel__footer">
-              <MotionToggleButton />
-            </div>
           </div>
         )}
       </header>
@@ -173,12 +177,9 @@ export function LandingPage() {
           <PolaHeroSvg />
           <div className="tk-landing-container tk-hero__inner">
             <div>
-              <div className="tk-hero__top-row">
-                <p className="tk-eyebrow" style={{ margin: 0 }}>
-                  {LANDING_HERO.eyebrow}
-                </p>
-                <MotionToggleButton />
-              </div>
+              <p className="tk-eyebrow" style={{ marginBottom: "var(--space-3)" }}>
+                {LANDING_HERO.eyebrow}
+              </p>
 
               <h1 className="tk-hero__title">
                 {LANDING_HERO.h1Utama}
@@ -216,8 +217,19 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div>
+            <div className="tk-hero__visual-col">
               <PhoneFrame kind="pakan" caption={LANDING_HERO.keteranganPratinjau} />
+              <div className="tk-hero__kokok-card">
+                <KokokMascot
+                  size="sm"
+                  interactive
+                  messages={[
+                    "Halo! Saya Kokok, teman kandang Anda di Ternakin. Ketuk saya untuk lihat info singkat.",
+                    "Hitung pakan dan catatan harian tetap jalan walau sinyal di kandang hilang.",
+                    "Gratis untuk peternak ayam petelur mandiri. Langsung coba tanpa unduh aplikasi.",
+                  ]}
+                />
+              </div>
             </div>
           </div>
         </section>
@@ -394,53 +406,54 @@ export function LandingPage() {
               </ul>
 
               <Card as="div" className="tk-trust-mascot-card">
-                <p className="tk-trust-bubble">“{LANDING_KEPERCAYAAN.gelembungMaskot}”</p>
-                <div
-                  className="tk-trust-mascot-slot"
-                  role="img"
-                  aria-label={LANDING_KEPERCAYAAN.slotMaskotLabel}
-                >
-                  <span>Slot maskot Kokok</span>
-                </div>
+                <KokokMascot
+                  size="lg"
+                  interactive
+                  messages={[
+                    LANDING_KEPERCAYAAN.gelembungMaskot,
+                    "Setiap angka pakan di Ternakin dihitung oleh solver dan bisa Anda periksa sendiri.",
+                    "Urutan toko selalu berdasarkan total biaya termurah, bukan komisi.",
+                    "Data kandang Anda bersifat pribadi dan bisa dihapus kapan saja di Profil kandang.",
+                  ]}
+                />
               </Card>
             </div>
           </div>
         </section>
 
-        {/* 7. Untuk toko pakan */}
+        {/* 7 & 8. Untuk toko pakan + Bukti dari lapangan (Grid 2 kolom kiri-kanan) */}
         <section
           id="untuk-toko"
           className="tk-section tk-section--white"
           aria-labelledby="judul-untuk-toko"
         >
           <div className="tk-landing-container">
-            <Card>
-              <p className="tk-eyebrow">{LANDING_TOKO.eyebrow}</p>
-              <h2 id="judul-untuk-toko" className="tk-landing-h2">
-                {LANDING_TOKO.judul}
-              </h2>
-              <ul className="tk-store-pitch-list">
-                {LANDING_TOKO.poin.map((teks, idx) => (
-                  <li key={`toko-poin-${idx}`}>{teks}</li>
-                ))}
-              </ul>
-              <a
-                href={waToko}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="tk-btn tk-btn--secondary tk-landing-inline-btn"
-              >
-                <WhatsAppIcon size={20} />
-                <span>{LANDING_TOKO.tombolWa}</span>
-              </a>
-            </Card>
-          </div>
-        </section>
+            <div className="tk-partner-pilot-grid">
+              <Card className="tk-partner-pilot-card">
+                <p className="tk-eyebrow">{LANDING_TOKO.eyebrow}</p>
+                <h2 id="judul-untuk-toko" className="tk-landing-h2">
+                  {LANDING_TOKO.judul}
+                </h2>
+                <ul className="tk-store-pitch-list">
+                  {LANDING_TOKO.poin.map((teks, idx) => (
+                    <li key={`toko-poin-${idx}`}>{teks}</li>
+                  ))}
+                </ul>
+                <div className="tk-partner-pilot-card__action">
+                  <a
+                    href={waToko}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="tk-btn tk-btn--secondary tk-landing-inline-btn"
+                  >
+                    <WhatsAppIcon size={20} />
+                    <span>{LANDING_TOKO.tombolWa}</span>
+                  </a>
+                </div>
+              </Card>
 
-        {/* 8. Bukti dari lapangan */}
-        <section className="tk-section tk-section--white" aria-label="Bukti dari lapangan">
-          <div className="tk-landing-container">
-            <FieldProof />
+              <FieldProof />
+            </div>
           </div>
         </section>
 
@@ -493,9 +506,19 @@ export function LandingPage() {
           <div className="tk-footer-grid">
             <div>
               <span className="tk-footer-brand">
-                ternakin
-                <span className="tk-brand__dot" aria-hidden="true">
-                  .
+                <img
+                  src="/images/kokok.webp"
+                  alt=""
+                  aria-hidden="true"
+                  className="tk-brand-kokok-avatar"
+                  width={34}
+                  height={34}
+                />
+                <span>
+                  ternakin
+                  <span className="tk-brand__dot" aria-hidden="true">
+                    .
+                  </span>
                 </span>
               </span>
               <p className="tk-footer-tagline">{LANDING_FOOTER.tagline}</p>
@@ -543,7 +566,6 @@ export function LandingPage() {
           <div className="tk-footer-bottom">
             <p className="tk-footer-copy">{LANDING_FOOTER.hakCipta}</p>
             <div className="tk-footer-controls">
-              <MotionToggleButton />
               <a href="#atas" className="tk-footer-top-link">
                 <ArrowUpIcon size={18} />
                 <span>Kembali ke atas</span>

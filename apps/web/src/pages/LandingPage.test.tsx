@@ -8,21 +8,23 @@ import { LandingPage } from "./LandingPage";
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
-  delete document.documentElement.dataset.motion;
 });
 
 describe("Landing page Ternakin (/)", () => {
-  it("menampilkan seluruh sepuluh bagian, 6 FAQ, kartu pilot jujur tanpa testimoni buatan, dan tautan WhatsApp aman", () => {
+  it("menampilkan seluruh bagian, 6 FAQ, kartu pilot jujur tanpa testimoni buatan, tautan WhatsApp aman, dan tanpa tombol Atur animasi", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <LandingPage />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole("link", { name: TEKS.lewatiKeKonten })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: TEKS.lewatiKeKonten })).toHaveClass("skip-link");
     expect(
       screen.getByRole("heading", { level: 1, name: /Pakan lebih hemat/i }),
     ).toBeInTheDocument();
+
+    // Tombol Atur animasi sudah dihapus sesuai keputusan pemilik
+    expect(screen.queryByRole("button", { name: /Atur animasi/i })).not.toBeInTheDocument();
 
     // Bagian masalah & sumber
     expect(screen.getByText("70–80%")).toBeInTheDocument();
@@ -66,20 +68,21 @@ describe("Landing page Ternakin (/)", () => {
     expect(screen.getByText("© 2026 Ternakin")).toBeInTheDocument();
   });
 
-  it("mengubah atribut data-motion lewat tombol Atur animasi", () => {
+  it("menampilkan maskot Kokok yang dapat diklik untuk berganti pesan", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <LandingPage />
       </MemoryRouter>,
     );
 
-    const tombolAnimasi = screen.getAllByRole("button", { name: /Atur animasi/i })[0];
-    expect(tombolAnimasi).toBeDefined();
-    if (!tombolAnimasi) return;
+    const tombolKokok = screen.getAllByRole("button", { name: /Sapa Kokok/i })[0];
+    expect(tombolKokok).toBeDefined();
+    if (!tombolKokok) return;
 
-    const sebelum = document.documentElement.dataset.motion;
-    fireEvent.click(tombolAnimasi);
-    const sesudah = document.documentElement.dataset.motion;
-    expect(sesudah).not.toBe(sebelum);
+    expect(screen.getByText(/Halo! Saya Kokok, teman kandang Anda/i)).toBeInTheDocument();
+    fireEvent.click(tombolKokok);
+    expect(
+      screen.getByText(/Hitung pakan dan catatan harian tetap jalan walau sinyal/i),
+    ).toBeInTheDocument();
   });
 });

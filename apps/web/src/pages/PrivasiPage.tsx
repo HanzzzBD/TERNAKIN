@@ -5,16 +5,26 @@ import { TEKS } from "../lib/teks";
 export function PrivasiPage() {
   return (
     <div className="tk-landing">
-      <a className="tk-skip-link" href="#konten-utama">
+      <a className="skip-link" href="#konten-utama">
         {TEKS.lewatiKeKonten}
       </a>
 
       <header className="tk-landing-header">
         <div className="tk-landing-container tk-landing-header__inner">
           <Link to="/" className="tk-brand">
-            ternakin
-            <span className="tk-brand__dot" aria-hidden="true">
-              .
+            <img
+              src="/images/kokok.webp"
+              alt=""
+              aria-hidden="true"
+              className="tk-brand-kokok-avatar"
+              width={32}
+              height={32}
+            />
+            <span>
+              ternakin
+              <span className="tk-brand__dot" aria-hidden="true">
+                .
+              </span>
             </span>
           </Link>
           <Link to="/app" className="tk-btn tk-btn--primary tk-landing-header__cta">
