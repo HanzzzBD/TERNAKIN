@@ -153,11 +153,52 @@
 }
 
 .tk-landing .tk-eyebrow {
-  display: inline-block;
-  padding: 3px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  padding: 6px 14px 6px 12px;
   border-radius: var(--radius-pill);
-  background: var(--tk-white);
-  border: 1px solid var(--tk-border-subtle);
+  background: color-mix(in srgb, var(--tk-orange) 8%, var(--tk-white));
+  border: 1.5px solid color-mix(in srgb, var(--tk-orange) 30%, var(--tk-white));
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+}
+
+.tk-landing .tk-eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Kartu dan baris bertepi tebal ala ubin 3D, seragam di seluruh landing */
+.tk-landing .tk-card,
+.tk-module-row,
+.tk-trust-item {
+  border: 2px solid color-mix(in srgb, var(--tk-ink) 12%, var(--tk-white));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--tk-ink) 12%, var(--tk-white));
+}
+
+/* Tombol sekunder di landing ikut bertepi tebal seperti tombol utama */
+.tk-landing .tk-btn--secondary {
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 3px 0 var(--tk-ink);
+}
+
+html[data-motion="on"] .tk-landing .tk-btn--secondary {
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.tk-landing .tk-btn--secondary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--tk-ink);
 }
 
 .tk-section--hero {
@@ -218,9 +259,10 @@
     );
 }
 
-.tk-section--trust .tk-eyebrow,
-.tk-section--trust .tk-accent-italic {
+.tk-section--trust .tk-eyebrow {
   color: var(--tk-green-dark);
+  background: var(--tk-white);
+  border-color: color-mix(in srgb, var(--tk-green) 30%, var(--tk-white));
 }
 
 .tk-section--mitra {
@@ -247,25 +289,51 @@
 }
 
 .tk-landing-h2 {
-  margin: var(--space-2) 0 var(--space-4);
-  font-size: var(--text-2xl);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-6);
+  font-size: var(--text-h2);
+  font-weight: 800;
+  font-stretch: var(--stretch-display);
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
   color: var(--tk-ink);
-  max-width: 24ch;
+  max-width: 18ch;
 }
 
+/* Aksen judul: sapuan stabilo, bukan huruf miring */
 .tk-accent-italic {
-  font-style: italic;
-  color: var(--tk-orange-dark);
+  font-style: normal;
+  color: var(--tk-ink);
+  background: linear-gradient(
+    transparent 60%,
+    var(--tk-amber-soft) 60%,
+    var(--tk-amber-soft) 92%,
+    transparent 92%
+  );
+  padding-inline: 0.06em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Stiker: blok warna tebal bertepi bawah, untuk aksen paling penting */
+.tk-sticker,
+.tk-accent-italic--ink {
+  font-style: normal;
+  padding: 0 0.22em 0.04em;
+  border-radius: 0.16em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.tk-sticker {
+  background: var(--tk-orange);
+  color: var(--tk-ink);
+  box-shadow: 0 0.07em 0 var(--tk-orange-dark);
 }
 
 .tk-accent-italic--ink {
-  font-style: italic;
+  background: var(--tk-white);
   color: var(--tk-ink);
-  text-decoration: underline;
-  text-decoration-thickness: 3px;
-  text-underline-offset: 6px;
+  box-shadow: 0 0.07em 0 var(--tk-ink);
 }
 
 /* 1. Hero */
@@ -303,23 +371,32 @@
 }
 
 .tk-hero__title {
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-5);
   font-size: var(--text-display);
-  line-height: 1.06;
-  letter-spacing: -0.03em;
+  font-weight: 800;
+  font-stretch: var(--stretch-display);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
   color: var(--tk-ink);
 }
 
-.tk-hero__title-accent {
+.tk-hero__title-line {
   display: block;
-  font-style: italic;
-  color: var(--tk-orange-dark);
+}
+
+.tk-hero__title-accent {
+  display: inline-block;
+  margin-top: 0.1em;
+  rotate: -2deg;
+  transform-origin: left center;
 }
 
 .tk-hero__sub {
-  margin: 0 0 var(--space-5);
+  margin: 0 0 var(--space-6);
+  font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  line-height: 1.55;
   color: var(--tk-ink-muted);
-  max-width: var(--measure-prose);
+  max-width: 44ch;
 }
 
 .tk-hero__actions {
@@ -335,31 +412,242 @@
 
 .tk-hero__install-row {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-4);
-  border-radius: var(--radius-card);
-  background: var(--tk-peach);
-  border: 1.5px solid var(--tk-border-subtle);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+  padding-top: var(--space-5);
+  border-top: 2px dashed color-mix(in srgb, var(--tk-ink) 14%, transparent);
+}
+
+.tk-hero__install-row .tk-banner {
+  flex-basis: 100%;
 }
 
 .tk-hero__install-note {
   margin: 0;
   font-size: var(--text-sm);
   color: var(--tk-ink-muted);
+  max-width: 30ch;
 }
 
 .tk-hero__visual-col {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
 }
 
-.tk-hero__kokok-card {
+/* Panggung maskot Kokok di hero */
+.tk-hero-stage {
+  --tk-stage-size: clamp(210px, 58vw, 340px);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  justify-content: center;
   width: 100%;
-  max-width: 360px;
+  max-width: 480px;
+  padding-top: var(--space-6);
+}
+
+.tk-hero-stage .tk-kokok3d {
+  --tk-kokok-size: var(--tk-stage-size) !important;
+}
+
+.tk-hero-stage__art {
+  position: absolute;
+  inset: 0 0 auto;
+  height: calc(var(--tk-stage-size) + var(--space-6) + 24px);
+  pointer-events: none;
+}
+
+.tk-hero-float {
+  z-index: 1;
+}
+
+.tk-hero-stage__sun {
+  z-index: -1;
+  position: absolute;
+  left: 50%;
+  top: calc(var(--space-6) + var(--tk-stage-size) * 0.06);
+  width: calc(var(--tk-stage-size) * 0.92);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  border: 2px solid var(--tk-ink);
+  background: radial-gradient(
+    circle at 36% 30%,
+    var(--tk-amber-soft) 0%,
+    var(--tk-orange) 60%,
+    var(--tk-orange-dark) 100%
+  );
+  box-shadow:
+    inset 0 10px 0 color-mix(in srgb, var(--tk-white) 30%, transparent),
+    inset 0 -14px 0 color-mix(in srgb, var(--tk-orange-dark) 55%, transparent),
+    0 6px 0 var(--tk-ink),
+    0 0 0 18px color-mix(in srgb, var(--tk-orange) 14%, transparent),
+    0 0 0 38px color-mix(in srgb, var(--tk-orange) 7%, transparent);
+}
+
+.tk-hero-stage .tk-kokok-widget--xl {
+  position: relative;
+  gap: var(--space-2);
+}
+
+.tk-hero-stage .tk-kokok-speech {
+  max-width: min(340px, 100%);
+  border-radius: 20px;
+  text-align: left;
+}
+
+/* Ekor gelembung menunjuk ke atas, ke arah Kokok */
+.tk-hero-stage .tk-kokok-speech::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  translate: -50% 0;
+  rotate: 45deg;
+  background: var(--tk-white);
+  border-top: 2px solid var(--tk-ink);
+  border-left: 2px solid var(--tk-ink);
+}
+
+.tk-hero-float {
+  position: absolute;
+  rotate: var(--tk-float-tilt, 0deg);
+}
+
+html[data-motion="on"] .tk-hero-float {
+  animation: tk-hero-float var(--tk-float-time, 6s) ease-in-out var(--tk-float-delay, 0s)
+    infinite alternate;
+}
+
+@keyframes tk-hero-float {
+  from {
+    translate: 0 0.35rem;
+  }
+  to {
+    translate: 0.25rem -0.6rem;
+    rotate: calc(var(--tk-float-tilt, 0deg) + 6deg);
+  }
+}
+
+.tk-hero-say {
+  padding: 6px 14px;
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 4px 0 var(--tk-ink);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.tk-hero-say--kiri {
+  top: 6%;
+  left: 0;
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  border-radius: 20px 20px 20px 6px;
+}
+
+.tk-hero-say--kanan {
+  top: 70%;
+  right: 0;
+  background: var(--tk-green);
+  color: var(--tk-white);
+  border-radius: 20px 20px 6px 20px;
+}
+
+.tk-clay-tile {
+  --tile: var(--tk-orange);
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  border: 2px solid var(--tk-ink);
+  color: var(--tk-ink);
+  background: radial-gradient(
+    circle at 30% 25%,
+    color-mix(in srgb, var(--tile) 45%, var(--tk-white)) 0%,
+    var(--tile) 70%
+  );
+  box-shadow:
+    inset 0 2px 0 color-mix(in srgb, var(--tk-white) 50%, transparent),
+    inset 0 -5px 0 color-mix(in srgb, var(--tile) 70%, var(--tk-ink)),
+    0 4px 0 var(--tk-ink),
+    0 14px 20px -8px color-mix(in srgb, var(--tk-ink) 40%, transparent);
+}
+
+.tk-clay-tile--orange {
+  --tile: var(--tk-orange);
+}
+
+.tk-clay-tile--green {
+  --tile: var(--tk-green);
+  color: var(--tk-white);
+}
+
+.tk-clay-tile--amber {
+  --tile: var(--tk-amber-soft);
+}
+
+.tk-hero-tile--1 {
+  top: 0;
+  right: 8%;
+}
+
+.tk-hero-tile--2 {
+  top: 26%;
+  left: 3%;
+}
+
+.tk-hero-tile--3 {
+  top: 42%;
+  right: 1%;
+}
+
+.tk-clay-egg {
+  width: 32px;
+  height: 42px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 42% 42%;
+  border: 2px solid var(--tk-ink);
+  background: radial-gradient(
+    circle at 36% 30%,
+    var(--tk-white) 0%,
+    var(--tk-peach) 45%,
+    color-mix(in srgb, var(--tk-peach) 70%, var(--tk-orange-dark)) 100%
+  );
+  box-shadow: 0 4px 0 var(--tk-ink);
+}
+
+.tk-hero-egg--1 {
+  top: 56%;
+  left: 2%;
+}
+
+.tk-hero-egg--2 {
+  top: 0;
+  left: 28%;
+}
+
+@media (max-width: 639px) {
+  .tk-hero-tile--2,
+  .tk-hero-egg--2 {
+    display: none;
+  }
+
+  .tk-hero-say {
+    font-size: var(--text-xs);
+    padding: 5px 10px;
+  }
+
+  .tk-hero-tile--3 {
+    top: 6%;
+    right: auto;
+    left: 62%;
+  }
 }
 
 /* Bingkai ponsel CSS */
@@ -559,8 +847,9 @@
   align-items: center;
   gap: var(--space-3);
   font-weight: 800;
-  font-size: var(--text-base);
-  letter-spacing: -0.01em;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
+  font-stretch: var(--stretch-display);
+  letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
@@ -614,17 +903,30 @@ html[data-motion="on"] .tk-marquee-row--right {
 }
 
 .tk-stat-card__value {
-  margin: 0 0 var(--space-2);
-  font-size: var(--text-xl);
+  margin: 0 0 var(--space-3);
+  font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.5rem);
   font-weight: 800;
-  line-height: 1.2;
+  font-stretch: var(--stretch-display);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.04;
+  letter-spacing: var(--tracking-heading);
   color: var(--tk-orange-dark);
 }
 
 .tk-stat-card__title {
   margin: 0 0 var(--space-2);
   font-size: var(--text-lg);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: var(--tk-ink);
+}
+
+.tk-stat-card__text,
+.tk-step-card__text {
+  margin: 0;
+  color: var(--tk-ink-muted);
+  line-height: 1.55;
 }
 
 .tk-source-bar {
@@ -645,6 +947,11 @@ html[data-motion="on"] .tk-marquee-row--right {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.tk-source-bar__note {
+  margin: 0;
+  max-width: var(--measure-prose);
 }
 
 .tk-source-chip {
@@ -680,12 +987,21 @@ html[data-motion="on"] .tk-marquee-row--right {
   justify-content: center;
   width: 52px;
   height: 52px;
-  border-radius: var(--radius-pill);
-  background: var(--tk-orange);
-  border: 2px solid var(--tk-orange-dark);
+  border-radius: 16px;
+  background: radial-gradient(
+    circle at 30% 25%,
+    color-mix(in srgb, var(--tk-orange) 45%, var(--tk-white)) 0%,
+    var(--tk-orange) 70%
+  );
+  border: 2px solid var(--tk-ink);
+  box-shadow:
+    inset 0 -4px 0 color-mix(in srgb, var(--tk-orange) 70%, var(--tk-ink)),
+    0 3px 0 var(--tk-ink);
   color: var(--tk-ink);
   font-weight: 800;
   font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
   flex-shrink: 0;
 }
 
@@ -701,11 +1017,29 @@ html[data-motion="on"] .tk-marquee-row--right {
   gap: var(--space-3);
 }
 
+.tk-module-label {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--tk-orange-dark);
+}
+
 .tk-module-title {
   margin: 0;
-  font-size: var(--text-xl);
-  line-height: 1.25;
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.125rem);
+  font-weight: 800;
+  font-stretch: 105%;
+  line-height: 1.12;
+  letter-spacing: var(--tracking-heading);
   color: var(--tk-ink);
+  max-width: 22ch;
+}
+
+.tk-module-text {
+  margin: 0;
+  color: var(--tk-ink-muted);
+  line-height: 1.6;
+  max-width: 52ch;
 }
 
 .tk-modules-caption {
@@ -732,6 +1066,9 @@ html[data-motion="on"] .tk-marquee-row--right {
 .tk-step-card__title {
   margin: 0;
   font-size: var(--text-lg);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: var(--tk-ink);
 }
 
@@ -777,21 +1114,33 @@ html[data-motion="on"] .tk-marquee-row--right {
 .tk-trust-item h3 {
   margin: 0 0 var(--space-1);
   font-size: var(--text-base);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
   color: var(--tk-ink);
 }
 
 .tk-trust-item p {
   margin: 0;
   font-size: var(--text-sm);
+  line-height: 1.55;
   color: var(--tk-ink-muted);
 }
 
-.tk-trust-mascot-card {
+.tk-landing .tk-trust-mascot-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-4);
+  padding: 0;
   text-align: center;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.tk-trust-kokok .tk-kokok-speech {
+  text-align: left;
 }
 
 .tk-trust-bubble {
@@ -841,6 +1190,19 @@ html[data-motion="on"] .tk-marquee-row--right {
 .tk-partner-pilot-card__action {
   margin-top: auto;
   padding-top: var(--space-3);
+}
+
+.tk-partner-pilot-card .tk-landing-h2 {
+  font-size: clamp(1.625rem, 1.2rem + 1.4vw, 2.25rem);
+  line-height: 1.1;
+  max-width: 22ch;
+  margin-bottom: var(--space-4);
+}
+
+.tk-faq-answer {
+  margin: 0;
+  line-height: 1.6;
+  max-width: var(--measure-prose);
 }
 
 .tk-store-pitch-list {
@@ -896,6 +1258,11 @@ html[data-motion="on"] .tk-marquee-row--right {
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-4);
+}
+
+.tk-cta-box .tk-landing-h2 {
+  max-width: 16ch;
+  margin-bottom: var(--space-2);
 }
 
 .tk-cta-eyebrow {
@@ -1096,8 +1463,12 @@ html[data-motion="on"] .tk-marquee-row--right {
   }
 
   .tk-hero__inner {
-    grid-template-columns: 1.25fr 0.9fr;
+    grid-template-columns: 1.15fr 0.85fr;
     gap: var(--space-8);
+  }
+
+  .tk-hero {
+    padding-block: var(--space-8) var(--space-section);
   }
 
   .tk-stat-grid,
@@ -1131,5 +1502,695 @@ html[data-motion="on"] .tk-marquee-row--right {
 @media (min-width: 1280px) {
   .tk-landing-container {
     padding-inline: var(--space-8);
+  }
+}
+
+/* Pengumuman fitur baru di hero */
+.tk-hero__announce {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  min-height: 44px;
+  margin-bottom: var(--space-4);
+  padding: 4px 14px 4px 4px;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--tk-ink);
+  background: var(--tk-white);
+  box-shadow: 0 3px 0 var(--tk-ink);
+  color: var(--tk-ink);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  text-decoration: none;
+}
+
+.tk-hero__announce-label {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tk-green);
+  color: var(--tk-white);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tk-hero__announce svg {
+  flex-shrink: 0;
+}
+
+.tk-hero__announce:active {
+  translate: 0 2px;
+  box-shadow: 0 1px 0 var(--tk-ink);
+}
+
+/* Modul 05, Investasi ternak: section hijau tua agar menonjol */
+.tk-section--investasi {
+  position: relative;
+  background:
+    radial-gradient(
+      circle at 85% 20%,
+      color-mix(in srgb, var(--tk-green) 70%, var(--tk-green-dark)) 0%,
+      transparent 55%
+    ),
+    var(--tk-green-dark);
+  color: var(--tk-white);
+}
+
+.tk-section--investasi .tk-eyebrow {
+  color: var(--tk-ink);
+  background: var(--tk-amber-soft);
+  border-color: var(--tk-amber-soft);
+}
+
+.tk-section--investasi .tk-landing-h2 {
+  color: var(--tk-white);
+}
+
+.tk-section--investasi :focus-visible {
+  outline-color: var(--tk-white);
+}
+
+.tk-invhl-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-8);
+  align-items: center;
+}
+
+.tk-invhl-sub {
+  margin: 0 0 var(--space-6);
+  max-width: 46ch;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.55;
+  color: color-mix(in srgb, var(--tk-white) 88%, var(--tk-green-dark));
+}
+
+.tk-invhl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Visual: kartu peluang tiruan dengan Kokok mengintip */
+.tk-invhl-visual {
+  position: relative;
+  justify-self: center;
+  width: 100%;
+  max-width: 400px;
+  padding-top: 70px;
+}
+
+.tk-invhl-visual__kokok {
+  position: absolute;
+  top: 0;
+  right: 18px;
+  z-index: 0;
+}
+
+.tk-invhl-mock {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border-radius: 24px;
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  border: 2px solid var(--tk-ink);
+  box-shadow:
+    0 6px 0 var(--tk-ink),
+    0 30px 50px -20px color-mix(in srgb, var(--tk-ink) 70%, transparent);
+  rotate: -2deg;
+}
+
+.tk-invhl-mock p {
+  margin: 0;
+}
+
+.tk-invhl-mock__top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 800;
+}
+
+.tk-invhl-mock__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+}
+
+.tk-invhl-mock__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.tk-invhl-mock__jarak {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tk-invhl-mock__title {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tk-invhl-mock__meta {
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-invhl-mock__facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--tk-ink-muted);
+}
+
+.tk-invhl-mock__facts span {
+  padding: var(--space-2);
+  border-radius: var(--radius-control);
+  background: var(--tk-peach);
+}
+
+.tk-invhl-mock__facts strong {
+  display: block;
+  font-size: var(--text-lg);
+  color: var(--tk-ink);
+}
+
+.tk-invhl-mock__bar {
+  height: 12px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--tk-ink);
+  background: var(--tk-surface-muted);
+  overflow: hidden;
+}
+
+.tk-invhl-mock__bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--tk-orange), var(--tk-orange-dark));
+}
+
+.tk-invhl-mock__vet {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--tk-green-dark);
+}
+
+.tk-invhl-chip {
+  position: absolute;
+  z-index: 2;
+  padding: 6px 12px;
+  border-radius: 16px;
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 3px 0 var(--tk-ink);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tk-invhl-chip--1 {
+  bottom: 64px;
+  left: -14px;
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+  rotate: -6deg;
+}
+
+.tk-invhl-chip--2 {
+  bottom: -14px;
+  right: 12px;
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  rotate: 4deg;
+}
+
+.tk-invhl-trust {
+  list-style: none;
+  margin: var(--space-8) 0 var(--space-4);
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.tk-invhl-trust li {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--tk-white) 8%, var(--tk-green-dark));
+  border: 1.5px solid color-mix(in srgb, var(--tk-white) 22%, var(--tk-green-dark));
+}
+
+.tk-invhl-trust__icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--tk-green-soft);
+  color: var(--tk-green-dark);
+}
+
+.tk-invhl-trust h3 {
+  margin: 0 0 2px;
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: var(--tk-white);
+}
+
+.tk-invhl-trust p {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--tk-white) 85%, var(--tk-green-dark));
+}
+
+.tk-invhl-risk {
+  margin: 0;
+  max-width: var(--measure-prose);
+  font-size: var(--text-sm);
+  color: color-mix(in srgb, var(--tk-white) 85%, var(--tk-green-dark));
+}
+
+@media (min-width: 640px) {
+  .tk-invhl-trust {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+}
+
+@media (min-width: 960px) {
+  .tk-invhl-layout {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-8);
+  }
+
+}
+
+/* Alur Ternakin: langkah per peran */
+.tk-section--alur {
+  background: linear-gradient(180deg, var(--tk-white) 0%, var(--tk-peach) 100%);
+}
+
+.tk-alur-head {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: end;
+  margin-bottom: var(--space-6);
+}
+
+.tk-alur-head .tk-landing-h2 {
+  margin-bottom: var(--space-3);
+}
+
+.tk-alur-sub {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  line-height: 1.55;
+  color: var(--tk-ink-muted);
+}
+
+.tk-alur-kokok {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+  justify-self: start;
+}
+
+.tk-alur-kokok__say {
+  position: relative;
+  max-width: 24ch;
+  margin: 0 0 var(--space-8);
+  padding: var(--space-3) var(--space-4);
+  border-radius: 20px 20px 6px 20px;
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 4px 0 var(--tk-ink);
+  background: var(--tk-white);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* Tab peran */
+.tk-alur-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.tk-alur-tab {
+  min-height: var(--tap-min);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--tk-ink);
+  background: var(--tk-white);
+  color: var(--tk-ink);
+  box-shadow: 0 3px 0 var(--tk-ink);
+  font-size: var(--text-base);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    translate 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.tk-alur-tab[aria-selected="true"] {
+  background: var(--tk-ink);
+  color: var(--tk-white);
+  box-shadow: 0 3px 0 var(--tk-orange);
+}
+
+.tk-alur-tab:active {
+  translate: 0 2px;
+  box-shadow: 0 1px 0 var(--tk-ink);
+}
+
+.tk-alur-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.tk-alur-ringkas {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: 1.4;
+  max-width: 52ch;
+}
+
+/* Langkah: garis waktu vertikal di ponsel, kisi di layar lebar */
+.tk-alur-steps {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+.tk-alur-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "head title"
+    "head text"
+    "head link";
+  column-gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-4);
+  border-radius: var(--radius-card);
+  background: var(--tk-white);
+  border: 2px solid color-mix(in srgb, var(--tk-ink) 12%, var(--tk-white));
+  box-shadow: 0 4px 0 color-mix(in srgb, var(--tk-ink) 12%, var(--tk-white));
+}
+
+html[data-motion="on"] .tk-alur-step {
+  animation: tk-alur-masuk 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+html[data-motion="on"] .tk-alur-step:nth-child(2) {
+  animation-delay: 40ms;
+}
+
+html[data-motion="on"] .tk-alur-step:nth-child(3) {
+  animation-delay: 80ms;
+}
+
+html[data-motion="on"] .tk-alur-step:nth-child(4) {
+  animation-delay: 120ms;
+}
+
+html[data-motion="on"] .tk-alur-step:nth-child(5) {
+  animation-delay: 160ms;
+}
+
+html[data-motion="on"] .tk-alur-step:nth-child(6) {
+  animation-delay: 200ms;
+}
+
+@keyframes tk-alur-masuk {
+  from {
+    translate: 0 10px;
+  }
+}
+
+.tk-alur-step__head {
+  grid-area: head;
+  position: relative;
+}
+
+.tk-alur-step__num {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--tk-ink);
+  color: var(--tk-white);
+  font-size: var(--text-xs);
+  font-weight: 800;
+}
+
+.tk-alur-step__icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: 2px solid var(--tk-ink);
+  color: var(--tk-ink);
+  background: radial-gradient(
+    circle at 30% 25%,
+    color-mix(in srgb, var(--tk-orange) 45%, var(--tk-white)) 0%,
+    var(--tk-orange) 70%
+  );
+  box-shadow:
+    inset 0 -4px 0 color-mix(in srgb, var(--tk-orange) 70%, var(--tk-ink)),
+    0 3px 0 var(--tk-ink);
+}
+
+.tk-alur-step__title {
+  grid-area: title;
+  margin: 0 0 2px;
+  font-size: var(--text-base);
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.tk-alur-step__text {
+  grid-area: text;
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--tk-ink-muted);
+}
+
+.tk-alur-step__link {
+  grid-area: link;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 40px;
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  color: var(--tk-orange-dark);
+  text-decoration: none;
+}
+
+@media (hover: hover) {
+  .tk-alur-step__link:hover span {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+@media (min-width: 640px) {
+  .tk-alur-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .tk-alur-head {
+    grid-template-columns: 1fr auto;
+  }
+
+  .tk-alur-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .tk-alur-step {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "head"
+      "title"
+      "text"
+      "link";
+    row-gap: var(--space-2);
+  }
+
+  .tk-alur-step__head {
+    margin-bottom: var(--space-1);
+  }
+}
+
+/* Navbar: aksi akun dan menu ponsel */
+.tk-floating-pill__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.tk-floating-pill__burger {
+  display: none;
+}
+
+@media (max-width: 959px) {
+  .tk-floating-header__inner {
+    display: block;
+  }
+
+  /* Di ponsel dan tablet navbar menjadi bilah penuh: merek di kiri, tombol menu di kanan */
+  .tk-floating-pill {
+    display: flex;
+    width: 100%;
+    padding: 4px 6px 4px 8px;
+    border-radius: 26px;
+  }
+
+  .tk-floating-pill__trigger {
+    width: 100%;
+  }
+
+  .tk-floating-pill__burger {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-left: auto;
+    border-radius: 50%;
+    border: 2px solid var(--tk-ink);
+    background: var(--tk-peach);
+    color: var(--tk-ink);
+  }
+
+  .tk-floating-pill--open .tk-floating-pill__burger {
+    background: var(--tk-ink);
+    color: var(--tk-white);
+  }
+
+  .tk-floating-pill__tray,
+  .tk-floating-pill--open .tk-floating-pill__tray {
+    max-width: none;
+    width: 100%;
+  }
+
+  .tk-floating-pill__tray-inner {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--space-3);
+    max-height: calc(100dvh - 120px);
+    overflow-y: auto;
+    padding: var(--space-2) 2px var(--space-3);
+  }
+
+  .tk-landing-nav {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 2px;
+    padding-top: var(--space-2);
+    border-top: 1.5px solid var(--tk-border-subtle);
+  }
+
+  .tk-landing-nav__link {
+    min-height: 48px;
+    padding: 0 var(--space-3);
+    border-radius: 12px;
+    font-size: var(--text-base);
+  }
+
+  .tk-landing-nav__link:active {
+    background: var(--tk-peach);
+  }
+
+  .tk-floating-pill__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tk-floating-pill__actions .tk-btn {
+    width: 100%;
+    padding-inline: var(--space-3);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tk-floating-pill__actions > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Saat menu tertutup, isi menu tidak boleh menyisakan ruang padding */
+.tk-floating-pill:not(.tk-floating-pill--open) .tk-floating-pill__tray-inner {
+  padding-block: 0;
+}
+
+.tk-hero__title-accent {
+  margin-top: 0.18em;
+}
+
+/* Navbar menyingkir saat menggulir ke bawah, kembali saat menggulir ke atas */
+.tk-floating-header {
+  transition: translate 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tk-floating-header--sembunyi {
+  translate: 0 calc(-100% - 24px);
+}
+
+/* Ponsel/tablet: menu terbuka melayang di atas konten, tidak mendorong halaman */
+@media (max-width: 959px) {
+  .tk-floating-header {
+    height: 72px;
   }
 }

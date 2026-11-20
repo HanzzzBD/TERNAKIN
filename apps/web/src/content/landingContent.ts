@@ -13,12 +13,6 @@ export interface ModulLandingItem {
   pratinjau: "pakan" | "catatan" | "kokok" | "toko";
 }
 
-export interface LangkahMulaiItem {
-  nomor: "01" | "02" | "03";
-  judul: string;
-  keterangan: string;
-}
-
 export interface KepercayaanItem {
   id: "solver" | "toko" | "kokok" | "privasi";
   judul: string;
@@ -33,17 +27,20 @@ export interface FaqLandingItem {
 
 export const LANDING_NAV_LINKS = [
   { href: "#fitur", label: "Fitur" },
-  { href: "#cara-kerja", label: "Cara kerja" },
+  { href: "#investasi", label: "Investasi" },
+  { href: "#cara-kerja", label: "Alur" },
   { href: "#kepercayaan", label: "Kepercayaan" },
   { href: "#untuk-toko", label: "Untuk toko pakan" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
 export const LANDING_HERO = {
+  pengumumanLabel: "Baru",
+  pengumuman: "Investasi ternak: titip modal ke peternak terdekat",
   eyebrow: "ASISTEN DIGITAL PETERNAK AYAM",
   h1Utama: "Pakan lebih hemat.",
   h1Aksen: "Ayam lebih terjaga.",
-  sub: "Hitung pakan termurah yang tetap cukup gizi, catat kandang tiap hari, dan tahu harus menghubungi siapa saat ayam bermasalah. Tetap jalan walau sinyal di kandang hilang.",
+  sub: "Hitung pakan termurah, catat kandang tiap hari, dan dapat bantuan saat ayam sakit. Tetap jalan tanpa sinyal.",
   tombolUtama: "Mulai hitung pakan",
   tombolWa: "Tanya dulu lewat WhatsApp",
   pesanWaHero:
@@ -95,15 +92,14 @@ export const LANDING_MASALAH = {
         "Gejala penyakit menular seperti AI dan ND sering tampak mirip dan perlu segera dilaporkan ke ahli.",
     },
   ] satisfies readonly MasalahStatItem[],
-  sumberLabel: "Sumber rujukan dokumen ringkasan eksekutif:",
+  sumberLabel: "Sumber:",
   sumberDaftar: [
     { nama: "BRMP Jawa Timur (Kementan)" },
     { nama: "Republika" },
     { nama: "Kementerian Pertanian RI" },
     { nama: "Universitas Gadjah Mada (UGM)" },
   ] as const,
-  catatanVerifikasi:
-    "Catatan jujur: angka latar di atas diambil dari ringkasan riset awal proyek dan dijadwalkan diverifikasi ulang terhadap publikasi resmi BPS, Kementan, dan teks SNI sebelum rilis publik penuh.",
+  catatanVerifikasi: "Angka dari riset awal, akan diverifikasi ulang sebelum rilis.",
 } as const;
 
 export const LANDING_MODUL: readonly ModulLandingItem[] = [
@@ -111,60 +107,31 @@ export const LANDING_MODUL: readonly ModulLandingItem[] = [
     nomor: "01",
     label: "HITUNG PAKAN",
     judul: "Tulis bahan dan harganya, Ternakin cari campuran termurah.",
-    kalimat:
-      "Komposisi per 100 kg dan biaya per kg dihitung solver yang bisa diperiksa, lalu dijelaskan dengan bahasa sehari-hari.",
+    kalimat: "Komposisi per 100 kg dihitung solver dan dijelaskan dengan bahasa sehari-hari.",
     pratinjau: "pakan",
   },
   {
     nomor: "02",
     label: "CATAT HARIAN",
     judul: "Catat sebentar, tanpa sinyal pun bisa.",
-    kalimat:
-      "Pakan, telur atau bobot, ayam mati, dan suhu tersimpan di ponsel, lalu terkirim saat sinyal kembali.",
+    kalimat: "Pakan, telur, ayam mati, dan suhu tersimpan di ponsel, terkirim saat ada sinyal.",
     pratinjau: "catatan",
   },
   {
     nomor: "03",
     label: "TANYA KOKOK",
     judul: "Ayam lesu? Tanya dulu.",
-    kalimat:
-      "Menilai seberapa mendesak, memberi panduan umum dari pedoman, lalu menyiapkan ringkasan kasus untuk penyuluh, puskeswan, atau dokter hewan. Tidak memberi dosis obat dan bukan diagnosis.",
+    kalimat: "Kokok menilai seberapa mendesak dan merujuk ke dokter hewan mitra. Bukan diagnosis, tanpa dosis obat.",
     pratinjau: "kokok",
   },
   {
     nomor: "04",
     label: "TOKO PAKAN",
     judul: "Tahu belinya di mana.",
-    kalimat:
-      "Toko mitra yang menjual bahan campuran termurah, lengkap dengan harga, asal harga, dan kapan diperbarui.",
+    kalimat: "Toko terdekat yang menjual campuran termurah, lengkap dengan harga dan waktu pembaruan.",
     pratinjau: "toko",
   },
 ];
-
-export const LANDING_CARA_MULAI = {
-  eyebrow: "CARA KERJA",
-  judul: "Mulainya gampang.",
-  langkah: [
-    {
-      nomor: "01",
-      judul: "Isi profil kandang",
-      keterangan: "Masukkan jenis ayam, umur dalam minggu, dan jumlah ayam di kandang Anda.",
-    },
-    {
-      nomor: "02",
-      judul: "Ketik bahan dan harga yang Anda temui",
-      keterangan:
-        "Pilih dari daftar bahan atau tulis dengan kalimat sehari-hari lalu periksa hasil bacaannya.",
-    },
-    {
-      nomor: "03",
-      judul: "Lihat campuran dan toko, lalu hubungi lewat WhatsApp",
-      keterangan:
-        "Periksa komposisi per 100 kg, bandingkan total biaya antar toko sekitar, dan hubungi toko langsung.",
-    },
-  ] satisfies readonly LangkahMulaiItem[],
-  tombolUtama: "Mulai hitung pakan",
-} as const;
 
 export const LANDING_KEPERCAYAAN = {
   eyebrow: "CARA KAMI MENJAGA KEPERCAYAAN",
@@ -174,26 +141,22 @@ export const LANDING_KEPERCAYAAN = {
     {
       id: "solver",
       judul: "Angka pakan dari perhitungan optimasi",
-      keterangan:
-        "Setiap komposisi dan biaya per kg dihitung langsung oleh solver dengan batasan gizi yang bisa Anda buka di panel Lihat perhitungan.",
+      keterangan: "Komposisi dan biaya per kg dihitung solver dan bisa Anda periksa.",
     },
     {
       id: "toko",
       judul: "Urutan toko dari total biaya, bukan komisi",
-      keterangan:
-        "Setiap kartu toko menampilkan label mitra atau bukan, asal harga, waktu pembaruan, dan penanda Usang bila harga sudah lama.",
+      keterangan: "Setiap toko diberi label mitra, asal harga, dan waktu pembaruan.",
     },
     {
       id: "kokok",
       judul: "Kokok menjawab dari pedoman terkurasi",
-      keterangan:
-        "Menampilkan sumber pedoman yang dipakai, tidak memberi dosis obat maupun diagnosis pasti, dan merujuk ke ahli bila mendesak atau di luar pedoman.",
+      keterangan: "Menampilkan sumber, tanpa dosis obat, dan merujuk ke ahli bila mendesak.",
     },
     {
       id: "privasi",
       judul: "Data kandang Anda tidak dijual",
-      keterangan:
-        "Catatan harian tersimpan untuk keperluan kandang Anda sendiri dan dapat dihapus seluruhnya kapan saja.",
+      keterangan: "Catatan kandang milik Anda dan bisa dihapus kapan saja.",
     },
   ] satisfies readonly KepercayaanItem[],
   gelembungMaskot:
@@ -205,10 +168,9 @@ export const LANDING_TOKO = {
   eyebrow: "TOKO PAKAN?",
   judul: "Dapat calon pembeli baru dari peternak di sekitar.",
   poin: [
-    "Pilot gratis untuk toko pakan di wilayah Bandung Raya dan sekitarnya.",
-    "Cukup kirim daftar harga bahan pakan lewat WhatsApp tiap minggu, tim kami yang memasukkannya.",
-    "Setiap peternak yang menghubungi toko tercatat atas nama toko lewat tautan atau kartu QR khusus, dan rekap lead dikirim tiap minggu.",
-    "Urutan toko selalu memakai total biaya pakan yang memenuhi gizi, sehingga harga yang bersaing otomatis berada di atas.",
+    "Pilot gratis untuk toko pakan di Bandung Raya.",
+    "Kirim daftar harga lewat WhatsApp tiap minggu, tim kami yang memasukkan.",
+    "Dapat rekap peternak yang menghubungi toko Anda setiap minggu.",
   ] as const,
   tombolWa: "Jadi toko mitra lewat WhatsApp",
   pesanWaToko:
@@ -240,10 +202,16 @@ export const LANDING_FAQ: readonly FaqLandingItem[] = [
       "Tidak. Ia tidak memberi dosis atau diagnosis pasti, hanya menilai urgensi, memberi panduan umum, dan merujuk ke ahli, karena gejala beberapa penyakit unggas mirip.",
   },
   {
-    id: "faq-urutan-toko",
-    pertanyaan: "Kenapa toko ini di urutan atas?",
+    id: "faq-investasi-uang",
+    pertanyaan: "Apakah Ternakin memegang uang investasi?",
     jawaban:
-      "Urutan dari total biaya pakan yang memenuhi gizi. Setiap toko diberi label mitra, asal harga, dan umur harga; harga yang terlalu lama ditandai usang.",
+      "Tidak. Di versi rilis, pendanaan berjalan lewat penyelenggara urun dana berizin OJK yang sedang disiapkan. Ternakin menyediakan data kandang dari catatan harian, tampilan perkembangan, dan rujukan ke mitra. Saat ini fitur investasi masih prototipe dan tidak ada uang yang berpindah.",
+  },
+  {
+    id: "faq-investasi-risiko",
+    pertanyaan: "Apa risikonya menitipkan modal ke peternak?",
+    jawaban:
+      "Ayam bisa sakit atau mati dan harga jual bisa turun, sehingga modal yang kembali bisa berkurang bahkan habis. Karena itu setiap kandang wajib diperiksa dokter hewan mitra sebelum dibuka, dan datanya bisa Anda pantau setiap hari.",
   },
   {
     id: "faq-unduh",
@@ -267,4 +235,61 @@ export const LANDING_FOOTER = {
     "Asisten digital peternak ayam untuk menekan biaya pakan dan bertindak cepat saat ayam bermasalah.",
   hakCipta: "© 2026 Ternakin",
   pesanWaFooter: "Halo tim Ternakin, saya ingin menghubungi tim terkait aplikasi Ternakin.",
+} as const;
+
+export interface KokokChatPilihan {
+  id: string;
+  label: string;
+  jawaban: string;
+  aksi?: { label: string; ke: string } | { label: string; whatsapp: string };
+}
+
+/** Isi popup obrolan Kokok di landing page. Jawaban diambil dari FAQ agar tidak berbeda. */
+function jawabanFaq(id: string): string {
+  return LANDING_FAQ.find((item) => item.id === id)?.jawaban ?? "";
+}
+
+export const LANDING_KOKOK_CHAT = {
+  judul: "Kokok",
+  status: "Asisten peternak Ternakin",
+  teaser: "Kukuruyuk! Ada yang mau ditanyakan soal Ternakin?",
+  sapaan: [
+    "Halo, saya Kokok! Saya bisa menjelaskan Ternakin atau membantu Anda mulai cek gejala ayam.",
+    "Pilih pertanyaan di bawah, atau ceritakan keluhan ayam Anda.",
+  ],
+  pilihan: [
+    {
+      id: "pakan",
+      label: "Cara hitung pakan",
+      jawaban:
+        "Tulis bahan pakan dan harganya, lalu Ternakin mencari campuran termurah yang gizinya tetap cukup. Hasilnya per 100 kg dan bisa Anda periksa sendiri.",
+      aksi: { label: "Mulai hitung pakan", ke: "/app/pakan" },
+    },
+    { id: "bayar", label: "Biayanya berapa?", jawaban: jawabanFaq("faq-bayar") },
+    { id: "sinyal", label: "Bisa tanpa sinyal?", jawaban: jawabanFaq("faq-sinyal") },
+    { id: "obat", label: "Kokok bisa kasih obat?", jawaban: jawabanFaq("faq-obat") },
+    { id: "siapa", label: "Cocok untuk siapa?", jawaban: jawabanFaq("faq-siapa") },
+    {
+      id: "investasi",
+      label: "Investasi ternak",
+      jawaban:
+        "Fitur baru! Anda bisa menitipkan modal ke peternak ayam pedaging di dekat Anda, lalu menerima bagian laba saat panen. Ternakin tidak memegang uangnya, dan setiap kandang diperiksa dokter hewan mitra dulu. Masih prototipe, jadi belum ada uang yang berpindah.",
+      aksi: { label: "Lihat peluang", ke: "/app/investasi" },
+    },
+    {
+      id: "tim",
+      label: "Bicara dengan tim",
+      jawaban: "Tentu. Tim Ternakin bisa dihubungi langsung lewat WhatsApp.",
+      aksi: {
+        label: "Buka WhatsApp",
+        whatsapp: "Halo tim Ternakin, saya ingin bertanya setelah mengobrol dengan Kokok.",
+      },
+    },
+  ] satisfies readonly KokokChatPilihan[],
+  labelInput: "Ceritakan keluhan ayam Anda",
+  placeholderInput: "Contoh: ayam lesu dan ngorok sejak kemarin",
+  balasanGejala:
+    "Terima kasih sudah bercerita. Untuk menilai seberapa mendesak, saya perlu membaca pedoman di halaman Tanya Kokok. Cerita Anda sudah saya bawa ke sana.",
+  tombolLanjutGejala: "Lanjut cek gejala",
+  catatanAman: "Kokok tidak memberi diagnosis atau dosis obat.",
 } as const;

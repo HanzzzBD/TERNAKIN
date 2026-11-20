@@ -92,16 +92,29 @@ export function useLandingGsap(rootRef: RefObject<HTMLElement | null>): void {
           { y: 0, duration: 0.55, stagger: 0.08, clearProps: "transform" },
         )
         .fromTo(
-          ".tk-hero__visual-col .tk-phone",
-          { y: 28, scale: 0.96 },
-          { y: 0, scale: 1, duration: 0.65, clearProps: "transform" },
+          ".tk-hero-stage__sun",
+          { scale: 0.7 },
+          { scale: 1, duration: 0.6, ease: "back.out(1.4)", clearProps: "transform" },
+          "-=0.45",
+        )
+        .fromTo(
+          ".tk-hero-stage .tk-kokok-btn",
+          { y: 40, scale: 0.85 },
+          { y: 0, scale: 1, duration: 0.6, ease: "back.out(1.7)", clearProps: "transform" },
           "-=0.4",
         )
         .fromTo(
-          ".tk-hero__kokok-card",
-          { y: 18, scale: 0.94 },
-          { y: 0, scale: 1, duration: 0.5, ease: "back.out(1.6)", clearProps: "transform" },
-          "-=0.35",
+          ".tk-hero-stage .tk-hero-float, .tk-hero-stage .tk-kokok-speech",
+          { y: 16, scale: 0.6 },
+          {
+            y: 0,
+            scale: 1,
+            duration: 0.45,
+            stagger: 0.06,
+            ease: "back.out(2)",
+            clearProps: "transform",
+          },
+          "-=0.3",
         );
 
       // 2. Judul tiap section saat digulir
@@ -167,7 +180,7 @@ export function useLandingGsap(rootRef: RefObject<HTMLElement | null>): void {
       });
 
       // 5. Tiga langkah cara mulai
-      const kartuLangkah = root.querySelectorAll<HTMLElement>(".tk-steps-grid > *");
+      const kartuLangkah = root.querySelectorAll<HTMLElement>(".tk-alur-steps > *");
       if (kartuLangkah.length > 0) {
         gsap.fromTo(
           kartuLangkah,
@@ -180,7 +193,7 @@ export function useLandingGsap(rootRef: RefObject<HTMLElement | null>): void {
             ease: "power3.out",
             clearProps: "transform",
             scrollTrigger: {
-              trigger: ".tk-steps-grid",
+              trigger: ".tk-alur-steps",
               start: "top 88%",
             },
           },

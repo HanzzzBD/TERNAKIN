@@ -1,6 +1,10 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router";
+import { AlurWebsite } from "../components/landing/AlurWebsite";
 import { FieldProof } from "../components/landing/FieldProof";
+import { InvestasiHighlight } from "../components/landing/InvestasiHighlight";
+import { KokokChatPopup } from "../components/landing/KokokChatPopup";
+import { KokokHeroStage } from "../components/landing/KokokHeroStage";
 import { PhoneFrame } from "../components/landing/PhoneFrame";
 import {
   Accordion,
@@ -10,15 +14,17 @@ import {
   Button,
   Card,
   ChatIcon,
+  CloseIcon,
   FeedIcon,
   InstallIcon,
   KokokMascot,
+  LogOutIcon,
+  MenuIcon,
   ShieldCheckIcon,
   StoreIcon,
   WhatsAppIcon,
 } from "../components/ui";
 import {
-  LANDING_CARA_MULAI,
   LANDING_FAQ,
   LANDING_FOOTER,
   LANDING_HERO,
@@ -33,6 +39,7 @@ import {
   type KepercayaanItem,
 } from "../content/landingContent";
 import { animateFloatingPillOpen, useLandingGsap } from "../lib/gsapAnimations";
+import { BERANDA_PERAN, LABEL_PERAN, keluarDemo, useAkunDemo } from "../lib/akunDemo";
 import { usePwaInstall } from "../lib/pwa";
 import { TEKS } from "../lib/teks";
 import { buatTautanWhatsAppTim } from "../lib/wa";
@@ -83,10 +90,51 @@ export function LandingPage() {
   const pillRef = useRef<HTMLDivElement | null>(null);
   const waktuBukaOtomatisRef = useRef<number>(0);
   const [pillTerbuka, setPillTerbuka] = useState(false);
+  const [headerSembunyi, setHeaderSembunyi] = useState(false);
+  const pillTerbukaRef = useRef(false);
+  const posisiBukaRef = useRef(0);
+
+  useEffect(() => {
+    pillTerbukaRef.current = pillTerbuka;
+    // Header yang sedang menyingkir tetap tampil selama menu terbuka (lihat kelas di bawah)
+    if (pillTerbuka) posisiBukaRef.current = window.scrollY;
+  }, [pillTerbuka]);
   const [pesanPasang, setPesanPasang] = useState<string | null>(null);
   const { bisaPasangLangsung, isStandalone, isIos, pasangSekarang } = usePwaInstall();
+  const akun = useAkunDemo();
 
   useLandingGsap(rootRef);
+
+  // Hanya desktop dengan mouse yang membuka menu saat kursor lewat; ponsel dan tablet lewat ketukan
+  const bolehBukaHover = () =>
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(hover: hover) and (min-width: 960px)").matches;
+
+  // Tutup menu saat mengetuk di luar, dan sembunyikan navbar saat menggulir ke bawah
+  useEffect(() => {
+    let posisiSebelum = window.scrollY;
+    const handleGulir = () => {
+      const posisi = window.scrollY;
+      // Menu terbuka: tutup hanya bila digulir cukup jauh, agar sisa gulir tidak langsung menutupnya
+      if (pillTerbukaRef.current) {
+        if (Math.abs(posisi - posisiBukaRef.current) > 60) setPillTerbuka(false);
+        posisiSebelum = posisi;
+        return;
+      }
+      if (Math.abs(posisi - posisiSebelum) < 6) return;
+      setHeaderSembunyi(posisi > posisiSebelum && posisi > 160);
+      posisiSebelum = posisi;
+    };
+    const handleKetukLuar = (e: PointerEvent) => {
+      if (pillRef.current && !pillRef.current.contains(e.target as Node)) setPillTerbuka(false);
+    };
+    window.addEventListener("scroll", handleGulir, { passive: true });
+    document.addEventListener("pointerdown", handleKetukLuar);
+    return () => {
+      window.removeEventListener("scroll", handleGulir);
+      document.removeEventListener("pointerdown", handleKetukLuar);
+    };
+  }, []);
 
   const bukaPill = () => {
     setPillTerbuka((sebelum) => {
@@ -144,14 +192,21 @@ export function LandingPage() {
         {TEKS.lewatiKeKonten}
       </a>
 
-      <header className="tk-floating-header">
+      <header
+        className={`tk-floating-header ${headerSembunyi && !pillTerbuka ? "tk-floating-header--sembunyi" : ""}`.trim()}
+        onFocusCapture={() => setHeaderSembunyi(false)}
+      >
         <div className="tk-landing-container tk-floating-header__inner">
           <div
             ref={pillRef}
             className={`tk-floating-pill ${pillTerbuka ? "tk-floating-pill--open" : ""}`.trim()}
             data-open={pillTerbuka ? "true" : "false"}
-            onMouseEnter={bukaPill}
-            onMouseLeave={tutupPill}
+            onMouseEnter={() => {
+              if (bolehBukaHover()) bukaPill();
+            }}
+            onMouseLeave={() => {
+              if (bolehBukaHover()) tutupPill();
+            }}
           >
             <button
               type="button"
@@ -160,7 +215,9 @@ export function LandingPage() {
               aria-controls="nav-pill-tray"
               aria-label="ternakin — buka atau tutup menu navigasi"
               onClick={togglePill}
-              onFocus={bukaPill}
+              onFocus={() => {
+                if (bolehBukaHover()) bukaPill();
+              }}
             >
               <img
                 src="/images/kokok.webp"
@@ -175,6 +232,9 @@ export function LandingPage() {
                 <span className="tk-brand__dot" aria-hidden="true">
                   .
                 </span>
+              </span>
+              <span className="tk-floating-pill__burger" aria-hidden="true">
+                {pillTerbuka ? <CloseIcon size={22} /> : <MenuIcon size={22} />}
               </span>
             </button>
 
@@ -194,13 +254,43 @@ export function LandingPage() {
                   ))}
                 </nav>
 
-                <Link
-                  to="/app"
-                  tabIndex={pillTerbuka ? 0 : -1}
-                  className="tk-btn tk-btn--primary tk-landing-header__cta tk-floating-pill__item"
-                >
-                  Buka aplikasi
-                </Link>
+                <div className="tk-floating-pill__actions">
+                  {akun ? (
+                    <>
+                      <Link
+                        to={BERANDA_PERAN[akun.peran]}
+                        tabIndex={pillTerbuka ? 0 : -1}
+                        className="tk-btn tk-btn--secondary tk-landing-header__cta tk-floating-pill__item"
+                      >
+                        {akun.nama} · {LABEL_PERAN[akun.peran]}
+                      </Link>
+                      <button
+                        type="button"
+                        tabIndex={pillTerbuka ? 0 : -1}
+                        className="tk-btn tk-btn--ghost tk-landing-header__cta tk-floating-pill__item"
+                        onClick={keluarDemo}
+                      >
+                        <LogOutIcon size={18} />
+                        <span>Keluar</span>
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      to="/app/masuk"
+                      tabIndex={pillTerbuka ? 0 : -1}
+                      className="tk-btn tk-btn--secondary tk-landing-header__cta tk-floating-pill__item"
+                    >
+                      Masuk
+                    </Link>
+                  )}
+                  <Link
+                    to="/app"
+                    tabIndex={pillTerbuka ? 0 : -1}
+                    className="tk-btn tk-btn--primary tk-landing-header__cta tk-floating-pill__item"
+                  >
+                    Buka aplikasi
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -213,13 +303,17 @@ export function LandingPage() {
           <PolaHeroSvg />
           <div className="tk-landing-container tk-hero__inner">
             <div className="tk-hero__copy">
-              <p className="tk-eyebrow" style={{ marginBottom: "var(--space-3)" }}>
-                {LANDING_HERO.eyebrow}
-              </p>
+              <a href="#investasi" className="tk-hero__announce">
+                <span className="tk-hero__announce-label">{LANDING_HERO.pengumumanLabel}</span>
+                <span>{LANDING_HERO.pengumuman}</span>
+                <ArrowRightIcon size={16} />
+              </a>
 
               <h1 className="tk-hero__title">
-                {LANDING_HERO.h1Utama}
-                <span className="tk-hero__title-accent">{LANDING_HERO.h1Aksen}</span>
+                <span className="tk-hero__title-line">{LANDING_HERO.h1Utama}</span>{" "}
+                <span className="tk-hero__title-accent">
+                  <span className="tk-sticker">{LANDING_HERO.h1Aksen}</span>
+                </span>
               </h1>
 
               <p className="tk-hero__sub">{LANDING_HERO.sub}</p>
@@ -239,33 +333,10 @@ export function LandingPage() {
                   <span>{LANDING_HERO.tombolWa}</span>
                 </a>
               </div>
-
-              <div className="tk-hero__install-row">
-                <Button
-                  variant="secondary"
-                  iconStart={<InstallIcon size={20} />}
-                  onClick={() => void handlePasang()}
-                >
-                  {LANDING_HERO.tombolPasang}
-                </Button>
-                <p className="tk-hero__install-note">{LANDING_HERO.keteranganPasang}</p>
-                {pesanPasang && <Banner variant="info">{pesanPasang}</Banner>}
-              </div>
             </div>
 
             <div className="tk-hero__visual-col">
-              <PhoneFrame kind="pakan" caption={LANDING_HERO.keteranganPratinjau} />
-              <div className="tk-hero__kokok-card">
-                <KokokMascot
-                  size="sm"
-                  interactive
-                  messages={[
-                    "Halo! Saya Kokok, teman kandang Anda di Ternakin. Ketuk saya untuk lihat info singkat.",
-                    "Hitung pakan dan catatan harian tetap jalan walau sinyal di kandang hilang.",
-                    "Gratis untuk peternak ayam petelur mandiri. Langsung coba tanpa unduh aplikasi.",
-                  ]}
-                />
-              </div>
+              <KokokHeroStage />
             </div>
           </div>
         </section>
@@ -298,6 +369,9 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* 2b. Alur website per peran */}
+        <AlurWebsite />
+
         {/* 3. Masalah */}
         <section className="tk-section tk-section--masalah" aria-labelledby="judul-masalah">
           <div className="tk-landing-container">
@@ -311,9 +385,7 @@ export function LandingPage() {
                 <Card key={item.id} as="article">
                   <p className="tk-stat-card__value tk-num">{item.angka}</p>
                   <h3 className="tk-stat-card__title">{item.judul}</h3>
-                  <p className="tk-muted" style={{ margin: 0 }}>
-                    {item.keterangan}
-                  </p>
+                  <p className="tk-stat-card__text">{item.keterangan}</p>
                 </Card>
               ))}
             </div>
@@ -327,7 +399,7 @@ export function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <p style={{ margin: 0 }}>{LANDING_MASALAH.catatanVerifikasi}</p>
+              <p className="tk-source-bar__note">{LANDING_MASALAH.catatanVerifikasi}</p>
             </div>
           </div>
         </section>
@@ -349,14 +421,10 @@ export function LandingPage() {
                   <div className="tk-module-copy">
                     <div className="tk-module-head">
                       <span className="tk-step-circle tk-num">{modul.nomor}</span>
-                      <span className="tk-eyebrow" style={{ margin: 0 }}>
-                        {modul.label}
-                      </span>
+                      <span className="tk-module-label">{modul.label}</span>
                     </div>
                     <h3 className="tk-module-title">{modul.judul}</h3>
-                    <p className="tk-muted tk-prose" style={{ margin: 0 }}>
-                      {modul.kalimat}
-                    </p>
+                    <p className="tk-module-text">{modul.kalimat}</p>
                   </div>
                   <div className="tk-module-visual">
                     <PhoneFrame kind={modul.pratinjau} />
@@ -365,42 +433,12 @@ export function LandingPage() {
               ))}
             </div>
 
-            <p className="tk-modules-caption">
-              Sekilas tampilan aplikasi. Data di layar adalah contoh.
-            </p>
+            <p className="tk-modules-caption">Data di layar adalah contoh.</p>
           </div>
         </section>
 
-        {/* 5. Cara mulai */}
-        <section
-          id="cara-kerja"
-          className="tk-section tk-section--cara"
-          aria-labelledby="judul-cara-mulai"
-        >
-          <div className="tk-landing-container">
-            <p className="tk-eyebrow">{LANDING_CARA_MULAI.eyebrow}</p>
-            <h2 id="judul-cara-mulai" className="tk-landing-h2">
-              {LANDING_CARA_MULAI.judul}
-            </h2>
-
-            <div className="tk-steps-grid">
-              {LANDING_CARA_MULAI.langkah.map((step) => (
-                <Card key={step.nomor} as="article" className="tk-step-card">
-                  <span className="tk-step-circle tk-num">{step.nomor}</span>
-                  <h3 className="tk-step-card__title">{step.judul}</h3>
-                  <p className="tk-muted" style={{ margin: 0 }}>
-                    {step.keterangan}
-                  </p>
-                </Card>
-              ))}
-            </div>
-
-            <Link to="/app/pakan" className="tk-btn tk-btn--primary tk-landing-inline-btn">
-              <span>{LANDING_CARA_MULAI.tombolUtama}</span>
-              <ArrowRightIcon size={20} />
-            </Link>
-          </div>
-        </section>
+        {/* 4b. Modul 05 — Investasi ternak (fitur baru) */}
+        <InvestasiHighlight />
 
         {/* 6. Kepercayaan */}
         <section
@@ -444,6 +482,7 @@ export function LandingPage() {
               <Card as="div" className="tk-trust-mascot-card">
                 <KokokMascot
                   size="lg"
+                  className="tk-trust-kokok"
                   interactive
                   messages={[
                     LANDING_KEPERCAYAAN.gelembungMaskot,
@@ -504,7 +543,7 @@ export function LandingPage() {
               items={LANDING_FAQ.map((item) => ({
                 id: item.id,
                 question: item.pertanyaan,
-                answer: <p style={{ margin: 0 }}>{item.jawaban}</p>,
+                answer: <p className="tk-faq-answer">{item.jawaban}</p>,
               }))}
             />
           </div>
@@ -531,6 +570,7 @@ export function LandingPage() {
                 {LANDING_PENUTUP.tombolPasang}
               </Button>
             </div>
+            {pesanPasang && <Banner variant="info">{pesanPasang}</Banner>}
             <p className="tk-cta-note">{LANDING_PENUTUP.catatanPrototipe}</p>
           </div>
         </section>
@@ -567,7 +607,10 @@ export function LandingPage() {
                   <a href="#fitur">Fitur</a>
                 </li>
                 <li>
-                  <a href="#cara-kerja">Cara kerja</a>
+                  <a href="#investasi">Investasi ternak</a>
+                </li>
+                <li>
+                  <a href="#cara-kerja">Alur Ternakin</a>
                 </li>
                 <li>
                   <a href="#untuk-toko">Untuk toko pakan</a>
@@ -610,6 +653,8 @@ export function LandingPage() {
           </div>
         </div>
       </footer>
+
+      <KokokChatPopup />
     </div>
   );
 }

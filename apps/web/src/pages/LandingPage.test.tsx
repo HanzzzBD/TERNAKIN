@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it } from "vitest";
 import { LANDING_FAQ } from "../content/landingContent";
@@ -37,6 +37,20 @@ describe("Landing page Ternakin (/)", () => {
     expect(screen.getByText("TANYA KOKOK")).toBeInTheDocument();
     expect(screen.getByText("TOKO PAKAN")).toBeInTheDocument();
 
+    // Modul 05 investasi ternak disorot, tanpa klaim Ternakin memegang uang, dan empat peran
+    expect(
+      screen.getByRole("heading", { level: 2, name: /Titip modal, ayam tumbuh/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Ternakin tidak memegang uang/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Lihat peluang di dekat Anda/i })).toHaveAttribute(
+      "href",
+      "/app/investasi",
+    );
+    // Peran pengunjung dipilih lewat tab di section Alur
+    for (const tab of ["Saya peternak", "Saya ingin titip modal", "Saya mitra"]) {
+      expect(screen.getByRole("tab", { name: tab })).toBeInTheDocument();
+    }
+
     // FieldProof kosong -> tampil kartu pencarian pilot Bandung
     expect(
       screen.getByRole("heading", {
@@ -66,6 +80,59 @@ describe("Landing page Ternakin (/)", () => {
       "/privasi",
     );
     expect(screen.getByText("© 2026 Ternakin")).toBeInTheDocument();
+  });
+
+  it("membuka popup obrolan Kokok, menjawab pertanyaan cepat dari FAQ, dan menutup dengan Escape", async () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>,
+    );
+
+    const peluncur = screen.getByRole("button", { name: "Buka obrolan dengan Kokok" });
+    expect(peluncur).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(peluncur);
+
+    const panel = screen.getByRole("dialog", { name: "Kokok" });
+    expect(panel).toBeVisible();
+    expect(screen.getByRole("button", { name: "Tutup obrolan dengan Kokok" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Biayanya berapa?" }));
+    const jawabanBayar = LANDING_FAQ.find((f) => f.id === "faq-bayar")?.jawaban ?? "";
+    await waitFor(() => expect(screen.getAllByText(jawabanBayar)).toHaveLength(2));
+
+    fireEvent.keyDown(panel, { key: "Escape" });
+    expect(panel).not.toBeVisible();
+  });
+
+  it("menampilkan alur website per peran lewat tab yang bisa dipindah dengan panah", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>,
+    );
+
+    const tabPeternak = screen.getByRole("tab", { name: "Saya peternak" });
+    expect(tabPeternak).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("link", { name: /Buka Pakan/ })).toHaveAttribute("href", "/app/pakan");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Saya ingin titip modal" }));
+    expect(
+      screen.getByRole("heading", { level: 3, name: /Lihat peluang terdekat/ }),
+    ).toBeInTheDocument();
+
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Saya ingin titip modal" }), {
+      key: "ArrowRight",
+    });
+    const tabMitra = screen.getByRole("tab", { name: "Saya mitra" });
+    expect(tabMitra).toHaveAttribute("aria-selected", "true");
+    expect(tabMitra).toHaveFocus();
+    expect(screen.getByRole("link", { name: /Buka WhatsApp/ }).getAttribute("href")).toMatch(
+      /^https:\/\/wa\.me\/\?text=/,
+    );
   });
 
   it("menampilkan maskot Kokok yang dapat diklik untuk berganti pesan", () => {
