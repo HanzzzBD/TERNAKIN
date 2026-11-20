@@ -98,6 +98,16 @@ describe("Layar Kokok (/app/tanya)", () => {
     const href = tautanWa.getAttribute("href") ?? "";
     expect(href.startsWith("https://wa.me/?text=")).toBe(true);
     expect(href).not.toMatch(/wa\.me\/\d+/);
+
+    // Urgensi tinggi merujuk ke dokter hewan mitra, bukan berhenti di "hubungi ahli"
+    expect(screen.getByText(TEKS_KOKOK.judulDokterMitra)).toBeInTheDocument();
+    const tautanDokter = screen.getAllByRole("link", { name: /Kirim ringkasan kasus ke drh\./ });
+    expect(tautanDokter.length).toBeGreaterThan(0);
+    for (const link of tautanDokter) {
+      const hrefDokter = decodeURIComponent(link.getAttribute("href") ?? "");
+      expect(hrefDokter).toContain("dirujuk Kokok karena urgensi tinggi");
+      expect(hrefDokter).toContain("Ringkasan Kasus Kandang");
+    }
   });
 
   it("menampilkan pesan batas harian ramah saat menerima status 429", async () => {

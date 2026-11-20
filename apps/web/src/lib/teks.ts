@@ -109,6 +109,9 @@ export const TEKS_KOKOK = {
   galatMinimalGejala: "Ceritakan gejala minimal 3 karakter agar Kokok dapat memeriksa pedoman.",
   galatServer: "Kokok belum bisa menjawab sekarang. Coba lagi sebentar lagi.",
   judulUrgensiTinggi: "Urgensi tinggi — segera hubungi dokter hewan",
+  judulDokterMitra: "Hubungi dokter hewan mitra Ternakin",
+  catatanDokterMitra:
+    "Prototipe: dokter hewan mitra di atas masih contoh dan nomornya belum dipasang, jadi WhatsApp akan meminta Anda memilih kontak. Bila belum ada yang bisa dihubungi, hubungi puskeswan atau dinas peternakan setempat.",
   judulRiwayat: "Riwayat tanya Kokok",
   kosongRiwayat:
     "Belum ada percakapan tersimpan. Pilih salah satu gejala di atas atau tulis kondisi ayam Anda untuk memulai.",

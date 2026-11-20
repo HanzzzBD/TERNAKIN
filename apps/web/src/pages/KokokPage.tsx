@@ -20,10 +20,12 @@ import {
   Field,
   KokokMascot,
   Skeleton,
+  StethoscopeIcon,
   TextInput,
   UrgencyChip,
   WhatsAppIcon,
 } from "../components/ui";
+import { DOKTER_HEWAN_MITRA } from "../content/investasiContent";
 import { db, getOrCreateDeviceId, type CatatanLokal, type KandangLokal } from "../db/db";
 import { useOnlineStatus } from "../lib/pwa";
 import { muatReferensiPakan } from "../lib/referensi";
@@ -112,6 +114,52 @@ function RingkasanKasusView({ ringkasan }: { ringkasan: RingkasanKasus }) {
   );
 }
 
+/**
+ * Rujukan ke dokter hewan mitra saat urgensi tinggi, agar Kokok tidak berhenti di
+ * "hubungi ahli". Mitra yang wilayah layanannya cocok dengan lokasi kandang tampil lebih dulu.
+ */
+function RujukanDokterMitra({ ringkasan }: { ringkasan: RingkasanKasus }) {
+  const lokasi = (ringkasan.lokasi ?? "").toLowerCase();
+  const skor = (wilayah: string) => (lokasi && wilayah.toLowerCase().includes(lokasi) ? 0 : 1);
+  const urut = [...DOKTER_HEWAN_MITRA].sort(
+    (a, b) => skor(a.wilayahLayanan) - skor(b.wilayahLayanan),
+  );
+
+  return (
+    <div className="tk-kokok-vet">
+      <h4 className="tk-kokok-vet__title">
+        <StethoscopeIcon size={20} /> {TEKS_KOKOK.judulDokterMitra}
+      </h4>
+      <ul className="tk-kokok-vet__list">
+        {urut.map((dokter) => (
+          <li key={dokter.id} className="tk-kokok-vet__item">
+            <div>
+              <p className="tk-kokok-vet__name">{dokter.nama}</p>
+              <p className="tk-kokok-vet__meta">
+                {dokter.klinik} · melayani {dokter.wilayahLayanan}
+              </p>
+            </div>
+            <a
+              className="tk-btn tk-btn--primary tk-kokok-vet__btn"
+              href={buatTautanWhatsAppKasus(ringkasan, {
+                nomorWa: dokter.nomorWa,
+                sapaan: `Halo ${dokter.nama.replace(" (contoh)", "")}, saya peternak pengguna Ternakin dan dirujuk Kokok karena urgensi tinggi.`,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Kirim ringkasan kasus ke ${dokter.nama} lewat WhatsApp`}
+            >
+              <WhatsAppIcon size={18} />
+              <span>Kirim ringkasan</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <p className="tk-kokok-vet__note">{TEKS_KOKOK.catatanDokterMitra}</p>
+    </div>
+  );
+}
+
 function KartuPercakapanKokok({ item }: { item: PercakapanKokokLokal }) {
   const { jawaban } = item;
 
@@ -129,6 +177,7 @@ function KartuPercakapanKokok({ item }: { item: PercakapanKokokLokal }) {
               </p>
             </div>
           </div>
+          <RujukanDokterMitra ringkasan={jawaban.ringkasanKasus} />
         </Card>
       )}
 

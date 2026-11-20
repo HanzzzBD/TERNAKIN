@@ -44,10 +44,14 @@ export function buatTautanWhatsAppToko(toko: TokoTerurut, src?: string): string 
 /**
  * Menyusun tautan WhatsApp (wa.me/?text=...) berisi ringkasan kasus kesehatan ayam
  * untuk dibagikan peternak ke dokter hewan, puskeswan, atau penyuluh setempat.
- * Sengaja tanpa nomor tujuan karena belum ada nomor rujukan resmi yang diverifikasi.
+ * Tanpa nomor tujuan kecuali dokter hewan mitra sudah punya nomor terverifikasi.
  */
-export function buatTautanWhatsAppKasus(ringkasan: RingkasanKasus): string {
+export function buatTautanWhatsAppKasus(
+  ringkasan: RingkasanKasus,
+  tujuan?: { nomorWa?: string; sapaan?: string },
+): string {
   const baris: string[] = [
+    ...(tujuan?.sapaan ? [tujuan.sapaan, ""] : []),
     "Ringkasan Kasus Kandang (Ternakin - Kokok)",
     `Kandang: ${ringkasan.kandang}`,
     `Jenis ayam: ${ringkasan.jenisAyam}`,
@@ -68,7 +72,9 @@ export function buatTautanWhatsAppKasus(ringkasan: RingkasanKasus): string {
 
   baris.push("", "Catatan: ringkasan awal dari Kokok (bukan diagnosis dan tanpa dosis obat).");
 
-  return `https://wa.me/?text=${encodeURIComponent(baris.join("\n"))}`;
+  const teks = encodeURIComponent(baris.join("\n"));
+  const nomor = tujuan?.nomorWa?.replace(/[^\d]/g, "");
+  return nomor ? `https://wa.me/${nomor}?text=${teks}` : `https://wa.me/?text=${teks}`;
 }
 
 /**
