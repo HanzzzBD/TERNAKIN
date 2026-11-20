@@ -23,8 +23,10 @@ test("hitung pakan berjalan penuh dalam mode pesawat setelah satu kunjungan", as
   await page.reload();
   await expect(page.getByText("Jagung kuning giling")).toBeVisible();
 
-  // Tombol Urai teks nonaktif saat offline
-  await expect(page.getByRole("button", { name: "Urai teks" })).toBeDisabled();
+  // Baris "Lainnya" butuh sinyal: tombol Tambahkan nonaktif saat offline
+  await page.getByRole("checkbox", { name: /Lainnya/ }).check();
+  await expect(page.getByRole("button", { name: "Tambahkan", exact: true })).toBeDisabled();
+  await page.getByRole("checkbox", { name: /Lainnya/ }).uncheck();
 
   const pilihan: Array<[string, string]> = [
     ["Jagung kuning giling", "6500"],

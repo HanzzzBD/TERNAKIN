@@ -91,6 +91,7 @@ export function PakanPage() {
   const [biayaSekarangTeks, setBiayaSekarangTeks] = useState("");
   const [galatForm, setGalatForm] = useState<string | null>(null);
 
+  const [lainnyaAktif, setLainnyaAktif] = useState(false);
   const [teksBebas, setTeksBebas] = useState("");
   const [sedangUrai, setSedangUrai] = useState(false);
   const [galatUrai, setGalatUrai] = useState<string | null>(null);
@@ -140,6 +141,7 @@ export function PakanPage() {
       .then((item) => {
         if (aktif && item?.teks) {
           setTeksBebas(item.teks);
+          setLainnyaAktif(true);
         }
       })
       .catch(() => {
@@ -225,6 +227,7 @@ export function PakanPage() {
     setDipilih(dipilihBaru);
     setHargaTeks(hargaBaru);
     setKonfirmasiUrai(null);
+    ubahTeksBebas("");
     setGalatForm(null);
   };
 
@@ -452,126 +455,6 @@ export function PakanPage() {
             </Card>
 
             <Card>
-              <h2 className="tk-pakan-h2">{TEKS_PAKAN.judulTeksBebas}</h2>
-              <div className="tk-pakan-stack">
-                <Field
-                  id="pakan-teks-bebas"
-                  label="Tulis daftar bahan dan harga"
-                  hint={TEKS_PAKAN.petunjukTeksBebas}
-                >
-                  <textarea
-                    id="pakan-teks-bebas"
-                    className="tk-textarea"
-                    value={teksBebas}
-                    placeholder={TEKS_PAKAN.petunjukTeksBebas}
-                    onChange={(e) => ubahTeksBebas(e.target.value)}
-                  />
-                </Field>
-
-                {!isOnline && <Banner variant="offline">{TEKS_PAKAN.alasanUraiOffline}</Banner>}
-
-                {galatUrai && <Banner variant="error">{galatUrai}</Banner>}
-
-                <div className="tk-actions-row">
-                  <Button
-                    variant="secondary"
-                    disabled={!isOnline || sedangUrai || teksBebas.trim().length < 2}
-                    onClick={() => void handleUraiTeks()}
-                  >
-                    {sedangUrai ? TEKS_PAKAN.uraiMemuat : TEKS_PAKAN.tombolUraiTeks}
-                  </Button>
-                </div>
-
-                {konfirmasiUrai && (
-                  <Card variant="warm" as="div">
-                    <h3 className="tk-pakan-h2">{TEKS_PAKAN.judulKonfirmasiUrai}</h3>
-                    <p className="tk-muted" style={{ fontSize: "var(--text-sm)" }}>
-                      {TEKS_PAKAN.subKonfirmasiUrai}
-                    </p>
-
-                    {catatanUrai.length > 0 && (
-                      <div style={{ marginBottom: "var(--space-3)" }}>
-                        <Banner variant="info">{catatanUrai.join(" ")}</Banner>
-                      </div>
-                    )}
-
-                    <div className="tk-urai-list">
-                      {konfirmasiUrai.map((baris, index) => (
-                        <div key={baris.kunci} className="tk-urai-row">
-                          <div className="tk-urai-row__bahan">
-                            <label className="tk-sr-only" htmlFor={`urai-bahan-${index}`}>
-                              Padanan bahan untuk {baris.namaMentah}
-                            </label>
-                            <select
-                              id={`urai-bahan-${index}`}
-                              className="tk-select"
-                              value={baris.bahanId}
-                              onChange={(e) => {
-                                const nilai = e.target.value;
-                                setKonfirmasiUrai((prev) =>
-                                  prev
-                                    ? prev.map((row, idx) =>
-                                        idx === index ? { ...row, bahanId: nilai } : row,
-                                      )
-                                    : null,
-                                );
-                              }}
-                            >
-                              <option value="">-- Pilih bahan ({baris.namaMentah}) --</option>
-                              {referensi.bahan.map((b) => (
-                                <option key={b.id} value={b.id}>
-                                  {b.nama}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="tk-urai-row__harga">
-                            <NumberInput
-                              aria-label={`Harga ${baris.namaMentah} per kg`}
-                              unit="Rp/kg"
-                              value={baris.hargaTeks}
-                              onChange={(e) => {
-                                const nilai = e.target.value;
-                                setKonfirmasiUrai((prev) =>
-                                  prev
-                                    ? prev.map((row, idx) =>
-                                        idx === index ? { ...row, hargaTeks: nilai } : row,
-                                      )
-                                    : null,
-                                );
-                              }}
-                            />
-                          </div>
-
-                          <Button
-                            variant="ghost"
-                            onClick={() =>
-                              setKonfirmasiUrai((prev) =>
-                                prev ? prev.filter((_, idx) => idx !== index) : null,
-                              )
-                            }
-                          >
-                            Hapus
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="tk-actions-row">
-                      <Button variant="primary" onClick={terapkanKonfirmasi}>
-                        {TEKS_PAKAN.tombolTerapkanUrai}
-                      </Button>
-                      <Button variant="secondary" onClick={() => setKonfirmasiUrai(null)}>
-                        {TEKS_PAKAN.tombolBatalUrai}
-                      </Button>
-                    </div>
-                  </Card>
-                )}
-              </div>
-            </Card>
-
-            <Card>
               <h2 className="tk-pakan-h2">{TEKS_PAKAN.judulPilihBahan}</h2>
               <p className="tk-muted" style={{ fontSize: "var(--text-sm)", marginBottom: 0 }}>
                 {TEKS_PAKAN.petunjukPilihBahan}
@@ -627,6 +510,145 @@ export function PakanPage() {
                     </div>
                   );
                 })}
+
+                <div
+                  className={`tk-bahan-item tk-bahan-item--lainnya ${lainnyaAktif ? "tk-bahan-item--dipilih" : ""}`.trim()}
+                >
+                  <label className="tk-bahan-toggle">
+                    <input
+                      type="checkbox"
+                      className="tk-bahan-checkbox"
+                      checked={lainnyaAktif}
+                      onChange={(e) => setLainnyaAktif(e.target.checked)}
+                    />
+                    <span className="tk-bahan-info">
+                      <span className="tk-bahan-nama">{TEKS_PAKAN.labelLainnya}</span>
+                      <span className="tk-bahan-meta">{TEKS_PAKAN.subLainnya}</span>
+                    </span>
+                  </label>
+
+                  {lainnyaAktif && (
+                    <div className="tk-lainnya">
+                      <label className="tk-sr-only" htmlFor="pakan-lainnya">
+                        {TEKS_PAKAN.labelInputLainnya}
+                      </label>
+                      <div className="tk-lainnya__row">
+                        <input
+                          id="pakan-lainnya"
+                          className="tk-input"
+                          type="text"
+                          autoComplete="off"
+                          value={teksBebas}
+                          placeholder={TEKS_PAKAN.petunjukTeksBebas}
+                          onChange={(e) => ubahTeksBebas(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              void handleUraiTeks();
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="secondary"
+                          disabled={!isOnline || sedangUrai || teksBebas.trim().length < 2}
+                          onClick={() => void handleUraiTeks()}
+                        >
+                          {sedangUrai ? TEKS_PAKAN.uraiMemuat : TEKS_PAKAN.tombolUraiTeks}
+                        </Button>
+                      </div>
+                      {!isOnline && (
+                        <p className="tk-lainnya__note">{TEKS_PAKAN.alasanUraiOffline}</p>
+                      )}
+                      {galatUrai && <Banner variant="error">{galatUrai}</Banner>}
+                      {konfirmasiUrai && (
+                        <Card variant="warm" as="div">
+                          <h3 className="tk-pakan-h2">{TEKS_PAKAN.judulKonfirmasiUrai}</h3>
+                          <p className="tk-muted" style={{ fontSize: "var(--text-sm)" }}>
+                            {TEKS_PAKAN.subKonfirmasiUrai}
+                          </p>
+
+                          {catatanUrai.length > 0 && (
+                            <div style={{ marginBottom: "var(--space-3)" }}>
+                              <Banner variant="info">{catatanUrai.join(" ")}</Banner>
+                            </div>
+                          )}
+
+                          <div className="tk-urai-list">
+                            {konfirmasiUrai.map((baris, index) => (
+                              <div key={baris.kunci} className="tk-urai-row">
+                                <div className="tk-urai-row__bahan">
+                                  <label className="tk-sr-only" htmlFor={`urai-bahan-${index}`}>
+                                    Padanan bahan untuk {baris.namaMentah}
+                                  </label>
+                                  <select
+                                    id={`urai-bahan-${index}`}
+                                    className="tk-select"
+                                    value={baris.bahanId}
+                                    onChange={(e) => {
+                                      const nilai = e.target.value;
+                                      setKonfirmasiUrai((prev) =>
+                                        prev
+                                          ? prev.map((row, idx) =>
+                                              idx === index ? { ...row, bahanId: nilai } : row,
+                                            )
+                                          : null,
+                                      );
+                                    }}
+                                  >
+                                    <option value="">-- Pilih bahan ({baris.namaMentah}) --</option>
+                                    {referensi.bahan.map((b) => (
+                                      <option key={b.id} value={b.id}>
+                                        {b.nama}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+
+                                <div className="tk-urai-row__harga">
+                                  <NumberInput
+                                    aria-label={`Harga ${baris.namaMentah} per kg`}
+                                    unit="Rp/kg"
+                                    value={baris.hargaTeks}
+                                    onChange={(e) => {
+                                      const nilai = e.target.value;
+                                      setKonfirmasiUrai((prev) =>
+                                        prev
+                                          ? prev.map((row, idx) =>
+                                              idx === index ? { ...row, hargaTeks: nilai } : row,
+                                            )
+                                          : null,
+                                      );
+                                    }}
+                                  />
+                                </div>
+
+                                <Button
+                                  variant="ghost"
+                                  onClick={() =>
+                                    setKonfirmasiUrai((prev) =>
+                                      prev ? prev.filter((_, idx) => idx !== index) : null,
+                                    )
+                                  }
+                                >
+                                  Hapus
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="tk-actions-row">
+                            <Button variant="primary" onClick={terapkanKonfirmasi}>
+                              {TEKS_PAKAN.tombolTerapkanUrai}
+                            </Button>
+                            <Button variant="secondary" onClick={() => setKonfirmasiUrai(null)}>
+                              {TEKS_PAKAN.tombolBatalUrai}
+                            </Button>
+                          </div>
+                        </Card>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="tk-pakan-stack">

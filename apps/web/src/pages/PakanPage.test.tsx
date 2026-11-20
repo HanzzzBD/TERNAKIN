@@ -203,7 +203,7 @@ describe("Layar Penyusun Pakan (/app/pakan)", () => {
     });
   });
 
-  it("menampilkan konfirmasi wajib Cek dulu bacaan kami setelah mengurai teks bebas", async () => {
+  it("menambah bahan lewat baris Lainnya dengan konfirmasi wajib Cek dulu bacaan kami", async () => {
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
       const url = typeof input === "string" ? input : input.toString();
       if (url.includes("/v1/referensi")) {
@@ -241,7 +241,9 @@ describe("Layar Penyusun Pakan (/app/pakan)", () => {
       expect(screen.getByText("Jagung kuning giling")).toBeInTheDocument();
     });
 
-    fireEvent.change(screen.getByLabelText("Tulis daftar bahan dan harga"), {
+    // Bahan di luar daftar ditulis lewat baris "Lainnya" di dalam daftar bahan
+    fireEvent.click(screen.getByRole("checkbox", { name: /Lainnya/ }));
+    fireEvent.change(screen.getByLabelText(TEKS_PAKAN.labelInputLainnya), {
       target: { value: "Jagung 6.500 per kg" },
     });
     fireEvent.click(screen.getByRole("button", { name: TEKS_PAKAN.tombolUraiTeks }));
