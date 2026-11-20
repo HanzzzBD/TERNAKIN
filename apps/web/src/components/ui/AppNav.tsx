@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router";
-import { ChatIcon, ClipboardIcon, FeedIcon, HomeIcon, StoreIcon } from "./Icons";
+import { useAkunDemo } from "../../lib/akunDemo";
+import { ChatIcon, ClipboardIcon, FeedIcon, HomeIcon, SproutCoinIcon, StoreIcon } from "./Icons";
 
 export interface NavItem {
   to: string;
@@ -15,6 +16,7 @@ const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
   { to: "/app/catatan", label: "Catatan", icon: <ClipboardIcon size={22} /> },
   { to: "/app/tanya", label: "Kokok", icon: <ChatIcon size={22} /> },
   { to: "/app/toko", label: "Toko", icon: <StoreIcon size={22} /> },
+  { to: "/app/investasi", label: "Investasi", icon: <SproutCoinIcon size={22} /> },
 ];
 
 export interface AppNavProps {
@@ -31,6 +33,14 @@ export function AppNav({
   ariaLabel = "Navigasi utama",
 }: AppNavProps) {
   const isRailCollapsed = variant === "rail" && collapsed;
+  const akun = useAkunDemo();
+  // Untuk peternak, tab Investasi langsung membuka profil peternakannya sendiri
+  const daftarItem =
+    akun?.peran === "peternak"
+      ? items.map((item) =>
+          item.to === "/app/investasi" ? { ...item, to: "/app/peternak" } : item,
+        )
+      : items;
 
   return (
     <nav
@@ -38,7 +48,7 @@ export function AppNav({
       aria-label={ariaLabel}
     >
       <ul className="tk-nav__list">
-        {items.map((item) => (
+        {daftarItem.map((item) => (
           <li key={item.to} className="tk-nav__item">
             <NavLink
               to={item.to}

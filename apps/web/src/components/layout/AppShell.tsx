@@ -4,6 +4,7 @@ import { useSyncStatus } from "../../db/sync";
 import { usePageTransition } from "../../lib/gsapAnimations";
 import { TEKS } from "../../lib/teks";
 import { PwaStatusBar } from "../PwaStatusBar";
+import { AkunMenu } from "./AkunMenu";
 import {
   AppNav,
   Banner,
@@ -178,6 +179,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
             </div>
 
             <div className="tk-shell__topbar-right">
+              <AkunMenu />
               <span className={`tk-net-chip ${statusChipClass}`} role="status" aria-live="polite">
                 {!isOnline ? (
                   <WifiOffIcon size={16} />

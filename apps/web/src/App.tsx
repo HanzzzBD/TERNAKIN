@@ -3,9 +3,13 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import { captureSrcParam } from "./db/db";
 import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
+import { InvestasiDetailPage } from "./pages/InvestasiDetailPage";
+import { InvestasiPage } from "./pages/InvestasiPage";
 import { KokokPage } from "./pages/KokokPage";
 import { LandingPage } from "./pages/LandingPage";
+import { MasukPage } from "./pages/MasukPage";
 import { PakanPage } from "./pages/PakanPage";
+import { PeternakPage } from "./pages/PeternakPage";
 import { PrivasiPage } from "./pages/PrivasiPage";
 import { ProfilPage } from "./pages/ProfilPage";
 import { TokoPage } from "./pages/TokoPage";
@@ -37,6 +41,10 @@ export function App() {
         <Route path="/app/profil" element={<ProfilPage />} />
         <Route path="/app/tanya" element={<KokokPage />} />
         <Route path="/app/toko" element={<TokoPage />} />
+        <Route path="/app/masuk" element={<MasukPage />} />
+        <Route path="/app/investasi" element={<InvestasiPage />} />
+        <Route path="/app/investasi/:id" element={<InvestasiDetailPage />} />
+        <Route path="/app/peternak" element={<PeternakPage />} />
         {DevKomponenPage && (
           <Route
             path="/dev/komponen"
