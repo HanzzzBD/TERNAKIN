@@ -13,6 +13,7 @@ export {
   type TextInputProps,
 } from "./Field";
 export { IconButton, type IconButtonProps } from "./IconButton";
+export { KokokFigure, type KokokFigureProps } from "./KokokFigure";
 export { KokokMascot, type KokokMascotProps, type KokokMascotSize } from "./KokokMascot";
 export {
   AlertOctagonIcon,
@@ -27,6 +28,8 @@ export {
   FeedIcon,
   HomeIcon,
   InstallIcon,
+  LogOutIcon,
+  MapPinIcon,
   MenuIcon,
   MotionIcon,
   PlusIcon,
@@ -34,6 +37,8 @@ export {
   ShieldCheckIcon,
   SidebarCollapseIcon,
   SidebarExpandIcon,
+  SproutCoinIcon,
+  StethoscopeIcon,
   StoreIcon,
   UserIcon,
   WhatsAppIcon,

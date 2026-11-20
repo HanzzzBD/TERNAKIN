@@ -480,7 +480,8 @@ html[data-motion="on"] .tk-accordion__icon {
 /* Varian bilah tab bawah (ponsel dan tablet) */
 .tk-nav--bottom .tk-nav__list {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 4px;
 }
 
@@ -643,6 +644,133 @@ html[data-motion="on"] .tk-rail-tip {
 }
 
 /* Maskot Kokok interaktif (identitas Ternakin) */
+
+/* Kokok bervolume 3D: tepi tebal bertumpuk ala clay + cahaya/bayangan mengikuti siluet */
+.tk-kokok3d {
+  --tk-kokok-edge: color-mix(in srgb, var(--tk-ink) 20%, var(--tk-peach));
+  --tk-kokok-edge-deep: color-mix(in srgb, var(--tk-ink) 32%, var(--tk-peach));
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 900px;
+}
+
+.tk-kokok3d__body {
+  position: relative;
+  display: block;
+  width: var(--tk-kokok-size);
+  height: var(--tk-kokok-size);
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tk-tilt-x, 0deg)) rotateY(var(--tk-tilt-y, 0deg));
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tk-kokok3d__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  /* Garis tepi tipis, dua lapis sisi tebal (ekstrusi), lalu bayangan lembut */
+  filter: drop-shadow(0 0 0.6px color-mix(in srgb, var(--tk-ink) 55%, transparent))
+    drop-shadow(1px 2px 0 var(--tk-kokok-edge)) drop-shadow(1px 2px 0 var(--tk-kokok-edge-deep))
+    drop-shadow(0 14px 16px color-mix(in srgb, var(--tk-ink) 20%, transparent));
+}
+
+/* Lapisan shading: dipotong tepat mengikuti siluet Kokok lewat mask gambar yang sama */
+.tk-kokok3d__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask: url("/images/kokok.webp") center / contain no-repeat;
+  mask: url("/images/kokok.webp") center / contain no-repeat;
+  background:
+    radial-gradient(
+      ellipse 42% 34% at 34% 26%,
+      color-mix(in srgb, var(--tk-white) 55%, transparent) 0%,
+      transparent 100%
+    ),
+    linear-gradient(
+      160deg,
+      transparent 42%,
+      color-mix(in srgb, var(--tk-ink) 14%, transparent) 78%,
+      color-mix(in srgb, var(--tk-ink) 26%, transparent) 100%
+    );
+}
+
+/* Lingkaran matahari di belakang Kokok, versi kecil dari panggung hero */
+.tk-kokok3d--sun {
+  isolation: isolate;
+}
+
+.tk-kokok3d__sun {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(var(--tk-kokok-size) * 0.1);
+  width: calc(var(--tk-kokok-size) * 0.84);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  border: 2px solid var(--tk-ink);
+  background: radial-gradient(
+    circle at 36% 30%,
+    var(--tk-amber-soft) 0%,
+    var(--tk-orange) 60%,
+    var(--tk-orange-dark) 100%
+  );
+  box-shadow:
+    inset 0 calc(var(--tk-kokok-size) * 0.03) 0
+      color-mix(in srgb, var(--tk-white) 30%, transparent),
+    inset 0 calc(var(--tk-kokok-size) * -0.04) 0
+      color-mix(in srgb, var(--tk-orange-dark) 55%, transparent),
+    0 3px 0 var(--tk-ink),
+    0 0 0 calc(var(--tk-kokok-size) * 0.06) color-mix(in srgb, var(--tk-orange) 12%, transparent);
+}
+
+.tk-kokok3d__ground {
+  display: block;
+  width: calc(var(--tk-kokok-size) * 0.56);
+  height: calc(var(--tk-kokok-size) * 0.07);
+  margin-top: calc(var(--tk-kokok-size) * -0.09);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--tk-ink) 34%, transparent),
+    transparent
+  );
+}
+
+html[data-motion="on"] .tk-kokok3d--float .tk-kokok3d__body {
+  animation: tk-kokok-float 4.2s ease-in-out infinite alternate;
+}
+
+html[data-motion="on"] .tk-kokok3d--float .tk-kokok3d__ground {
+  animation: tk-kokok-ground 4.2s ease-in-out infinite alternate;
+}
+
+@keyframes tk-kokok-float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 calc(var(--tk-kokok-size) * -0.045);
+  }
+}
+
+@keyframes tk-kokok-ground {
+  from {
+    scale: 1;
+    opacity: 1;
+  }
+  to {
+    scale: 0.82;
+    opacity: 0.7;
+  }
+}
+
 .tk-kokok-widget {
   display: flex;
   flex-direction: column;
@@ -654,21 +782,44 @@ html[data-motion="on"] .tk-rail-tip {
   align-items: flex-start;
 }
 
+/* Kokok selalu berdiri bebas tanpa kotak latar, seperti figur 3D di hero */
 .tk-kokok-btn {
+  position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
   min-width: var(--tap-min);
   min-height: var(--tap-min);
-  padding: var(--space-2);
-  border-radius: var(--radius-card);
-  border: 2px solid var(--tk-border-subtle);
-  background: var(--tk-white);
+  padding: 0;
+  border: 0;
+  border-radius: 40%;
+  background: transparent;
   cursor: pointer;
   flex-shrink: 0;
   transition: transform 140ms ease;
+}
+
+/* Label nama sebagai stiker yang sedikit menumpuk kaki Kokok */
+.tk-kokok-btn .tk-kokok-name-tag {
+  position: relative;
+  z-index: 2;
+  margin-top: -14px;
+  transform: rotate(-4deg);
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 2px 0 var(--tk-ink);
+}
+
+.tk-kokok-widget--lg .tk-kokok-name-tag,
+.tk-kokok-widget--xl .tk-kokok-name-tag {
+  position: absolute;
+  bottom: 12%;
+  left: 6%;
+  transform: rotate(-6deg);
+  padding: 4px 12px;
+  font-size: var(--text-sm);
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 3px 0 var(--tk-ink);
 }
 
 .tk-kokok-btn:active {
@@ -677,8 +828,12 @@ html[data-motion="on"] .tk-rail-tip {
 
 @media (hover: hover) {
   .tk-kokok-btn:hover {
-    border-color: var(--tk-orange-dark);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+  }
+
+  .tk-kokok-btn:hover .tk-kokok3d__body {
+    --tk-tilt-y: -10deg;
+    --tk-tilt-x: 6deg;
   }
 }
 
@@ -687,21 +842,6 @@ html[data-motion="on"] .tk-rail-tip {
   object-fit: contain;
   user-select: none;
   pointer-events: none;
-}
-
-.tk-kokok-widget--sm .tk-kokok-mascot__img {
-  width: 48px;
-  height: 48px;
-}
-
-.tk-kokok-widget--md .tk-kokok-mascot__img {
-  width: 88px;
-  height: 88px;
-}
-
-.tk-kokok-widget--lg .tk-kokok-mascot__img {
-  width: 148px;
-  height: 148px;
 }
 
 .tk-kokok-name-tag {
@@ -717,21 +857,26 @@ html[data-motion="on"] .tk-rail-tip {
 }
 
 .tk-kokok-speech {
+  position: relative;
   padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-card);
+  border-radius: 20px 20px 20px 6px;
   background: var(--tk-white);
-  border: 1.5px solid var(--tk-border-subtle);
+  border: 2px solid var(--tk-ink);
+  box-shadow: 0 4px 0 var(--tk-ink);
   color: var(--tk-ink);
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-width: 34ch;
 }
 
 .tk-kokok-speech__text {
   margin: 0;
   font-size: var(--text-sm);
   font-weight: 600;
+  line-height: 1.45;
   color: var(--tk-ink);
+  text-wrap: pretty;
 }
 
 .tk-kokok-speech__hint {
@@ -744,7 +889,7 @@ html[data-motion="on"] .tk-rail-tip {
     transform: translateY(0) rotate(0deg);
   }
   35% {
-    transform: translateY(-8px) rotate(-4deg);
+    transform: translateY(-10px) rotate(-5deg);
   }
   70% {
     transform: translateY(-3px) rotate(3deg);
@@ -755,12 +900,13 @@ html[data-motion="on"] .tk-rail-tip {
 }
 
 .tk-kokok-btn--hop {
-  animation: tk-kokok-hop 360ms ease;
+  animation: tk-kokok-hop 420ms ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .tk-kokok-btn,
-  .tk-kokok-btn--hop {
+  .tk-kokok-btn--hop,
+  .tk-kokok3d__body {
     animation: none;
     transition: none;
   }

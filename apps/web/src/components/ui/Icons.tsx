@@ -256,3 +256,44 @@ export function SidebarCollapseIcon(props: IconProps) {
     </BaseIcon>
   );
 }
+
+export function SproutCoinIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <circle cx="8" cy="15" r="5" />
+      <path d="M8 13v4" />
+      <path d="M15 21v-8" />
+      <path d="M15 13c0-3 2-5 5-5 0 3-2 5-5 5Z" />
+      <path d="M15 15c0-2.2-1.6-4-4-4" />
+    </BaseIcon>
+  );
+}
+
+export function StethoscopeIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M5 3v5a4 4 0 0 0 8 0V3" />
+      <path d="M9 12v3a5 5 0 0 0 10 0v-2" />
+      <circle cx="19" cy="11" r="2" />
+    </BaseIcon>
+  );
+}
+
+export function MapPinIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M12 21s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12Z" />
+      <circle cx="12" cy="9" r="2.5" />
+    </BaseIcon>
+  );
+}
+
+export function LogOutIcon(props: IconProps) {
+  return (
+    <BaseIcon {...props}>
+      <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
+      <path d="M10 17l-5-5 5-5" />
+      <path d="M5 12h11" />
+    </BaseIcon>
+  );
+}

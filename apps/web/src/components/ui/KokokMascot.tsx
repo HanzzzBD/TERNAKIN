@@ -1,6 +1,10 @@
 import { useState } from "react";
+import { KokokFigure } from "./KokokFigure";
 
-export type KokokMascotSize = "sm" | "md" | "lg";
+export type KokokMascotSize = "sm" | "md" | "lg" | "xl";
+
+const UKURAN_PIKSEL: Record<KokokMascotSize, number> = { sm: 48, md: 96, lg: 168, xl: 320 };
+const ALT_KOKOK = "Maskot Kokok, asisten ayam Ternakin";
 
 const PESAN_KOKOK_DEFAULT: readonly string[] = [
   "Kukuruyuk! Saya Kokok, asisten peternak di Ternakin. Ketuk saya lagi untuk tips singkat.",
@@ -40,15 +44,20 @@ export function KokokMascot({
     });
   };
 
+  const piksel = UKURAN_PIKSEL[size];
+  const besar = size === "lg" || size === "xl";
+  // Hero (xl) sudah punya panggung matahari sendiri; ukuran sedang dan besar memakai versi kecil
+  const pakaiMatahari = size === "md" || size === "lg";
+
   if (!interactive) {
     return (
       <div className={`tk-kokok-mascot tk-kokok-mascot--${size} ${className}`.trim()}>
-        <img
-          src="/images/kokok.webp"
-          alt="Maskot Kokok, asisten ayam Ternakin"
-          className="tk-kokok-mascot__img"
-          width={size === "sm" ? 44 : size === "md" ? 96 : 156}
-          height={size === "sm" ? 44 : size === "md" ? 96 : 156}
+        <KokokFigure
+          size={piksel}
+          alt={ALT_KOKOK}
+          grounded={besar}
+          floating={besar}
+          sun={pakaiMatahari}
         />
       </div>
     );
@@ -63,12 +72,12 @@ export function KokokMascot({
         onClick={handleInteraksi}
         onAnimationEnd={() => setSedangSapa(false)}
       >
-        <img
-          src="/images/kokok.webp"
-          alt="Maskot Kokok, asisten ayam Ternakin"
-          className="tk-kokok-mascot__img"
-          width={size === "sm" ? 48 : size === "md" ? 96 : 156}
-          height={size === "sm" ? 48 : size === "md" ? 96 : 156}
+        <KokokFigure
+          size={piksel}
+          alt={ALT_KOKOK}
+          grounded={besar}
+          floating={besar}
+          sun={pakaiMatahari}
         />
         <span className="tk-kokok-name-tag">Kokok</span>
       </button>
@@ -76,7 +85,6 @@ export function KokokMascot({
       {showBubble && (
         <div className="tk-kokok-speech" role="status" aria-live="polite">
           <p className="tk-kokok-speech__text">“{pesanAktif}”</p>
-          <span className="tk-kokok-speech__hint">Ketuk Kokok untuk ganti pesan</span>
         </div>
       )}
     </div>
