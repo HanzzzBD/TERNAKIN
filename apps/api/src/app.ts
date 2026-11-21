@@ -6,7 +6,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { GalatApi, KesehatanApi } from "@ternakin/shared";
 import { MockLlmAdapter } from "./adapters/mockLlm.js";
+import { DemoPengirimEmail, type PengirimEmail } from "./adapters/pengirimEmail.js";
 import { DemoPengirimOtp, type PengirimOtp } from "./adapters/pengirimOtp.js";
+import type { VerifikasiGoogle } from "./lib/googleIdToken.js";
 import { SharedSolverAdapter } from "./adapters/solverAdapter.js";
 import { SqliteGuidelineRetriever } from "./adapters/sqliteGuidelineRetriever.js";
 import type { GuidelineRetriever, LlmAdapter, SolverAdapter } from "./adapters/types.js";
@@ -41,6 +43,11 @@ export interface CreateAppOptions {
   cookieSesi?: OpsiCookieSesi;
   /** Akun demo bersama untuk juri. Bawaan: aktif. */
   akunDemoAktif?: boolean;
+  /** null = masuk dengan email dimatikan. Bawaan: mode demo (kode tampil di layar). */
+  pengirimEmail?: PengirimEmail | null;
+  /** Pemeriksa ID token Google; null = tombol Google disembunyikan. */
+  verifikasiGoogle?: VerifikasiGoogle | null;
+  googleClientId?: string | null;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
@@ -62,7 +69,26 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   const cookieSesi = options.cookieSesi ?? { aman: false, durasiMs: 30 * 24 * 60 * 60 * 1000 };
 
   app.disable("x-powered-by");
-  app.use(helmet());
+  // Tombol "Masuk dengan Google" memuat skrip dan jendela dari accounts.google.com, dan
+  // memakai popup: CSP dan Cross-Origin-Opener-Policy disesuaikan seperlunya saja.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          "script-src": ["'self'", "https://accounts.google.com/gsi/client"],
+          "style-src": [
+            "'self'",
+            "https:",
+            "'unsafe-inline'",
+            "https://accounts.google.com/gsi/style",
+          ],
+          "frame-src": ["'self'", "https://accounts.google.com/gsi/"],
+          "connect-src": ["'self'", "https://accounts.google.com/gsi/"],
+        },
+      },
+      crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    }),
+  );
   app.use(express.json({ limit: "100kb" }));
 
   app.get("/health", (_req, res) => {
@@ -86,6 +112,10 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       rahasiaOtp,
       cookieSesi,
       akunDemoAktif: options.akunDemoAktif ?? true,
+      pengirimEmail:
+        options.pengirimEmail === undefined ? new DemoPengirimEmail() : options.pengirimEmail,
+      verifikasiGoogle: options.verifikasiGoogle ?? null,
+      googleClientId: options.googleClientId ?? null,
     }),
   );
 

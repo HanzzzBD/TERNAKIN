@@ -13,6 +13,14 @@ const envSchema = z.object({
     .enum(["true", "false"])
     .default("true")
     .transform((v) => v === "true"),
+  // Gmail SMTP untuk kode verifikasi email & reset sandi (App Password, bukan sandi Gmail biasa).
+  SMTP_HOST: z.string().trim().default("smtp.gmail.com"),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(465),
+  SMTP_USER: z.string().trim().default(""),
+  SMTP_PASS: z.string().trim().default(""),
+  SMTP_DARI: z.string().trim().default(""),
+  // OAuth Client ID tipe Web untuk tombol "Masuk dengan Google"; kosong = tombol disembunyikan.
+  GOOGLE_CLIENT_ID: z.string().trim().default(""),
   SESI_BERLAKU_HARI: z.coerce.number().int().min(1).max(365).default(30),
   LLM_PROVIDER: z.enum(["mock", "gemini"]).default("mock"),
   LLM_API_KEY: z.string().trim().default(""),

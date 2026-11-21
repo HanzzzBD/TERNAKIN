@@ -1,48 +1,47 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import {
+  aturPeranRequestSchema,
+  masukDemoRequestSchema,
   mintaOtpRequestSchema,
   normalisasiNomorPonsel,
   samarkanNomorPonsel,
   verifikasiOtpRequestSchema,
+  type AturPeranRequest,
   type GalatApi,
+  type MasukDemoRequest,
   type MintaOtpRequest,
   type MintaOtpResponse,
-  type PenggunaSaya,
   type SesiAkunResponse,
   type VerifikasiOtpRequest,
-  aturPeranRequestSchema,
-  masukDemoRequestSchema,
-  type AturPeranRequest,
-  type MasukDemoRequest,
 } from "@ternakin/shared";
 import type { PengirimOtp } from "../adapters/pengirimOtp.js";
 import {
+  JEDA_KIRIM_ULANG_MS,
+  aturPeranAkun,
   batalkanOtp,
   buatKodeOtp,
-  buatSesi,
   cariAtauBuatPengguna,
+  cariPengguna,
   detikTungguOtp,
   hapusSesi,
   hashKodeOtp,
-  JEDA_KIRIM_ULANG_MS,
-  pindahkanDataTamu,
   simpanOtp,
   verifikasiOtp,
-  aturPeranAkun,
-  cariPengguna,
 } from "../db/akunRepo.js";
-import { AKUN_DEMO_SERVER } from "../db/investasiRepo.js";
 import type { DatabaseContext } from "../db/database.js";
+import { AKUN_DEMO_SERVER } from "../db/investasiRepo.js";
 import { hashSingkatUntukLog } from "../lib/llmGuard.js";
 import { logger } from "../lib/logger.js";
-import { ambilPenggunaSesi, bersihkanPerangkatId, type PenggunaSesi } from "../lib/pemilik.js";
-import { hapusCookieSesi, setelCookieSesi, type OpsiCookieSesi } from "../middleware/sesi.js";
+import { ambilPenggunaSesi } from "../lib/pemilik.js";
+import { keSaya, selesaikanMasuk } from "../lib/sesiMasuk.js";
+import { hapusCookieSesi, type OpsiCookieSesi } from "../middleware/sesi.js";
 import { validate } from "../middleware/validate.js";
+import { pasangRuteEmailGoogle, type DepsEmailGoogle } from "./authEmail.js";
 
 export const BERLAKU_OTP_MS = 5 * 60 * 1000;
 
-export interface AuthRouterDeps {
+export interface AuthRouterDeps extends DepsEmailGoogle {
   /** Akun demo bersama untuk juri (POST /v1/auth/demo). */
   akunDemoAktif: boolean;
   dbCtx: DatabaseContext;
@@ -54,16 +53,6 @@ export interface AuthRouterDeps {
 
 function galat(kode: string, pesan: string, rinci?: Record<string, unknown>): GalatApi {
   return rinci ? { kode, pesan, rinci } : { kode, pesan };
-}
-
-function keSaya(p: PenggunaSesi): PenggunaSaya {
-  return {
-    id: p.id,
-    nomorTersamar: p.nomorPonsel ? samarkanNomorPonsel(p.nomorPonsel) : "",
-    nama: p.nama,
-    peran: p.peran,
-    isDemo: p.isDemo,
-  };
 }
 
 const pesanBatasOtp = galat(
@@ -216,23 +205,11 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       }
 
       const pengguna = cariAtauBuatPengguna(db, nomor, body.peran);
-      const perangkatId = bersihkanPerangkatId(body.perangkatId ?? req.header("x-device-id"));
-      const kandangDipindahkan = perangkatId ? pindahkanDataTamu(db, perangkatId, pengguna.id) : 0;
-
-      // Sesi lama di perangkat ini (bila ada) diganti dengan yang baru.
-      const tokenLama = res.locals.tokenSesi as string | undefined;
-      if (tokenLama) hapusSesi(db, tokenLama);
-
-      const token = buatSesi(db, pengguna.id, deps.cookie.durasiMs);
-      setelCookieSesi(res, token, deps.cookie);
-
-      logger.info(
-        { rute: "/v1/auth/otp/verifikasi", pengguna: pengguna.id, kandangDipindahkan },
-        "Pengguna masuk",
-      );
-
-      const respons: SesiAkunResponse = { pengguna: keSaya(pengguna), kandangDipindahkan };
-      res.status(200).json(respons);
+      selesaikanMasuk(db, res, pengguna, {
+        perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
+        cookie: deps.cookie,
+        rute: "/v1/auth/otp/verifikasi",
+      });
     },
   );
 
@@ -293,12 +270,20 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       res.status(503).json(galat("AKUN_DEMO_BELUM_SIAP", "Akun demo belum disiapkan di server."));
       return;
     }
-    const tokenLama = res.locals.tokenSesi as string | undefined;
-    if (tokenLama) hapusSesi(db, tokenLama);
-    setelCookieSesi(res, buatSesi(db, pengguna.id, deps.cookie.durasiMs), deps.cookie);
-    const respons: SesiAkunResponse = { pengguna: keSaya(pengguna) };
-    res.status(200).json(respons);
+    selesaikanMasuk(db, res, pengguna, { cookie: deps.cookie, rute: "/v1/auth/demo" });
   });
+
+  // GET /v1/auth/konfigurasi — cara masuk yang tersedia, untuk menyusun halaman Masuk.
+  router.get("/konfigurasi", (_req, res) => {
+    res.status(200).json({
+      googleClientId: deps.googleClientId,
+      whatsapp: deps.pengirimOtp !== null,
+      email: deps.pengirimEmail?.mode ?? "nonaktif",
+      akunDemo: deps.akunDemoAktif,
+    });
+  });
+
+  pasangRuteEmailGoogle(router, deps);
 
   return router;
 }

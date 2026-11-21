@@ -2,6 +2,14 @@ import { z } from "zod";
 import {
   adminUpdateHargaRequestSchema,
   ajuanPeluangRequestSchema,
+  daftarEmailRequestSchema,
+  emailSajaRequestSchema,
+  kodeEmailResponseSchema,
+  konfigurasiAuthResponseSchema,
+  masukEmailRequestSchema,
+  masukGoogleRequestSchema,
+  resetSandiRequestSchema,
+  verifikasiEmailRequestSchema,
   aturPeranRequestSchema,
   daftarPeluangResponseSchema,
   izinDataRequestSchema,
@@ -261,6 +269,137 @@ export function buildOpenApiSpec() {
         post: {
           summary: "Mengakhiri sesi di perangkat ini",
           responses: { "200": { description: "Sesi diakhiri" } },
+        },
+      },
+      "/v1/auth/konfigurasi": {
+        get: {
+          summary:
+            "Cara masuk yang aktif: Google (Client ID), WhatsApp, email (smtp/demo/nonaktif), akun demo",
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: {
+                "application/json": { schema: z.toJSONSchema(konfigurasiAuthResponseSchema) },
+              },
+            },
+          },
+        },
+      },
+      "/v1/auth/email/daftar": {
+        post: {
+          summary:
+            "Daftar dengan nama, email, kata sandi, dan peran; kode verifikasi dikirim ke email (201)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(daftarEmailRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(kodeEmailResponseSchema) } },
+            },
+            "409": { description: "Email sudah terdaftar" },
+            "503": { description: "Email belum diatur di server" },
+          },
+        },
+      },
+      "/v1/auth/email/verifikasi": {
+        post: {
+          summary: "Mencocokkan kode verifikasi email lalu langsung masuk (cookie sesi)",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": { schema: z.toJSONSchema(verifikasiEmailRequestSchema) },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "400": { description: "Kode salah, kedaluwarsa, atau terlalu banyak percobaan" },
+          },
+        },
+      },
+      "/v1/auth/email/kirim-ulang": {
+        post: {
+          summary: "Kirim ulang kode verifikasi (respons sama walau email tidak terdaftar)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(emailSajaRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(kodeEmailResponseSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/auth/email/masuk": {
+        post: {
+          summary: "Masuk dengan email + kata sandi",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(masukEmailRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "401": { description: "Email atau kata sandi salah" },
+            "403": { description: "Email belum diverifikasi; kode dikirim, info di rinci" },
+          },
+        },
+      },
+      "/v1/auth/email/lupa-sandi": {
+        post: {
+          summary: "Kirim kode atur ulang kata sandi (respons sama walau email tidak terdaftar)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(emailSajaRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(kodeEmailResponseSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/auth/email/reset-sandi": {
+        post: {
+          summary: "Kode benar: simpan kata sandi baru lalu langsung masuk",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(resetSandiRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "400": { description: "Kode salah atau kedaluwarsa" },
+          },
+        },
+      },
+      "/v1/auth/google": {
+        post: {
+          summary:
+            "Masuk dengan Google: ID token diperiksa server (tanda tangan, aud, iss, exp, email terverifikasi)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(masukGoogleRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "401": { description: "Token Google tidak sah" },
+            "503": { description: "GOOGLE_CLIENT_ID belum diatur" },
+          },
         },
       },
       "/v1/auth/peran": {

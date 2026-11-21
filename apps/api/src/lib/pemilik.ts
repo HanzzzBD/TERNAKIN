@@ -17,6 +17,8 @@ export interface PenggunaSesi {
   /** Peran aplikasi; null = belum memilih. */
   peran: "peternak" | "pengguna" | null;
   nama: string | null;
+  /** Email akun (masuk dengan email/Google); null untuk akun WhatsApp saja. */
+  email: string | null;
   isDemo: boolean;
 }
 

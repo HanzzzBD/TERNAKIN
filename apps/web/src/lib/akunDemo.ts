@@ -4,9 +4,9 @@ import type { PeranAkun } from "@ternakin/shared";
  * Info tampilan akun demo bersama untuk juri. Sesinya sungguhan di server (POST /v1/auth/demo)
  * dan mengikuti aturan peran yang sama dengan akun WhatsApp.
  */
-export const AKUN_DEMO_TAMPIL: Record<PeranAkun, { nama: string }> = {
-  pengguna: { nama: "Rani" },
-  peternak: { nama: "Pak Dedi S." },
+export const AKUN_DEMO_TAMPIL: Record<PeranAkun, { nama: string; email: string; sandi: string }> = {
+  pengguna: { nama: "Rani", email: "pengguna@demo.ternakin.id", sandi: "demo1234" },
+  peternak: { nama: "Pak Dedi S.", email: "peternak@demo.ternakin.id", sandi: "demo1234" },
 };
 
 /** Jarak garis lurus (km) antara dua titik koordinat, rumus haversine. */

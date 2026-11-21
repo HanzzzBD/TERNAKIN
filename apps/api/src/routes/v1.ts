@@ -1,7 +1,9 @@
 import { Router } from "express";
 import type { GalatApi } from "@ternakin/shared";
 import type { GuidelineRetriever, LlmAdapter, SolverAdapter } from "../adapters/types.js";
+import type { PengirimEmail } from "../adapters/pengirimEmail.js";
 import type { PengirimOtp } from "../adapters/pengirimOtp.js";
+import type { VerifikasiGoogle } from "../lib/googleIdToken.js";
 import type { DatabaseContext } from "../db/database.js";
 import type { OpsiCookieSesi } from "../middleware/sesi.js";
 import { buildOpenApiSpec } from "../openapi.js";
@@ -31,6 +33,9 @@ export interface V1RouterDeps {
   rahasiaOtp: string;
   cookieSesi: OpsiCookieSesi;
   akunDemoAktif: boolean;
+  pengirimEmail: PengirimEmail | null;
+  verifikasiGoogle: VerifikasiGoogle | null;
+  googleClientId: string | null;
 }
 
 export function createV1Router(deps: V1RouterDeps): Router {
@@ -59,6 +64,9 @@ export function createV1Router(deps: V1RouterDeps): Router {
       rahasiaOtp: deps.rahasiaOtp,
       cookie: deps.cookieSesi,
       akunDemoAktif: deps.akunDemoAktif,
+      pengirimEmail: deps.pengirimEmail,
+      verifikasiGoogle: deps.verifikasiGoogle,
+      googleClientId: deps.googleClientId,
     }),
   );
   router.use("/investasi", createInvestasiRouter(deps.dbCtx));

@@ -17,6 +17,7 @@
     "express": "latest",
     "express-rate-limit": "latest",
     "helmet": "latest",
+    "nodemailer": "^10.6.1",
     "pino": "latest",
     "zod": "latest"
   },
@@ -24,6 +25,7 @@
     "@types/better-sqlite3": "latest",
     "@types/express": "latest",
     "@types/node": "latest",
+    "@types/nodemailer": "^8.0.2",
     "@types/supertest": "latest",
     "supertest": "latest",
     "tsx": "latest"

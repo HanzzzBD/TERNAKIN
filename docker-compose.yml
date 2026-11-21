@@ -12,6 +12,12 @@ services:
       FONNTE_TOKEN: ${FONNTE_TOKEN:-}
       SESI_BERLAKU_HARI: ${SESI_BERLAKU_HARI:-30}
       AKUN_DEMO_AKTIF: ${AKUN_DEMO_AKTIF:-true}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_DARI: ${SMTP_DARI:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       LLM_PROVIDER: ${LLM_PROVIDER:-mock}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_MODEL: ${LLM_MODEL:-gemini-3.5-flash-lite}

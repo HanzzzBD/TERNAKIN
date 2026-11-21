@@ -917,3 +917,70 @@
   flex-wrap: wrap;
   margin: var(--space-3) 0;
 }
+
+/* Masuk dengan email: tab, pemisah "atau", tautan teks, tombol Google */
+.tk-masuk-tab {
+  display: inline-flex;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+  padding: 4px;
+  border: 2px solid var(--tk-border-subtle);
+  border-radius: 999px;
+  background: var(--tk-surface-muted);
+}
+
+.tk-masuk-tab__btn {
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--tk-ink);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tk-masuk-tab__btn[aria-selected="true"] {
+  background: var(--tk-white);
+  box-shadow: 0 2px 0 var(--tk-ink);
+}
+
+.tk-masuk-atau {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+  color: var(--tk-ink-muted);
+  font-size: var(--text-sm);
+}
+
+.tk-masuk-atau::before,
+.tk-masuk-atau::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--tk-border-subtle);
+}
+
+.tk-masuk-tautan {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tk-orange-dark);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tk-tombol-google {
+  margin-top: var(--space-3);
+  min-height: 44px;
+}
+
+.tk-tombol-google.is-nonaktif {
+  opacity: 0.6;
+  pointer-events: none;
+}

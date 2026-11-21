@@ -20,6 +20,7 @@ const MIGRATION_001 = path.join(API_ROOT, "migrations", "001_init.sql");
 const MIGRATION_002 = path.join(API_ROOT, "migrations", "002_panduan_embedding.sql");
 const MIGRATION_003 = path.join(API_ROOT, "migrations", "003_akun_otp.sql");
 const MIGRATION_004 = path.join(API_ROOT, "migrations", "004_peran_investasi.sql");
+const MIGRATION_005 = path.join(API_ROOT, "migrations", "005_email_google.sql");
 const DEFAULT_SEED_PELUANG = path.join(API_ROOT, "seed", "peluang_investasi.json");
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
 const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
@@ -98,6 +99,15 @@ export function initDatabase(
   ensureColumn(db, "pengguna", "peran_akun", "TEXT");
   ensureColumn(db, "pengguna", "nama", "TEXT");
   ensureColumn(db, "pengguna", "is_demo", "INTEGER NOT NULL DEFAULT 0");
+  db.exec(fs.readFileSync(MIGRATION_005, "utf-8"));
+  ensureColumn(db, "pengguna", "email", "TEXT");
+  ensureColumn(db, "pengguna", "sandi_hash", "TEXT");
+  ensureColumn(db, "pengguna", "email_terverifikasi", "INTEGER NOT NULL DEFAULT 0");
+  ensureColumn(db, "pengguna", "google_sub", "TEXT");
+  db.exec(
+    "CREATE UNIQUE INDEX IF NOT EXISTS idx_pengguna_email ON pengguna (email) WHERE email IS NOT NULL;" +
+      "CREATE UNIQUE INDEX IF NOT EXISTS idx_pengguna_google ON pengguna (google_sub) WHERE google_sub IS NOT NULL;",
+  );
   ensureColumn(db, "kandang", "bahan_tersedia_json", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "catatan_harian", "dihapus_pada", "TEXT");
   ensureColumn(db, "toko", "kode", "TEXT NOT NULL DEFAULT ''");

@@ -129,9 +129,10 @@ interface PenggunaRow {
   peran_akun: string | null;
   nama: string | null;
   is_demo: number;
+  email: string | null;
 }
 
-const KOLOM_PENGGUNA = "p.id, p.nomor_ponsel, p.peran_akun, p.nama, p.is_demo";
+const KOLOM_PENGGUNA = "p.id, p.nomor_ponsel, p.peran_akun, p.nama, p.is_demo, p.email";
 
 function petakanPengguna(row: PenggunaRow): PenggunaSesi {
   const peran =
@@ -141,6 +142,7 @@ function petakanPengguna(row: PenggunaRow): PenggunaSesi {
     nomorPonsel: row.nomor_ponsel,
     peran,
     nama: row.nama,
+    email: row.email,
     isDemo: row.is_demo === 1,
   };
 }
@@ -185,7 +187,14 @@ export function cariAtauBuatPengguna(
   db.prepare(
     "INSERT INTO pengguna (id, nomor_ponsel, peran, peran_akun, is_demo, dibuat_pada) VALUES (?, ?, 'peternak', ?, 0, ?)",
   ).run(id, nomor, peranDipilih ?? null, new Date().toISOString());
-  return { id, nomorPonsel: nomor, peran: peranDipilih ?? null, nama: null, isDemo: false };
+  return {
+    id,
+    nomorPonsel: nomor,
+    peran: peranDipilih ?? null,
+    nama: null,
+    email: null,
+    isDemo: false,
+  };
 }
 
 export function buatSesi(
@@ -267,6 +276,9 @@ export function hapusAkun(db: Database.Database, penggunaId: string): void {
     db.prepare("DELETE FROM percakapan_kokok WHERE pengguna_id = ?").run(penggunaId);
     db.prepare(
       "DELETE FROM otp_permintaan WHERE nomor_ponsel IN (SELECT nomor_ponsel FROM pengguna WHERE id = ?)",
+    ).run(penggunaId);
+    db.prepare(
+      "DELETE FROM kode_email WHERE email IN (SELECT email FROM pengguna WHERE id = ? AND email IS NOT NULL)",
     ).run(penggunaId);
     db.prepare("DELETE FROM pengguna WHERE id = ?").run(penggunaId);
   });

@@ -16,14 +16,10 @@ import {
 } from "../ui";
 import { GalatAkun, aturPeran, keluarAkun, mintaOtp, useAkun, verifikasiOtp } from "../../lib/akun";
 import { BERANDA_PERAN, LABEL_PERAN, namaTampil } from "../../lib/peran";
+import { PilihanPeran } from "./PilihanPeran";
 import { useOnlineStatus } from "../../lib/pwa";
 
 type Tahap = "nomor" | "kode";
-
-const PENJELASAN_PERAN: Record<PeranAkun, string> = {
-  peternak: "Hitung pakan, catatan harian, toko pakan, tanya Kokok, dan ajukan peluang modal.",
-  pengguna: "Tanya Kokok soal ayam peliharaan dan titip modal ke peternak di sekitar.",
-};
 
 function pesanDari(err: unknown): string {
   return err instanceof GalatAkun ? err.message : "Terjadi kendala. Coba lagi sebentar lagi.";
@@ -43,43 +39,6 @@ function useHitungMundur(): [number, (detik: number) => void] {
 /** Hanya tujuan internal /app agar tidak bisa dipakai mengalihkan ke situs lain. */
 function tujuanAman(lanjut: string | null | undefined): string | null {
   return lanjut && lanjut.startsWith("/app") && !lanjut.startsWith("//") ? lanjut : null;
-}
-
-function PilihanPeran({
-  nilai,
-  onPilih,
-  nama,
-}: {
-  nilai: PeranAkun | null;
-  onPilih: (peran: PeranAkun) => void;
-  nama: string;
-}) {
-  return (
-    <fieldset className="tk-masuk-peran">
-      <legend className="tk-field__label">Saya masuk sebagai</legend>
-      {(["peternak", "pengguna"] as const).map((peran) => (
-        <label
-          key={peran}
-          className={`tk-masuk-peran__opsi ${nilai === peran ? "is-dipilih" : ""}`.trim()}
-        >
-          <input
-            type="radio"
-            name={nama}
-            value={peran}
-            checked={nilai === peran}
-            onChange={() => onPilih(peran)}
-          />
-          <span className="tk-masuk-peran__ikon" aria-hidden="true">
-            {peran === "peternak" ? <HomeIcon size={20} /> : <SproutCoinIcon size={20} />}
-          </span>
-          <span>
-            <strong>{LABEL_PERAN[peran]}</strong>
-            <span className="tk-masuk-peran__teks">{PENJELASAN_PERAN[peran]}</span>
-          </span>
-        </label>
-      ))}
-    </fieldset>
-  );
 }
 
 export function MasukWhatsAppCard({
@@ -226,7 +185,7 @@ export function MasukWhatsAppCard({
         </span>
         <div className="tk-masuk-aktif__text">
           <p className="tk-masuk-aktif__label">
-            {akun.isDemo ? "Akun demo" : "Masuk dengan WhatsApp"} · {LABEL_PERAN[peran]}
+            {akun.isDemo ? "Akun demo" : "Akun Ternakin"} · {LABEL_PERAN[peran]}
           </p>
           <p className="tk-masuk-aktif__nama">{namaTampil(akun)}</p>
         </div>

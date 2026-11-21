@@ -1,7 +1,12 @@
+import { useEffect, useState } from "react";
 import {
   galatApiSchema,
+  kodeEmailResponseSchema,
+  konfigurasiAuthResponseSchema,
   mintaOtpResponseSchema,
   sesiAkunResponseSchema,
+  type KodeEmailResponse,
+  type KonfigurasiAuthResponse,
   type MintaOtpResponse,
   type PeranAkun,
   type SesiAkunResponse,
@@ -17,6 +22,7 @@ export class GalatAkun extends Error {
     pesan: string,
     readonly kode?: string,
     readonly tungguDetik?: number,
+    readonly rinci?: Record<string, unknown>,
   ) {
     super(pesan);
     this.name = "GalatAkun";
@@ -34,6 +40,7 @@ export async function keGalat(res: Response): Promise<GalatAkun> {
         parsed.data.pesan,
         parsed.data.kode,
         typeof tunggu === "number" ? tunggu : undefined,
+        parsed.data.rinci,
       );
     }
   } catch {
@@ -177,16 +184,7 @@ export async function aturPeran(peran: PeranAkun): Promise<void> {
  * tidak boleh ikut tersinkron ke akun demo: hanya diizinkan bila HP belum punya data kandang.
  */
 export async function masukAkunDemo(peran: PeranAkun): Promise<SesiAkunResponse> {
-  const [jumlahKandang, jumlahAntrean] = await Promise.all([
-    db.kandang.count().catch(() => 0),
-    db.outbox.count().catch(() => 0),
-  ]);
-  if (jumlahKandang > 0 || jumlahAntrean > 0) {
-    throw new GalatAkun(
-      "HP ini sudah berisi data kandang Anda. Akun demo dipakai bersama, jadi agar data Anda tidak tercampur, masuklah dengan nomor WhatsApp Anda sendiri.",
-      "ADA_DATA_TAMU",
-    );
-  }
+  await pastikanBolehAkunDemo();
 
   const res = await kirimJson("/v1/auth/demo", { peran });
   if (!res.ok) throw await keGalat(res);
@@ -194,4 +192,123 @@ export async function masukAkunDemo(peran: PeranAkun): Promise<SesiAkunResponse>
   setelAkunLokal(hasil.pengguna);
   if (peran === "peternak") await sinkronkanSampaiSelesai();
   return hasil;
+}
+
+/* ---------- Masuk dengan email + kata sandi, dan Google ---------- */
+
+const DOMAIN_DEMO = "@demo.ternakin.id";
+
+/** Langkah setelah server membuat sesi: simpan status akun lalu tarik data akun. */
+async function setelahMasuk(hasil: SesiAkunResponse): Promise<SesiAkunResponse> {
+  setelAkunLokal(hasil.pengguna);
+  if (hasil.pengguna.peran !== "pengguna") {
+    try {
+      await db.meta.delete("terakhirSinkron");
+    } catch {
+      // Abaikan
+    }
+    await sinkronkanSampaiSelesai();
+  }
+  return hasil;
+}
+
+/** Akun demo dipakai bersama: tolak bila HP sudah berisi data kandang tamu. */
+async function pastikanBolehAkunDemo(): Promise<void> {
+  const [jumlahKandang, jumlahAntrean] = await Promise.all([
+    db.kandang.count().catch(() => 0),
+    db.outbox.count().catch(() => 0),
+  ]);
+  if (jumlahKandang > 0 || jumlahAntrean > 0) {
+    throw new GalatAkun(
+      "HP ini sudah berisi data kandang Anda. Akun demo dipakai bersama, jadi agar data Anda tidak tercampur, daftar atau masuklah dengan akun Anda sendiri.",
+      "ADA_DATA_TAMU",
+    );
+  }
+}
+
+async function postSesi(url: string, body: Record<string, unknown>): Promise<SesiAkunResponse> {
+  const perangkatId = await getOrCreateDeviceId();
+  const res = await kirimJson(url, { ...body, perangkatId });
+  if (!res.ok) throw await keGalat(res);
+  return setelahMasuk(sesiAkunResponseSchema.parse(await res.json()));
+}
+
+async function postKode(url: string, body: Record<string, unknown>): Promise<KodeEmailResponse> {
+  const res = await kirimJson(url, body);
+  if (!res.ok) throw await keGalat(res);
+  return kodeEmailResponseSchema.parse(await res.json());
+}
+
+export function daftarEmail(data: {
+  nama: string;
+  email: string;
+  sandi: string;
+  peran: PeranAkun;
+}): Promise<KodeEmailResponse> {
+  return postKode("/v1/auth/email/daftar", data);
+}
+
+export function verifikasiEmail(email: string, kode: string): Promise<SesiAkunResponse> {
+  return postSesi("/v1/auth/email/verifikasi", { email, kode });
+}
+
+export function kirimUlangKodeEmail(email: string): Promise<KodeEmailResponse> {
+  return postKode("/v1/auth/email/kirim-ulang", { email });
+}
+
+/**
+ * Masuk dengan email + sandi. Bila email belum diverifikasi, server mengirim kode dan menjawab
+ * GalatAkun berkode EMAIL_BELUM_TERVERIFIKASI (rinci berisi info kode).
+ */
+export async function masukEmail(email: string, sandi: string): Promise<SesiAkunResponse> {
+  if (email.trim().toLowerCase().endsWith(DOMAIN_DEMO)) await pastikanBolehAkunDemo();
+  return postSesi("/v1/auth/email/masuk", { email, sandi });
+}
+
+export function lupaSandi(email: string): Promise<KodeEmailResponse> {
+  return postKode("/v1/auth/email/lupa-sandi", { email });
+}
+
+export function resetSandi(
+  email: string,
+  kode: string,
+  sandiBaru: string,
+): Promise<SesiAkunResponse> {
+  return postSesi("/v1/auth/email/reset-sandi", { email, kode, sandiBaru });
+}
+
+export function masukGoogle(credential: string, peran?: PeranAkun): Promise<SesiAkunResponse> {
+  return postSesi("/v1/auth/google", { credential, ...(peran ? { peran } : {}) });
+}
+
+let cacheKonfigurasi: Promise<KonfigurasiAuthResponse> | null = null;
+
+/** Cara masuk yang aktif di server (Google, WhatsApp, email, akun demo). */
+export function muatKonfigurasiAuth(): Promise<KonfigurasiAuthResponse> {
+  cacheKonfigurasi ??= fetch("/v1/auth/konfigurasi")
+    .then(async (res) => konfigurasiAuthResponseSchema.parse(await res.json()))
+    .catch((err: unknown) => {
+      cacheKonfigurasi = null;
+      throw err;
+    });
+  return cacheKonfigurasi;
+}
+
+export function useKonfigurasiAuth(): KonfigurasiAuthResponse | null {
+  const [konfigurasi, setKonfigurasi] = useState<KonfigurasiAuthResponse | null>(null);
+  useEffect(() => {
+    let aktif = true;
+    muatKonfigurasiAuth()
+      .then((k) => aktif && setKonfigurasi(k))
+      .catch(() => {
+        // Offline atau server lama: tampilkan email & WhatsApp tanpa tombol Google.
+        if (aktif) {
+          setKonfigurasi({ googleClientId: null, whatsapp: true, email: "smtp", akunDemo: true });
+        }
+      });
+    return () => {
+      aktif = false;
+    };
+  }, []);
+  return konfigurasi;
 }

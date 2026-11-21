@@ -45,6 +45,7 @@ const PENGGUNA = {
   id: "pengguna-1",
   nomorTersamar: "0812****7890",
   nama: null,
+  emailTersamar: "",
   peran: "peternak" as const,
   isDemo: false,
 };

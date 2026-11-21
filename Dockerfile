@@ -29,6 +29,7 @@ COPY --from=builder /app/apps/api/package.json ./apps/api/
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/migrations ./apps/api/migrations
 COPY --from=builder /app/apps/api/seed ./apps/api/seed
+COPY --from=builder /app/apps/api/assets ./apps/api/assets
 COPY --from=builder /app/apps/web/dist ./apps/web/dist
 
 VOLUME ["/data"]

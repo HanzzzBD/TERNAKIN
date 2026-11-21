@@ -45,5 +45,5 @@ export function usePeranAktif(): InfoPeran {
 
 /** Nama untuk ditampilkan di menu: nama (akun demo / sudah diisi) atau nomor tersamar. */
 export function namaTampil(akun: PenggunaSaya): string {
-  return akun.nama?.trim() || akun.nomorTersamar || "Akun Ternakin";
+  return akun.nama?.trim() || akun.nomorTersamar || akun.emailTersamar || "Akun Ternakin";
 }

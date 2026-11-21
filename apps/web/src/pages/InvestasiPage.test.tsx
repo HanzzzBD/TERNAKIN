@@ -34,6 +34,7 @@ const AKUN: Record<PeranAkun, PenggunaSaya> = {
   pengguna: {
     id: "demo-pengguna",
     nomorTersamar: "",
+    emailTersamar: "",
     nama: "Rani",
     peran: "pengguna",
     isDemo: true,
@@ -41,6 +42,7 @@ const AKUN: Record<PeranAkun, PenggunaSaya> = {
   peternak: {
     id: "demo-peternak",
     nomorTersamar: "",
+    emailTersamar: "",
     nama: "Pak Dedi S.",
     peran: "peternak",
     isDemo: true,
@@ -244,7 +246,10 @@ describe("Modul 5 — Investasi ternak (simulasi, data dari server)", () => {
     ).toBeInTheDocument();
     expect(screen.getByLabelText(/Nomor WhatsApp/)).toBeInTheDocument();
     // Peran Peternak sudah terpilih karena datang dari halaman peternak.
-    expect(screen.getByRole("radio", { name: /Peternak/ })).toBeChecked();
+    // Peran Peternak terpilih di semua pilihan peran (form daftar email dan WhatsApp).
+    for (const radio of screen.getAllByRole("radio", { name: /Peternak/ })) {
+      expect(radio).toBeChecked();
+    }
     expect(screen.getByRole("button", { name: "Masuk sebagai peternak" })).toBeInTheDocument();
   });
 

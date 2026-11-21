@@ -11,6 +11,7 @@ import {
   type MinatSayaItem,
   type PeluangInvestasi,
 } from "@ternakin/shared";
+import { hashSandiSync } from "../lib/sandi.js";
 
 /**
  * Modul 5 — Investasi ternak (SIMULASI). Tidak ada uang yang berpindah; minat hanya dicatat.
@@ -42,9 +43,22 @@ const seedPeluangSchema = z.object({
 
 /** Akun demo bersama untuk juri: tidak punya nomor ponsel dan tidak bisa dihapus. */
 export const AKUN_DEMO_SERVER = {
-  pengguna: { id: "demo-pengguna", nama: "Rani", peran: "pengguna" as const },
-  peternak: { id: "demo-peternak", nama: "Pak Dedi S.", peran: "peternak" as const },
+  pengguna: {
+    id: "demo-pengguna",
+    nama: "Rani",
+    peran: "pengguna" as const,
+    email: "pengguna@demo.ternakin.id",
+  },
+  peternak: {
+    id: "demo-peternak",
+    nama: "Pak Dedi S.",
+    peran: "peternak" as const,
+    email: "peternak@demo.ternakin.id",
+  },
 };
+
+/** Kata sandi akun demo bersama, sengaja ditampilkan di halaman Masuk untuk juri. */
+export const SANDI_AKUN_DEMO = "demo1234";
 
 export function seedInvestasi(db: Database.Database, seedPath: string): void {
   if (!fs.existsSync(seedPath)) return;
@@ -70,6 +84,15 @@ export function seedInvestasi(db: Database.Database, seedPath: string): void {
   db.transaction(() => {
     for (const akun of Object.values(AKUN_DEMO_SERVER)) {
       tambahPengguna.run(akun.id, akun.peran, akun.nama, sekarang);
+      // Email + sandi demo agar juri bisa mengetik di form Masuk; hash dibuat sekali saja.
+      const punyaSandi = db
+        .prepare("SELECT 1 FROM pengguna WHERE id = ? AND sandi_hash IS NOT NULL")
+        .get(akun.id);
+      if (!punyaSandi) {
+        db.prepare(
+          "UPDATE pengguna SET email = ?, sandi_hash = ?, email_terverifikasi = 1 WHERE id = ?",
+        ).run(akun.email, hashSandiSync(SANDI_AKUN_DEMO), akun.id);
+      }
     }
     for (const p of daftar) {
       tambahPengguna.run(p.pemilikDemo, "peternak", p.peternak, sekarang);

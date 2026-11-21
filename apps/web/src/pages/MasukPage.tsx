@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import type { PeranAkun } from "@ternakin/shared";
+import { MasukEmailCard } from "../components/akun/MasukEmailCard";
 import { MasukWhatsAppCard } from "../components/akun/MasukWhatsAppCard";
 import { AppShell } from "../components/layout/AppShell";
 import {
@@ -16,7 +17,7 @@ import {
   WhatsAppIcon,
 } from "../components/ui";
 import { TEKS_INVESTASI } from "../content/investasiContent";
-import { GalatAkun, masukAkunDemo, useAkun } from "../lib/akun";
+import { GalatAkun, masukAkunDemo, useAkun, useKonfigurasiAuth } from "../lib/akun";
 import { AKUN_DEMO_TAMPIL } from "../lib/akunDemo";
 import { BERANDA_PERAN, LABEL_PERAN } from "../lib/peran";
 import { buatTautanWhatsAppTim } from "../lib/wa";
@@ -57,6 +58,7 @@ export function MasukPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const akun = useAkun();
+  const konfigurasi = useKonfigurasiAuth();
   const peranSaran = peranDariParam(params.get("peran"));
   const lanjut = params.get("lanjut");
   const [galatDemo, setGalatDemo] = useState<string | null>(null);
@@ -90,7 +92,23 @@ export function MasukPage() {
         </p>
       </Card>
 
-      <MasukWhatsAppCard peranSaran={peranSaran} lanjut={lanjut} />
+      <MasukEmailCard
+        googleClientId={konfigurasi?.googleClientId ?? null}
+        peranSaran={peranSaran}
+        lanjut={lanjut}
+      />
+
+      {/* Saat sudah masuk, kartu ini menampilkan status akun dan pilihan peran. */}
+      {(akun || konfigurasi?.whatsapp !== false) && (
+        <>
+          {!akun && konfigurasi?.akunDemo !== false && (
+            <p className="tk-masuk-atau" aria-hidden="true">
+              <span>atau</span>
+            </p>
+          )}
+          <MasukWhatsAppCard peranSaran={peranSaran} lanjut={lanjut} />
+        </>
+      )}
 
       {!akun && (
         <section aria-labelledby="judul-akun-demo" className="tk-masuk-section">
@@ -98,7 +116,8 @@ export function MasukPage() {
             Coba akun demo
           </h2>
           <p className="tk-muted tk-prose">
-            Untuk juri dan uji coba. Akun demo dipakai bersama, jadi jangan isi data pribadi.
+            Untuk juri dan uji coba. Klik tombolnya, atau ketik email dan sandi di form Masuk di
+            atas. Akun demo dipakai bersama, jadi jangan isi data pribadi.
           </p>
           {galatDemo && <Banner variant="error">{galatDemo}</Banner>}
           <div className="tk-masuk-grid">
@@ -116,6 +135,16 @@ export function MasukPage() {
                     <p className="tk-masuk-kartu__nama">{AKUN_DEMO_TAMPIL[peran].nama}</p>
                   </div>
                 </div>
+                <dl className="tk-masuk-kartu__cred">
+                  <div>
+                    <dt>Email</dt>
+                    <dd>{AKUN_DEMO_TAMPIL[peran].email}</dd>
+                  </div>
+                  <div>
+                    <dt>Sandi</dt>
+                    <dd>{AKUN_DEMO_TAMPIL[peran].sandi}</dd>
+                  </div>
+                </dl>
                 <ul className="tk-masuk-kartu__list">
                   {INFO_PERAN[peran].bisa.map((b) => (
                     <li key={b}>

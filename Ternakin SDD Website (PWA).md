@@ -52,6 +52,9 @@ Sepuluh tabel cukup untuk seluruh MVP. Setiap catatan milik pengguna memakai ID 
 | panduan\_embedding (tambahan) | dokumen\_id, model, hash\_isi, dimensi, vektor | Indeks RAG; hanya panduan baru atau berubah yang di-embed ulang |
 | otp\_permintaan (tambahan) | nomor\_ponsel, kode\_hash, percobaan, terpakai, kedaluwarsa\_pada | Kode OTP disimpan sebagai HMAC, berlaku 5 menit, maksimal 5 percobaan |
 | sesi (tambahan) | token\_hash, pengguna, kedaluwarsa\_pada | Token sesi disimpan sebagai hash SHA-256; berlaku 30 hari (SESI\_BERLAKU\_HARI) |
+| kode\_email (tambahan) | email, tujuan (verifikasi/reset), kode\_hash, percobaan, kedaluwarsa\_pada | Kode email sebagai HMAC, berlaku 15 menit, maksimal 5 percobaan |
+
+Kolom tambahan `pengguna`: `email` (unik), `sandi_hash` (scrypt), `email_terverifikasi`, dan `google_sub` (unik).
 
 Kepemilikan data: baris milik tamu memakai `perangkat_id` berisi ID perangkat; setelah masuk, kolom yang sama berisi `akun:<id pengguna>` dan `pengguna_id` terisi. Kunci berawalan `akun:` hanya berasal dari sesi yang terverifikasi, tidak pernah dari kiriman klien.
 
@@ -72,6 +75,10 @@ Satu API REST berformat JSON, versi `/v1`, dipakai bersama oleh web dan mobile. 
 | POST /v1/kokok/triase | Menilai gejala; mengembalikan urgensi, langkah, dan sumber |
 | GET /v1/toko/rujukan | Toko berurut menurut total biaya untuk suatu campuran |
 | DELETE /v1/akun | Menghapus akun dan seluruh datanya |
+| POST /v1/auth/email/daftar, /email/verifikasi, /email/masuk | Daftar (nama, email, sandi, peran) dengan kode verifikasi lewat Gmail SMTP, lalu masuk dengan email + kata sandi |
+| POST /v1/auth/email/lupa-sandi, /email/reset-sandi | Atur ulang kata sandi dengan kode dari email |
+| POST /v1/auth/google | Masuk dengan Google; ID token diperiksa server dengan kunci publik Google |
+| GET /v1/auth/konfigurasi | Cara masuk yang aktif, untuk menyusun halaman Masuk |
 | POST /v1/auth/otp/minta | Mengirim kode OTP 6 angka ke WhatsApp lewat Fonnte (jeda 60 detik, maksimal 5 per jam per nomor) |
 | POST /v1/auth/otp/verifikasi | Mencocokkan kode, membuat sesi cookie, dan memindahkan data tamu perangkat ke akun |
 | GET /v1/auth/saya, POST /v1/auth/keluar | Status sesi dan keluar |
@@ -137,7 +144,7 @@ Setiap tulisan masuk ke IndexedDB lebih dulu dan masuk antrean outbox; pengguna 
 
 Tiga lapis: lindungi akses, kurangi data, dan batasi apa yang boleh dikatakan AI.
 
-- **Akses:** HTTPS di seluruh jalur, validasi skema di server untuk semua input, pembatasan laju per pengguna dan per alamat. Masuk dengan nomor WhatsApp + OTP (Fonnte); sesi berupa cookie `HttpOnly`, `SameSite=Lax`, dan `Secure` di production, sehingga token tidak bisa dibaca skrip. Tanpa token Fonnte di luar production, kode ditampilkan di layar (mode demo); di production tanpa token, masuk dinonaktifkan. Keluar akun mengirim antrean dulu lalu membersihkan data di perangkat. Kandang dan catatan hanya bisa diubah oleh pemiliknya.
+- **Akses:** HTTPS di seluruh jalur, validasi skema di server untuk semua input, pembatasan laju per pengguna dan per alamat. Cara masuk utama adalah email + kata sandi (scrypt, kode verifikasi dan atur ulang sandi lewat Gmail SMTP dengan App Password) dan tombol "Masuk dengan Google" (ID token diverifikasi server: tanda tangan RS256, `aud`, `iss`, `exp`, email terverifikasi). Saat Google ditautkan ke akun email yang belum terverifikasi, sandi lama dihapus agar akun tidak bisa diambil alih oleh pendaftar palsu. Pesan galat masuk dan lupa sandi dibuat seragam agar tidak bisa dipakai menebak email terdaftar. CSP dan `Cross-Origin-Opener-Policy: same-origin-allow-popups` disesuaikan untuk skrip dan popup Google. WhatsApp + OTP (Fonnte) tetap tersedia sebagai pilihan kedua. Sesi berupa cookie `HttpOnly`, `SameSite=Lax`, dan `Secure` di production, sehingga token tidak bisa dibaca skrip. Tanpa token Fonnte di luar production, kode ditampilkan di layar (mode demo); di production tanpa token, masuk dinonaktifkan. Keluar akun mengirim antrean dulu lalu membersihkan data di perangkat. Kandang dan catatan hanya bisa diubah oleh pemiliknya.
 - **Rahasia:** kunci API LLM hanya ada di server, tidak pernah dikirim ke klien; disimpan sebagai variabel lingkungan.
 - **Privasi:** hanya data yang dibutuhkan; percakapan Kokok disimpan sebagai ringkasan untuk evaluasi; pengguna dapat menghapus seluruh data lewat DELETE /v1/akun.
 - **Batas AI:** tanpa dosis obat dan diagnosis pasti, jawaban selalu bersumber atau mengaku tidak tahu, dan peringkat toko tidak dipengaruhi komisi. Aturan ini diuji dengan kumpulan pertanyaan uji yang dijalankan sebelum setiap rilis.
