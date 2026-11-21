@@ -841,3 +841,79 @@
   align-self: stretch;
   width: 100%;
 }
+
+/* Masuk dengan nomor WhatsApp + OTP */
+.tk-masuk-otp__kode {
+  max-width: 220px;
+  font-size: var(--text-xl);
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-masuk-otp__banner,
+.tk-masuk-otp__konfirmasi {
+  flex: 1 1 100%;
+}
+
+.tk-masuk-otp__konfirmasi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Pilihan peran saat masuk */
+.tk-masuk-peran {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.tk-masuk-peran__opsi {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 2px solid var(--tk-border-subtle);
+  border-radius: 14px;
+  background: var(--tk-white);
+  cursor: pointer;
+}
+
+.tk-masuk-peran__opsi.is-dipilih {
+  border-color: var(--tk-ink);
+  box-shadow: 0 3px 0 var(--tk-ink);
+}
+
+.tk-masuk-peran__opsi input {
+  margin-top: 4px;
+  accent-color: var(--tk-orange);
+}
+
+.tk-masuk-peran__ikon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--tk-peach);
+  color: var(--tk-ink);
+}
+
+.tk-masuk-peran__teks {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
+.tk-masuk-peran--tombol {
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: var(--space-3) 0;
+}

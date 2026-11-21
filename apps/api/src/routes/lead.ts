@@ -2,6 +2,7 @@ import { Router } from "express";
 import { leadCreateRequestSchema, type GalatApi, type LeadCreateRequest } from "@ternakin/shared";
 import type { DatabaseContext } from "../db/database.js";
 import { insertLeadIdempotent } from "../db/tokoRepo.js";
+import { kunciPemilik } from "../lib/pemilik.js";
 import { validate } from "../middleware/validate.js";
 
 export function createLeadRouter(dbCtx: DatabaseContext): Router {
@@ -10,7 +11,7 @@ export function createLeadRouter(dbCtx: DatabaseContext): Router {
   // Tambahan di luar SDD (disetujui tim): POST /v1/lead — idempoten lewat clientId.
   router.post("/", validate(leadCreateRequestSchema), (req, res) => {
     const body = req.body as LeadCreateRequest;
-    const perangkatId = body.perangkatId ?? req.header("x-device-id") ?? null;
+    const perangkatId = kunciPemilik(res, body.perangkatId, req.header("x-device-id"));
 
     const ok = insertLeadIdempotent(dbCtx.db, {
       clientId: body.clientId,

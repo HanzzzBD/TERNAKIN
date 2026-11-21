@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Router, type Response } from "express";
 import {
   pakanHitungRequestSchema,
   pakanJelaskanRequestSchema,
@@ -23,6 +23,7 @@ import {
   simpanCacheLlm,
 } from "../lib/llmGuard.js";
 import { logger } from "../lib/logger.js";
+import { kunciPemilik } from "../lib/pemilik.js";
 import { llmLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 
@@ -34,16 +35,14 @@ export interface PakanRouterDeps {
   dailyLlmLimit: number;
 }
 
+/** Pemilik untuk batas harian dan riwayat: akun bila sudah masuk, lalu perangkat, lalu alamat IP. */
 function ambilPerangkatId(
+  res: Response,
   bodyPerangkatId: string | undefined,
   headerVal: string | undefined,
   ip: string,
 ): string {
-  const kandidat = bodyPerangkatId ?? headerVal;
-  if (kandidat && kandidat.trim().length > 0) {
-    return kandidat.trim().slice(0, 128);
-  }
-  return `ip:${ip}`;
+  return kunciPemilik(res, bodyPerangkatId, headerVal) ?? `ip:${ip}`;
 }
 
 export function createPakanRouter(deps: PakanRouterDeps): Router {
@@ -54,6 +53,7 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
     try {
       const body = req.body as PakanUraiRequest;
       const perangkatId = ambilPerangkatId(
+        res,
         body.perangkatId,
         req.header("x-device-id"),
         req.ip ?? "lokal",
@@ -141,6 +141,7 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
       try {
         const body = req.body as PakanJelaskanRequest;
         const perangkatId = ambilPerangkatId(
+          res,
           body.perangkatId,
           req.header("x-device-id"),
           req.ip ?? "lokal",

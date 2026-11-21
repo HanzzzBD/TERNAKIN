@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { z } from "zod";
 import { catatanPutRequestSchema, type CatatanPutRequest, type GalatApi } from "@ternakin/shared";
-import { upsertCatatan } from "../db/catatanRepo.js";
+import { pemilikKandang, upsertCatatan } from "../db/catatanRepo.js";
 import type { DatabaseContext } from "../db/database.js";
+import { kunciPemilik } from "../lib/pemilik.js";
 import { validate } from "../middleware/validate.js";
 
 const uuidParamSchema = z.string().uuid();
@@ -23,6 +24,19 @@ export function createCatatanRouter(dbCtx: DatabaseContext): Router {
     }
 
     const body = req.body as CatatanPutRequest;
+
+    // Catatan hanya boleh ditulis oleh pemilik kandangnya (akun atau perangkat x-device-id).
+    const pemilik = kunciPemilik(res, req.header("x-device-id"));
+    const pemilikAda = pemilikKandang(dbCtx.db, body.kandangId);
+    if (pemilikAda && pemilikAda !== pemilik) {
+      const galat: GalatApi = {
+        kode: "KANDANG_BUKAN_MILIK",
+        pesan: "Kandang ini tersimpan atas nama perangkat atau akun lain.",
+      };
+      res.status(403).json(galat);
+      return;
+    }
+
     const tersimpan = upsertCatatan(dbCtx.db, {
       id: idParam.data,
       kandangId: body.kandangId,

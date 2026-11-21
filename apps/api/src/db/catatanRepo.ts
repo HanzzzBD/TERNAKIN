@@ -65,23 +65,47 @@ export function listKandangByDevice(db: Database.Database, perangkatId: string):
   return rows.map(mapKandang);
 }
 
+/**
+ * Pemilik (perangkat_id) sebuah kandang; undefined bila kandang belum ada di server.
+ * Pemilik bisa berupa ID perangkat (mode tamu) atau `akun:<penggunaId>`.
+ */
+export function pemilikKandang(
+  db: Database.Database,
+  kandangId: string,
+): string | null | undefined {
+  const row = db.prepare("SELECT perangkat_id FROM kandang WHERE id = ?").get(kandangId) as
+    { perangkat_id: string | null } | undefined;
+  return row ? row.perangkat_id : undefined;
+}
+
+/**
+ * Menyimpan kandang milik `perangkatId` (kunci pemilik). Mengembalikan null bila kandang dengan
+ * ID yang sama sudah dimiliki pemilik lain, sehingga kandang tidak bisa diambil alih lewat ID.
+ */
 export function upsertKandang(
   db: Database.Database,
   perangkatId: string,
   kandang: Kandang,
-): Kandang {
+): Kandang | null {
   const existing = db.prepare("SELECT * FROM kandang WHERE id = ?").get(kandang.id) as
     KandangRow | undefined;
+
+  if (existing && existing.perangkat_id !== null && existing.perangkat_id !== perangkatId) {
+    return null;
+  }
 
   if (existing && existing.diubah_pada > kandang.diubahPada) {
     return mapKandang(existing);
   }
 
+  const penggunaId = perangkatId.startsWith("akun:") ? perangkatId.slice("akun:".length) : null;
+
   db.prepare(
     `INSERT INTO kandang
-      (id, perangkat_id, nama, jenis_ayam, jumlah_ekor, umur_minggu, lokasi, bahan_tersedia_json, diubah_pada)
-     VALUES (@id, @perangkatId, @nama, @jenisAyam, @jumlahEkor, @umurMinggu, @lokasi, @bahanJson, @diubahPada)
+      (id, pengguna_id, perangkat_id, nama, jenis_ayam, jumlah_ekor, umur_minggu, lokasi, bahan_tersedia_json, diubah_pada)
+     VALUES (@id, @penggunaId, @perangkatId, @nama, @jenisAyam, @jumlahEkor, @umurMinggu, @lokasi, @bahanJson, @diubahPada)
      ON CONFLICT(id) DO UPDATE SET
+       pengguna_id = COALESCE(excluded.pengguna_id, kandang.pengguna_id),
        perangkat_id = excluded.perangkat_id,
        nama = excluded.nama,
        jenis_ayam = excluded.jenis_ayam,
@@ -92,6 +116,7 @@ export function upsertKandang(
        diubah_pada = excluded.diubah_pada`,
   ).run({
     id: kandang.id,
+    penggunaId,
     perangkatId,
     nama: kandang.nama,
     jenisAyam: kandang.jenisAyam,

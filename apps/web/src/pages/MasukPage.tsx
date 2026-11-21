@@ -1,5 +1,7 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useState, type ReactNode } from "react";
+import { useNavigate, useSearchParams } from "react-router";
+import type { PeranAkun } from "@ternakin/shared";
+import { MasukWhatsAppCard } from "../components/akun/MasukWhatsAppCard";
 import { AppShell } from "../components/layout/AppShell";
 import {
   ArrowRightIcon,
@@ -7,26 +9,16 @@ import {
   Button,
   Card,
   CheckIcon,
-  Field,
   HomeIcon,
-  LogOutIcon,
   StethoscopeIcon,
   StoreIcon,
-  TextInput,
   UserIcon,
   WhatsAppIcon,
 } from "../components/ui";
 import { TEKS_INVESTASI } from "../content/investasiContent";
-import {
-  AKUN_DEMO,
-  BERANDA_PERAN,
-  LABEL_PERAN,
-  cocokkanAkunDemo,
-  keluarDemo,
-  masukDemo,
-  useAkunDemo,
-  type PeranAkun,
-} from "../lib/akunDemo";
+import { GalatAkun, masukAkunDemo, useAkun } from "../lib/akun";
+import { AKUN_DEMO_TAMPIL } from "../lib/akunDemo";
+import { BERANDA_PERAN, LABEL_PERAN } from "../lib/peran";
 import { buatTautanWhatsAppTim } from "../lib/wa";
 import "./InvestasiPage.css";
 
@@ -37,11 +29,13 @@ const INFO_PERAN: Record<PeranAkun, { ikon: ReactNode; bisa: readonly string[] }
       "Lihat peluang di peternak terdekat",
       "Periksa data kandang dan hasil dokter hewan",
       "Coba catat minat titip modal",
+      "Tanya Kokok soal ayam peliharaan",
     ],
   },
   peternak: {
     ikon: <HomeIcon size={24} />,
     bisa: [
+      "Hitung pakan, catatan harian, dan toko",
       "Atur izin data catatan harian",
       "Pantau peluang kandang Anda",
       "Ajukan peluang siklus berikutnya",
@@ -55,30 +49,30 @@ function tujuanAman(lanjut: string | null, peran: PeranAkun): string {
   return BERANDA_PERAN[peran];
 }
 
+function peranDariParam(nilai: string | null): PeranAkun | null {
+  return nilai === "peternak" || nilai === "pengguna" ? nilai : null;
+}
+
 export function MasukPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const akun = useAkunDemo();
-  const peranSaran: PeranAkun = params.get("peran") === "peternak" ? "peternak" : "pengguna";
+  const akun = useAkun();
+  const peranSaran = peranDariParam(params.get("peran"));
   const lanjut = params.get("lanjut");
+  const [galatDemo, setGalatDemo] = useState<string | null>(null);
+  const [sedangDemo, setSedangDemo] = useState<PeranAkun | null>(null);
 
-  const [email, setEmail] = useState("");
-  const [sandi, setSandi] = useState("");
-  const [galat, setGalat] = useState<string | null>(null);
-
-  const masukSebagai = (peran: PeranAkun) => {
-    masukDemo(peran);
-    void navigate(tujuanAman(lanjut, peran));
-  };
-
-  const handleMasukManual = (e: FormEvent) => {
-    e.preventDefault();
-    const peran = cocokkanAkunDemo(email, sandi);
-    if (!peran) {
-      setGalat("Email atau kata sandi tidak cocok dengan akun demo di atas.");
-      return;
+  const masukSebagai = async (peran: PeranAkun) => {
+    setGalatDemo(null);
+    setSedangDemo(peran);
+    try {
+      await masukAkunDemo(peran);
+      void navigate(tujuanAman(lanjut, peran));
+    } catch (err) {
+      setGalatDemo(err instanceof GalatAkun ? err.message : "Akun demo belum bisa dibuka.");
+    } finally {
+      setSedangDemo(null);
     }
-    masukSebagai(peran);
   };
 
   const urutanPeran: PeranAkun[] =
@@ -87,48 +81,31 @@ export function MasukPage() {
   return (
     <AppShell pageTitle="Masuk">
       <Card variant="warm" className="tk-inv-hero">
-        <p className="tk-eyebrow">AKUN DEMO · PROTOTIPE</p>
+        <p className="tk-eyebrow">AKUN TERNAKIN</p>
         <h1 className="tk-inv-title">Masuk ke Ternakin</h1>
         <p className="tk-muted tk-prose">
-          Pilih akun demo untuk mencoba Ternakin sebagai pengguna atau peternak. Akun hanya
-          tersimpan di perangkat ini dan bisa diganti kapan saja.
+          Ada dua peran. <strong>Peternak</strong> menghitung pakan, mencatat kandang, bertanya ke
+          Kokok, dan mengajukan peluang modal. <strong>Pengguna</strong> bertanya ke Kokok dan
+          menitipkan modal ke peternak. Tanpa akun, Ternakin tetap bisa dipakai sebagai peternak.
         </p>
       </Card>
 
-      {akun && (
-        <Card className="tk-masuk-aktif">
-          <span className="tk-masuk-aktif__icon" aria-hidden="true">
-            {INFO_PERAN[akun.peran].ikon}
-          </span>
-          <div className="tk-masuk-aktif__text">
-            <p className="tk-masuk-aktif__label">Sedang masuk sebagai</p>
-            <p className="tk-masuk-aktif__nama">
-              {akun.nama} · {LABEL_PERAN[akun.peran]} demo
-            </p>
-          </div>
-          <div className="tk-masuk-aktif__aksi">
-            <Link to={BERANDA_PERAN[akun.peran]} className="tk-btn tk-btn--secondary">
-              Lanjutkan
-            </Link>
-            <Button variant="secondary" iconStart={<LogOutIcon size={18} />} onClick={keluarDemo}>
-              Keluar
-            </Button>
-          </div>
-        </Card>
-      )}
+      <MasukWhatsAppCard peranSaran={peranSaran} lanjut={lanjut} />
 
-      <section aria-labelledby="judul-akun-demo" className="tk-masuk-section">
-        <h2 id="judul-akun-demo" className="tk-inv-h2">
-          {akun ? "Ganti ke akun demo lain" : "Pilih akun demo"}
-        </h2>
-        <div className="tk-masuk-grid">
-          {urutanPeran.map((peran) => {
-            const data = AKUN_DEMO[peran];
-            const sedangDipakai = akun?.peran === peran;
-            return (
+      {!akun && (
+        <section aria-labelledby="judul-akun-demo" className="tk-masuk-section">
+          <h2 id="judul-akun-demo" className="tk-inv-h2">
+            Coba akun demo
+          </h2>
+          <p className="tk-muted tk-prose">
+            Untuk juri dan uji coba. Akun demo dipakai bersama, jadi jangan isi data pribadi.
+          </p>
+          {galatDemo && <Banner variant="error">{galatDemo}</Banner>}
+          <div className="tk-masuk-grid">
+            {urutanPeran.map((peran) => (
               <article
                 key={peran}
-                className={`tk-masuk-kartu ${peran === peranSaran && !akun ? "tk-masuk-kartu--saran" : ""}`.trim()}
+                className={`tk-masuk-kartu ${peran === peranSaran ? "tk-masuk-kartu--saran" : ""}`.trim()}
               >
                 <div className="tk-masuk-kartu__head">
                   <span className="tk-masuk-kartu__icon" aria-hidden="true">
@@ -136,7 +113,7 @@ export function MasukPage() {
                   </span>
                   <div>
                     <h3 className="tk-masuk-kartu__title">{LABEL_PERAN[peran]} demo</h3>
-                    <p className="tk-masuk-kartu__nama">{data.nama}</p>
+                    <p className="tk-masuk-kartu__nama">{AKUN_DEMO_TAMPIL[peran].nama}</p>
                   </div>
                 </div>
                 <ul className="tk-masuk-kartu__list">
@@ -147,59 +124,21 @@ export function MasukPage() {
                     </li>
                   ))}
                 </ul>
-                <dl className="tk-masuk-kartu__cred">
-                  <div>
-                    <dt>Email</dt>
-                    <dd>{data.email}</dd>
-                  </div>
-                  <div>
-                    <dt>Sandi</dt>
-                    <dd>{data.sandi}</dd>
-                  </div>
-                </dl>
                 <Button
                   fullWidth
-                  variant={sedangDipakai ? "secondary" : "primary"}
+                  disabled={sedangDemo !== null}
                   iconEnd={<ArrowRightIcon size={18} />}
-                  onClick={() => masukSebagai(peran)}
+                  onClick={() => void masukSebagai(peran)}
                 >
-                  {sedangDipakai
-                    ? `Buka sebagai ${LABEL_PERAN[peran].toLowerCase()}`
+                  {sedangDemo === peran
+                    ? "Membuka..."
                     : `Masuk sebagai ${LABEL_PERAN[peran].toLowerCase()}`}
                 </Button>
               </article>
-            );
-          })}
-        </div>
-      </section>
-
-      <Card>
-        <h2 className="tk-inv-h2">Masuk dengan email</h2>
-        <form className="tk-inv-form tk-masuk-form" onSubmit={handleMasukManual} noValidate>
-          <Field id="masuk-email" label="Email">
-            <TextInput
-              id="masuk-email"
-              type="email"
-              autoComplete="username"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Field>
-          <Field id="masuk-sandi" label="Kata sandi">
-            <TextInput
-              id="masuk-sandi"
-              type="password"
-              autoComplete="current-password"
-              value={sandi}
-              onChange={(e) => setSandi(e.target.value)}
-            />
-          </Field>
-          {galat && <Banner variant="error">{galat}</Banner>}
-          <Button type="submit" iconEnd={<ArrowRightIcon size={18} />}>
-            Masuk
-          </Button>
-        </form>
-      </Card>
+            ))}
+          </div>
+        </section>
+      )}
 
       <Card>
         <h2 className="tk-inv-h2">Mitra Ternakin</h2>

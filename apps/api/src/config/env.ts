@@ -6,6 +6,14 @@ const envSchema = z.object({
   DATABASE_PATH: z.string().min(1).default("./data/ternakin.sqlite"),
   ADMIN_KEY: z.string().default(""),
   SESSION_SECRET: z.string().default(""),
+  // Token perangkat Fonnte untuk mengirim OTP WhatsApp. Kosong + bukan production = mode demo.
+  FONNTE_TOKEN: z.string().trim().default(""),
+  // Akun demo bersama (Rani/Pak Dedi) untuk juri; matikan saat pilot sungguhan.
+  AKUN_DEMO_AKTIF: z
+    .enum(["true", "false"])
+    .default("true")
+    .transform((v) => v === "true"),
+  SESI_BERLAKU_HARI: z.coerce.number().int().min(1).max(365).default(30),
   LLM_PROVIDER: z.enum(["mock", "gemini"]).default("mock"),
   LLM_API_KEY: z.string().trim().default(""),
   LLM_MODEL: z.string().trim().min(1).default("gemini-3.5-flash-lite"),

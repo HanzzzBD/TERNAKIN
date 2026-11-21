@@ -39,7 +39,8 @@ import {
   type KepercayaanItem,
 } from "../content/landingContent";
 import { animateFloatingPillOpen, useLandingGsap } from "../lib/gsapAnimations";
-import { BERANDA_PERAN, LABEL_PERAN, keluarDemo, useAkunDemo } from "../lib/akunDemo";
+import { keluarAkun } from "../lib/akun";
+import { BERANDA_PERAN, LABEL_PERAN, namaTampil, usePeranAktif } from "../lib/peran";
 import { usePwaInstall } from "../lib/pwa";
 import { TEKS } from "../lib/teks";
 import { buatTautanWhatsAppTim } from "../lib/wa";
@@ -101,7 +102,13 @@ export function LandingPage() {
   }, [pillTerbuka]);
   const [pesanPasang, setPesanPasang] = useState<string | null>(null);
   const { bisaPasangLangsung, isStandalone, isIos, pasangSekarang } = usePwaInstall();
-  const akun = useAkunDemo();
+  const { akun, peran } = usePeranAktif();
+  const keluar = () => {
+    // Bila gagal (mis. offline atau masih ada data belum terkirim), lanjutkan di halaman Masuk.
+    keluarAkun().catch(() => {
+      window.location.assign("/app/masuk");
+    });
+  };
 
   useLandingGsap(rootRef);
 
@@ -258,17 +265,17 @@ export function LandingPage() {
                   {akun ? (
                     <>
                       <Link
-                        to={BERANDA_PERAN[akun.peran]}
+                        to={BERANDA_PERAN[peran]}
                         tabIndex={pillTerbuka ? 0 : -1}
                         className="tk-btn tk-btn--secondary tk-landing-header__cta tk-floating-pill__item"
                       >
-                        {akun.nama} · {LABEL_PERAN[akun.peran]}
+                        {namaTampil(akun)} · {akun.peran ? LABEL_PERAN[akun.peran] : "Pilih peran"}
                       </Link>
                       <button
                         type="button"
                         tabIndex={pillTerbuka ? 0 : -1}
                         className="tk-btn tk-btn--ghost tk-landing-header__cta tk-floating-pill__item"
-                        onClick={keluarDemo}
+                        onClick={keluar}
                       >
                         <LogOutIcon size={18} />
                         <span>Keluar</span>

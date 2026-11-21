@@ -1,0 +1,1073 @@
+[
+  {
+    "id": "pl-ciparay",
+    "pemilikDemo": "demo-peternak",
+    "peternak": "Pak Dedi S.",
+    "namaKandang": "Kandang Sukamaju",
+    "kecamatan": "Ciparay",
+    "wilayah": "Kab. Bandung",
+    "lat": -7.0336,
+    "lng": 107.7247,
+    "pengalamanTahun": 6,
+    "jumlahEkor": 1000,
+    "siklusHari": 32,
+    "status": "dibuka",
+    "hariBerjalan": null,
+    "kebutuhanModal": 32000000,
+    "modalAwal": 19500000,
+    "minimalTitip": 100000,
+    "porsiPemodalPersen": 60,
+    "pemeriksaan": {
+      "dokter": "drh. Rina A. (contoh)",
+      "klinik": "Klinik Hewan Mitra Bandung Timur (contoh)",
+      "tanggal": "2026-11-12",
+      "hasil": "layak",
+      "poin": [
+        "Ventilasi dan kepadatan kandang sesuai untuk 1.000 ekor.",
+        "Program vaksinasi ND dan Gumboro siklus lalu tercatat lengkap.",
+        "Tidak ditemukan tanda penyakit menular saat kunjungan."
+      ]
+    },
+    "siklusLalu": {
+      "mortalitasPersen": 3.1,
+      "bobotPanenKg": 1.9,
+      "fcr": 1.52,
+      "hariPanen": 32
+    },
+    "catatan": [
+      {
+        "hari": 1,
+        "bobotGram": 48,
+        "mortalitasPersen": 0.1,
+        "pakanKg": 16
+      },
+      {
+        "hari": 2,
+        "bobotGram": 56,
+        "mortalitasPersen": 0.2,
+        "pakanKg": 17
+      },
+      {
+        "hari": 3,
+        "bobotGram": 68,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 18
+      },
+      {
+        "hari": 4,
+        "bobotGram": 84,
+        "mortalitasPersen": 0.4,
+        "pakanKg": 19
+      },
+      {
+        "hari": 5,
+        "bobotGram": 102,
+        "mortalitasPersen": 0.5,
+        "pakanKg": 21
+      },
+      {
+        "hari": 6,
+        "bobotGram": 124,
+        "mortalitasPersen": 0.6,
+        "pakanKg": 23
+      },
+      {
+        "hari": 7,
+        "bobotGram": 148,
+        "mortalitasPersen": 0.7,
+        "pakanKg": 25
+      },
+      {
+        "hari": 8,
+        "bobotGram": 176,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 27
+      },
+      {
+        "hari": 9,
+        "bobotGram": 208,
+        "mortalitasPersen": 0.9,
+        "pakanKg": 30
+      },
+      {
+        "hari": 10,
+        "bobotGram": 242,
+        "mortalitasPersen": 1,
+        "pakanKg": 33
+      },
+      {
+        "hari": 11,
+        "bobotGram": 280,
+        "mortalitasPersen": 1.1,
+        "pakanKg": 36
+      },
+      {
+        "hari": 12,
+        "bobotGram": 320,
+        "mortalitasPersen": 1.2,
+        "pakanKg": 39
+      },
+      {
+        "hari": 13,
+        "bobotGram": 364,
+        "mortalitasPersen": 1.3,
+        "pakanKg": 43
+      },
+      {
+        "hari": 14,
+        "bobotGram": 412,
+        "mortalitasPersen": 1.4,
+        "pakanKg": 47
+      },
+      {
+        "hari": 15,
+        "bobotGram": 462,
+        "mortalitasPersen": 1.5,
+        "pakanKg": 51
+      },
+      {
+        "hari": 16,
+        "bobotGram": 516,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 56
+      },
+      {
+        "hari": 17,
+        "bobotGram": 572,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 61
+      },
+      {
+        "hari": 18,
+        "bobotGram": 632,
+        "mortalitasPersen": 1.7,
+        "pakanKg": 66
+      },
+      {
+        "hari": 19,
+        "bobotGram": 696,
+        "mortalitasPersen": 1.8,
+        "pakanKg": 71
+      },
+      {
+        "hari": 20,
+        "bobotGram": 762,
+        "mortalitasPersen": 1.9,
+        "pakanKg": 77
+      },
+      {
+        "hari": 21,
+        "bobotGram": 832,
+        "mortalitasPersen": 2,
+        "pakanKg": 83
+      },
+      {
+        "hari": 22,
+        "bobotGram": 904,
+        "mortalitasPersen": 2.1,
+        "pakanKg": 89
+      },
+      {
+        "hari": 23,
+        "bobotGram": 980,
+        "mortalitasPersen": 2.2,
+        "pakanKg": 95
+      },
+      {
+        "hari": 24,
+        "bobotGram": 1060,
+        "mortalitasPersen": 2.3,
+        "pakanKg": 102
+      },
+      {
+        "hari": 25,
+        "bobotGram": 1142,
+        "mortalitasPersen": 2.4,
+        "pakanKg": 109
+      },
+      {
+        "hari": 26,
+        "bobotGram": 1228,
+        "mortalitasPersen": 2.5,
+        "pakanKg": 116
+      },
+      {
+        "hari": 27,
+        "bobotGram": 1316,
+        "mortalitasPersen": 2.6,
+        "pakanKg": 124
+      },
+      {
+        "hari": 28,
+        "bobotGram": 1408,
+        "mortalitasPersen": 2.7,
+        "pakanKg": 132
+      },
+      {
+        "hari": 29,
+        "bobotGram": 1504,
+        "mortalitasPersen": 2.8,
+        "pakanKg": 140
+      },
+      {
+        "hari": 30,
+        "bobotGram": 1602,
+        "mortalitasPersen": 2.9,
+        "pakanKg": 148
+      },
+      {
+        "hari": 31,
+        "bobotGram": 1704,
+        "mortalitasPersen": 3,
+        "pakanKg": 157
+      },
+      {
+        "hari": 32,
+        "bobotGram": 1808,
+        "mortalitasPersen": 3.1,
+        "pakanKg": 166
+      }
+    ]
+  },
+  {
+    "id": "pl-cileunyi",
+    "pemilikDemo": "demo-peternak-cileunyi",
+    "peternak": "Bu Euis N.",
+    "namaKandang": "Kandang Mekar Tani",
+    "kecamatan": "Cileunyi",
+    "wilayah": "Kab. Bandung",
+    "lat": -6.9396,
+    "lng": 107.7466,
+    "pengalamanTahun": 4,
+    "jumlahEkor": 1500,
+    "siklusHari": 33,
+    "status": "dipelihara",
+    "hariBerjalan": 18,
+    "kebutuhanModal": 48000000,
+    "modalAwal": 48000000,
+    "minimalTitip": 100000,
+    "porsiPemodalPersen": 60,
+    "pemeriksaan": {
+      "dokter": "drh. Bayu P. (contoh)",
+      "klinik": "Praktik Dokter Hewan Mitra Cileunyi (contoh)",
+      "tanggal": "2026-10-28",
+      "hasil": "layak",
+      "poin": [
+        "Kandang panggung dengan alas bersih dan tempat minum otomatis.",
+        "Biosekuriti pintu masuk tersedia (bak celup kaki)."
+      ]
+    },
+    "siklusLalu": {
+      "mortalitasPersen": 4,
+      "bobotPanenKg": 1.85,
+      "fcr": 1.58,
+      "hariPanen": 33
+    },
+    "catatan": [
+      {
+        "hari": 1,
+        "bobotGram": 47,
+        "mortalitasPersen": 0.1,
+        "pakanKg": 24
+      },
+      {
+        "hari": 2,
+        "bobotGram": 55,
+        "mortalitasPersen": 0.2,
+        "pakanKg": 25
+      },
+      {
+        "hari": 3,
+        "bobotGram": 67,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 27
+      },
+      {
+        "hari": 4,
+        "bobotGram": 82,
+        "mortalitasPersen": 0.4,
+        "pakanKg": 28
+      },
+      {
+        "hari": 5,
+        "bobotGram": 100,
+        "mortalitasPersen": 0.5,
+        "pakanKg": 31
+      },
+      {
+        "hari": 6,
+        "bobotGram": 121,
+        "mortalitasPersen": 0.6,
+        "pakanKg": 33
+      },
+      {
+        "hari": 7,
+        "bobotGram": 145,
+        "mortalitasPersen": 0.7,
+        "pakanKg": 36
+      },
+      {
+        "hari": 8,
+        "bobotGram": 173,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 40
+      },
+      {
+        "hari": 9,
+        "bobotGram": 203,
+        "mortalitasPersen": 0.9,
+        "pakanKg": 44
+      },
+      {
+        "hari": 10,
+        "bobotGram": 237,
+        "mortalitasPersen": 1,
+        "pakanKg": 48
+      },
+      {
+        "hari": 11,
+        "bobotGram": 274,
+        "mortalitasPersen": 1.1,
+        "pakanKg": 53
+      },
+      {
+        "hari": 12,
+        "bobotGram": 314,
+        "mortalitasPersen": 1.2,
+        "pakanKg": 58
+      },
+      {
+        "hari": 13,
+        "bobotGram": 357,
+        "mortalitasPersen": 1.3,
+        "pakanKg": 64
+      },
+      {
+        "hari": 14,
+        "bobotGram": 403,
+        "mortalitasPersen": 1.4,
+        "pakanKg": 69
+      },
+      {
+        "hari": 15,
+        "bobotGram": 453,
+        "mortalitasPersen": 1.5,
+        "pakanKg": 76
+      },
+      {
+        "hari": 16,
+        "bobotGram": 505,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 82
+      },
+      {
+        "hari": 17,
+        "bobotGram": 561,
+        "mortalitasPersen": 1.7,
+        "pakanKg": 90
+      },
+      {
+        "hari": 18,
+        "bobotGram": 620,
+        "mortalitasPersen": 1.8,
+        "pakanKg": 97
+      }
+    ]
+  },
+  {
+    "id": "pl-lembang",
+    "pemilikDemo": "demo-peternak-lembang",
+    "peternak": "Kang Asep R.",
+    "namaKandang": "Kandang Cikole",
+    "kecamatan": "Lembang",
+    "wilayah": "Kab. Bandung Barat",
+    "lat": -6.8117,
+    "lng": 107.6175,
+    "pengalamanTahun": 3,
+    "jumlahEkor": 800,
+    "siklusHari": 34,
+    "status": "dibuka",
+    "hariBerjalan": null,
+    "kebutuhanModal": 26000000,
+    "modalAwal": 6200000,
+    "minimalTitip": 100000,
+    "porsiPemodalPersen": 55,
+    "pemeriksaan": {
+      "dokter": "drh. Rina A. (contoh)",
+      "klinik": "Klinik Hewan Mitra Bandung Timur (contoh)",
+      "tanggal": "2026-11-15",
+      "hasil": "layak-dengan-catatan",
+      "poin": [
+        "Suhu malam di Lembang rendah; pemanas DOC wajib disiapkan hari 1–14.",
+        "Catatan harian siklus lalu lengkap 34 dari 34 hari."
+      ]
+    },
+    "siklusLalu": {
+      "mortalitasPersen": 4.6,
+      "bobotPanenKg": 1.82,
+      "fcr": 1.61,
+      "hariPanen": 34
+    },
+    "catatan": [
+      {
+        "hari": 1,
+        "bobotGram": 46,
+        "mortalitasPersen": 0.1,
+        "pakanKg": 13
+      },
+      {
+        "hari": 2,
+        "bobotGram": 54,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 13
+      },
+      {
+        "hari": 3,
+        "bobotGram": 66,
+        "mortalitasPersen": 0.4,
+        "pakanKg": 14
+      },
+      {
+        "hari": 4,
+        "bobotGram": 80,
+        "mortalitasPersen": 0.5,
+        "pakanKg": 15
+      },
+      {
+        "hari": 5,
+        "bobotGram": 98,
+        "mortalitasPersen": 0.7,
+        "pakanKg": 16
+      },
+      {
+        "hari": 6,
+        "bobotGram": 119,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 18
+      },
+      {
+        "hari": 7,
+        "bobotGram": 142,
+        "mortalitasPersen": 0.9,
+        "pakanKg": 19
+      },
+      {
+        "hari": 8,
+        "bobotGram": 169,
+        "mortalitasPersen": 1.1,
+        "pakanKg": 21
+      },
+      {
+        "hari": 9,
+        "bobotGram": 199,
+        "mortalitasPersen": 1.2,
+        "pakanKg": 23
+      },
+      {
+        "hari": 10,
+        "bobotGram": 232,
+        "mortalitasPersen": 1.4,
+        "pakanKg": 25
+      },
+      {
+        "hari": 11,
+        "bobotGram": 268,
+        "mortalitasPersen": 1.5,
+        "pakanKg": 28
+      },
+      {
+        "hari": 12,
+        "bobotGram": 308,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 31
+      },
+      {
+        "hari": 13,
+        "bobotGram": 350,
+        "mortalitasPersen": 1.8,
+        "pakanKg": 33
+      },
+      {
+        "hari": 14,
+        "bobotGram": 395,
+        "mortalitasPersen": 1.9,
+        "pakanKg": 36
+      },
+      {
+        "hari": 15,
+        "bobotGram": 444,
+        "mortalitasPersen": 2,
+        "pakanKg": 40
+      },
+      {
+        "hari": 16,
+        "bobotGram": 495,
+        "mortalitasPersen": 2.2,
+        "pakanKg": 43
+      },
+      {
+        "hari": 17,
+        "bobotGram": 550,
+        "mortalitasPersen": 2.3,
+        "pakanKg": 47
+      },
+      {
+        "hari": 18,
+        "bobotGram": 607,
+        "mortalitasPersen": 2.4,
+        "pakanKg": 51
+      },
+      {
+        "hari": 19,
+        "bobotGram": 668,
+        "mortalitasPersen": 2.6,
+        "pakanKg": 55
+      },
+      {
+        "hari": 20,
+        "bobotGram": 732,
+        "mortalitasPersen": 2.7,
+        "pakanKg": 59
+      },
+      {
+        "hari": 21,
+        "bobotGram": 798,
+        "mortalitasPersen": 2.8,
+        "pakanKg": 64
+      },
+      {
+        "hari": 22,
+        "bobotGram": 868,
+        "mortalitasPersen": 3,
+        "pakanKg": 69
+      },
+      {
+        "hari": 23,
+        "bobotGram": 941,
+        "mortalitasPersen": 3.1,
+        "pakanKg": 74
+      },
+      {
+        "hari": 24,
+        "bobotGram": 1017,
+        "mortalitasPersen": 3.2,
+        "pakanKg": 79
+      },
+      {
+        "hari": 25,
+        "bobotGram": 1096,
+        "mortalitasPersen": 3.4,
+        "pakanKg": 84
+      },
+      {
+        "hari": 26,
+        "bobotGram": 1178,
+        "mortalitasPersen": 3.5,
+        "pakanKg": 90
+      },
+      {
+        "hari": 27,
+        "bobotGram": 1264,
+        "mortalitasPersen": 3.7,
+        "pakanKg": 96
+      },
+      {
+        "hari": 28,
+        "bobotGram": 1352,
+        "mortalitasPersen": 3.8,
+        "pakanKg": 102
+      },
+      {
+        "hari": 29,
+        "bobotGram": 1443,
+        "mortalitasPersen": 3.9,
+        "pakanKg": 108
+      },
+      {
+        "hari": 30,
+        "bobotGram": 1538,
+        "mortalitasPersen": 4.1,
+        "pakanKg": 114
+      },
+      {
+        "hari": 31,
+        "bobotGram": 1635,
+        "mortalitasPersen": 4.2,
+        "pakanKg": 121
+      },
+      {
+        "hari": 32,
+        "bobotGram": 1736,
+        "mortalitasPersen": 4.3,
+        "pakanKg": 128
+      },
+      {
+        "hari": 33,
+        "bobotGram": 1840,
+        "mortalitasPersen": 4.5,
+        "pakanKg": 135
+      },
+      {
+        "hari": 34,
+        "bobotGram": 1946,
+        "mortalitasPersen": 4.6,
+        "pakanKg": 142
+      }
+    ]
+  },
+  {
+    "id": "pl-soreang",
+    "pemilikDemo": "demo-peternak-soreang",
+    "peternak": "Pak Ujang H.",
+    "namaKandang": "Kandang Barokah",
+    "kecamatan": "Soreang",
+    "wilayah": "Kab. Bandung",
+    "lat": -7.0331,
+    "lng": 107.5186,
+    "pengalamanTahun": 2,
+    "jumlahEkor": 600,
+    "siklusHari": 32,
+    "status": "menunggu-pemeriksaan",
+    "hariBerjalan": null,
+    "kebutuhanModal": 19500000,
+    "modalAwal": 0,
+    "minimalTitip": 100000,
+    "porsiPemodalPersen": 60,
+    "pemeriksaan": null,
+    "siklusLalu": {
+      "mortalitasPersen": 5.2,
+      "bobotPanenKg": 1.78,
+      "fcr": 1.64,
+      "hariPanen": 32
+    },
+    "catatan": [
+      {
+        "hari": 1,
+        "bobotGram": 45,
+        "mortalitasPersen": 0.2,
+        "pakanKg": 9
+      },
+      {
+        "hari": 2,
+        "bobotGram": 54,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 10
+      },
+      {
+        "hari": 3,
+        "bobotGram": 65,
+        "mortalitasPersen": 0.5,
+        "pakanKg": 11
+      },
+      {
+        "hari": 4,
+        "bobotGram": 79,
+        "mortalitasPersen": 0.7,
+        "pakanKg": 11
+      },
+      {
+        "hari": 5,
+        "bobotGram": 97,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 12
+      },
+      {
+        "hari": 6,
+        "bobotGram": 117,
+        "mortalitasPersen": 1,
+        "pakanKg": 13
+      },
+      {
+        "hari": 7,
+        "bobotGram": 141,
+        "mortalitasPersen": 1.1,
+        "pakanKg": 14
+      },
+      {
+        "hari": 8,
+        "bobotGram": 168,
+        "mortalitasPersen": 1.3,
+        "pakanKg": 16
+      },
+      {
+        "hari": 9,
+        "bobotGram": 197,
+        "mortalitasPersen": 1.5,
+        "pakanKg": 17
+      },
+      {
+        "hari": 10,
+        "bobotGram": 230,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 19
+      },
+      {
+        "hari": 11,
+        "bobotGram": 266,
+        "mortalitasPersen": 1.8,
+        "pakanKg": 21
+      },
+      {
+        "hari": 12,
+        "bobotGram": 304,
+        "mortalitasPersen": 2,
+        "pakanKg": 23
+      },
+      {
+        "hari": 13,
+        "bobotGram": 346,
+        "mortalitasPersen": 2.1,
+        "pakanKg": 25
+      },
+      {
+        "hari": 14,
+        "bobotGram": 391,
+        "mortalitasPersen": 2.3,
+        "pakanKg": 27
+      },
+      {
+        "hari": 15,
+        "bobotGram": 439,
+        "mortalitasPersen": 2.4,
+        "pakanKg": 30
+      },
+      {
+        "hari": 16,
+        "bobotGram": 490,
+        "mortalitasPersen": 2.6,
+        "pakanKg": 32
+      },
+      {
+        "hari": 17,
+        "bobotGram": 544,
+        "mortalitasPersen": 2.8,
+        "pakanKg": 35
+      },
+      {
+        "hari": 18,
+        "bobotGram": 601,
+        "mortalitasPersen": 2.9,
+        "pakanKg": 38
+      },
+      {
+        "hari": 19,
+        "bobotGram": 661,
+        "mortalitasPersen": 3.1,
+        "pakanKg": 41
+      },
+      {
+        "hari": 20,
+        "bobotGram": 724,
+        "mortalitasPersen": 3.3,
+        "pakanKg": 44
+      },
+      {
+        "hari": 21,
+        "bobotGram": 790,
+        "mortalitasPersen": 3.4,
+        "pakanKg": 47
+      },
+      {
+        "hari": 22,
+        "bobotGram": 859,
+        "mortalitasPersen": 3.6,
+        "pakanKg": 51
+      },
+      {
+        "hari": 23,
+        "bobotGram": 931,
+        "mortalitasPersen": 3.7,
+        "pakanKg": 55
+      },
+      {
+        "hari": 24,
+        "bobotGram": 1007,
+        "mortalitasPersen": 3.9,
+        "pakanKg": 59
+      },
+      {
+        "hari": 25,
+        "bobotGram": 1085,
+        "mortalitasPersen": 4.1,
+        "pakanKg": 63
+      },
+      {
+        "hari": 26,
+        "bobotGram": 1166,
+        "mortalitasPersen": 4.2,
+        "pakanKg": 67
+      },
+      {
+        "hari": 27,
+        "bobotGram": 1251,
+        "mortalitasPersen": 4.4,
+        "pakanKg": 71
+      },
+      {
+        "hari": 28,
+        "bobotGram": 1338,
+        "mortalitasPersen": 4.6,
+        "pakanKg": 75
+      },
+      {
+        "hari": 29,
+        "bobotGram": 1428,
+        "mortalitasPersen": 4.7,
+        "pakanKg": 80
+      },
+      {
+        "hari": 30,
+        "bobotGram": 1522,
+        "mortalitasPersen": 4.9,
+        "pakanKg": 85
+      },
+      {
+        "hari": 31,
+        "bobotGram": 1618,
+        "mortalitasPersen": 5,
+        "pakanKg": 90
+      },
+      {
+        "hari": 32,
+        "bobotGram": 1718,
+        "mortalitasPersen": 5.2,
+        "pakanKg": 95
+      }
+    ]
+  },
+  {
+    "id": "pl-jatinangor",
+    "pemilikDemo": "demo-peternak-jatinangor",
+    "peternak": "Teh Nining W.",
+    "namaKandang": "Kandang Cibeusi",
+    "kecamatan": "Jatinangor",
+    "wilayah": "Kab. Sumedang",
+    "lat": -6.9306,
+    "lng": 107.772,
+    "pengalamanTahun": 5,
+    "jumlahEkor": 1200,
+    "siklusHari": 33,
+    "status": "dibuka",
+    "hariBerjalan": null,
+    "kebutuhanModal": 38500000,
+    "modalAwal": 30800000,
+    "minimalTitip": 100000,
+    "porsiPemodalPersen": 60,
+    "pemeriksaan": {
+      "dokter": "drh. Bayu P. (contoh)",
+      "klinik": "Praktik Dokter Hewan Mitra Cileunyi (contoh)",
+      "tanggal": "2026-11-10",
+      "hasil": "layak",
+      "poin": [
+        "Riwayat 3 siklus terakhir tercatat di Ternakin tanpa kasus penyakit menular.",
+        "Gudang pakan kering dan tertutup."
+      ]
+    },
+    "siklusLalu": {
+      "mortalitasPersen": 2.8,
+      "bobotPanenKg": 1.95,
+      "fcr": 1.49,
+      "hariPanen": 33
+    },
+    "catatan": [
+      {
+        "hari": 1,
+        "bobotGram": 49,
+        "mortalitasPersen": 0.1,
+        "pakanKg": 19
+      },
+      {
+        "hari": 2,
+        "bobotGram": 58,
+        "mortalitasPersen": 0.2,
+        "pakanKg": 20
+      },
+      {
+        "hari": 3,
+        "bobotGram": 70,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 22
+      },
+      {
+        "hari": 4,
+        "bobotGram": 85,
+        "mortalitasPersen": 0.3,
+        "pakanKg": 23
+      },
+      {
+        "hari": 5,
+        "bobotGram": 104,
+        "mortalitasPersen": 0.4,
+        "pakanKg": 25
+      },
+      {
+        "hari": 6,
+        "bobotGram": 126,
+        "mortalitasPersen": 0.5,
+        "pakanKg": 27
+      },
+      {
+        "hari": 7,
+        "bobotGram": 151,
+        "mortalitasPersen": 0.6,
+        "pakanKg": 30
+      },
+      {
+        "hari": 8,
+        "bobotGram": 180,
+        "mortalitasPersen": 0.7,
+        "pakanKg": 33
+      },
+      {
+        "hari": 9,
+        "bobotGram": 212,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 36
+      },
+      {
+        "hari": 10,
+        "bobotGram": 247,
+        "mortalitasPersen": 0.8,
+        "pakanKg": 40
+      },
+      {
+        "hari": 11,
+        "bobotGram": 285,
+        "mortalitasPersen": 0.9,
+        "pakanKg": 43
+      },
+      {
+        "hari": 12,
+        "bobotGram": 327,
+        "mortalitasPersen": 1,
+        "pakanKg": 48
+      },
+      {
+        "hari": 13,
+        "bobotGram": 372,
+        "mortalitasPersen": 1.1,
+        "pakanKg": 52
+      },
+      {
+        "hari": 14,
+        "bobotGram": 420,
+        "mortalitasPersen": 1.2,
+        "pakanKg": 57
+      },
+      {
+        "hari": 15,
+        "bobotGram": 471,
+        "mortalitasPersen": 1.3,
+        "pakanKg": 62
+      },
+      {
+        "hari": 16,
+        "bobotGram": 526,
+        "mortalitasPersen": 1.4,
+        "pakanKg": 68
+      },
+      {
+        "hari": 17,
+        "bobotGram": 584,
+        "mortalitasPersen": 1.4,
+        "pakanKg": 74
+      },
+      {
+        "hari": 18,
+        "bobotGram": 645,
+        "mortalitasPersen": 1.5,
+        "pakanKg": 80
+      },
+      {
+        "hari": 19,
+        "bobotGram": 710,
+        "mortalitasPersen": 1.6,
+        "pakanKg": 87
+      },
+      {
+        "hari": 20,
+        "bobotGram": 777,
+        "mortalitasPersen": 1.7,
+        "pakanKg": 94
+      },
+      {
+        "hari": 21,
+        "bobotGram": 848,
+        "mortalitasPersen": 1.8,
+        "pakanKg": 101
+      },
+      {
+        "hari": 22,
+        "bobotGram": 922,
+        "mortalitasPersen": 1.9,
+        "pakanKg": 108
+      },
+      {
+        "hari": 23,
+        "bobotGram": 1000,
+        "mortalitasPersen": 2,
+        "pakanKg": 116
+      },
+      {
+        "hari": 24,
+        "bobotGram": 1081,
+        "mortalitasPersen": 2,
+        "pakanKg": 125
+      },
+      {
+        "hari": 25,
+        "bobotGram": 1165,
+        "mortalitasPersen": 2.1,
+        "pakanKg": 133
+      },
+      {
+        "hari": 26,
+        "bobotGram": 1252,
+        "mortalitasPersen": 2.2,
+        "pakanKg": 142
+      },
+      {
+        "hari": 27,
+        "bobotGram": 1343,
+        "mortalitasPersen": 2.3,
+        "pakanKg": 151
+      },
+      {
+        "hari": 28,
+        "bobotGram": 1437,
+        "mortalitasPersen": 2.4,
+        "pakanKg": 161
+      },
+      {
+        "hari": 29,
+        "bobotGram": 1534,
+        "mortalitasPersen": 2.5,
+        "pakanKg": 171
+      },
+      {
+        "hari": 30,
+        "bobotGram": 1634,
+        "mortalitasPersen": 2.5,
+        "pakanKg": 181
+      },
+      {
+        "hari": 31,
+        "bobotGram": 1738,
+        "mortalitasPersen": 2.6,
+        "pakanKg": 192
+      },
+      {
+        "hari": 32,
+        "bobotGram": 1845,
+        "mortalitasPersen": 2.7,
+        "pakanKg": 203
+      },
+      {
+        "hari": 33,
+        "bobotGram": 1955,
+        "mortalitasPersen": 2.8,
+        "pakanKg": 214
+      }
+    ]
+  }
+]

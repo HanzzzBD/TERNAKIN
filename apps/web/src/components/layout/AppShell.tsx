@@ -1,7 +1,8 @@
 import { useRef, useState, type ReactNode } from "react";
-import { NavLink, useLocation } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import { useSyncStatus } from "../../db/sync";
 import { usePageTransition } from "../../lib/gsapAnimations";
+import { usePeranAktif } from "../../lib/peran";
 import { TEKS } from "../../lib/teks";
 import { PwaStatusBar } from "../PwaStatusBar";
 import { AkunMenu } from "./AkunMenu";
@@ -38,6 +39,8 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
   const { isOnline, pendingCount, isSyncing, namaKandangAktif } = useSyncStatus();
   const [isRailCollapsed, setIsRailCollapsed] = useState<boolean>(bacaStatusRailAwal);
   const location = useLocation();
+  const { bolehFiturPeternak, perluPilihPeran } = usePeranAktif();
+  const labelProfil = bolehFiturPeternak ? "Profil kandang" : "Profil akun";
   const contentRef = useRef<HTMLDivElement | null>(null);
 
   usePageTransition(contentRef, location.pathname);
@@ -110,7 +113,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         <div className="tk-shell__rail-footer">
           <NavLink
             to="/app/profil"
-            aria-label={isRailCollapsed ? "Profil kandang" : undefined}
+            aria-label={isRailCollapsed ? labelProfil : undefined}
             className={({ isActive }) =>
               `tk-shell__profil-link ${isActive ? "tk-shell__profil-link--active" : ""} ${isRailCollapsed ? "tk-shell__profil-link--collapsed tk-rail-tip-host" : ""}`.trim()
             }
@@ -122,7 +125,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
               className={isRailCollapsed ? "tk-rail-tip" : ""}
               aria-hidden={isRailCollapsed ? true : undefined}
             >
-              Profil kandang
+              {labelProfil}
             </span>
           </NavLink>
 
@@ -201,6 +204,22 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
             {!isOnline && (
               <div className="tk-shell__offline">
                 <Banner variant="offline">{TEKS.bannerOffline}</Banner>
+              </div>
+            )}
+
+            {perluPilihPeran && location.pathname !== "/app/masuk" && (
+              <div className="tk-shell__offline">
+                <Banner
+                  variant="info"
+                  title="Pilih peran akun Anda"
+                  action={
+                    <Link to="/app/masuk" className="tk-btn tk-btn--secondary">
+                      Pilih peran
+                    </Link>
+                  }
+                >
+                  Peternak memakai pakan, catatan, dan toko. Pengguna menitipkan modal ke peternak.
+                </Banner>
               </div>
             )}
 

@@ -50,6 +50,10 @@ Sepuluh tabel cukup untuk seluruh MVP. Setiap catatan milik pengguna memakai ID 
 | dokumen\_panduan | id, judul, sumber, isi, versi | Bahan indeks RAG, dikurasi manual |
 | percakapan\_kokok | id, pengguna, ringkasan, urgensi, sumber\_dipakai | Untuk evaluasi, tanpa menyimpan data pribadi berlebih |
 | panduan\_embedding (tambahan) | dokumen\_id, model, hash\_isi, dimensi, vektor | Indeks RAG; hanya panduan baru atau berubah yang di-embed ulang |
+| otp\_permintaan (tambahan) | nomor\_ponsel, kode\_hash, percobaan, terpakai, kedaluwarsa\_pada | Kode OTP disimpan sebagai HMAC, berlaku 5 menit, maksimal 5 percobaan |
+| sesi (tambahan) | token\_hash, pengguna, kedaluwarsa\_pada | Token sesi disimpan sebagai hash SHA-256; berlaku 30 hari (SESI\_BERLAKU\_HARI) |
+
+Kepemilikan data: baris milik tamu memakai `perangkat_id` berisi ID perangkat; setelah masuk, kolom yang sama berisi `akun:<id pengguna>` dan `pengguna_id` terisi. Kunci berawalan `akun:` hanya berasal dari sesi yang terverifikasi, tidak pernah dari kiriman klien.
 
 Di perangkat, IndexedDB menyimpan salinan kandang, catatan\_harian, bahan, harga, toko, dan satu tabel outbox untuk perubahan yang belum terkirim.
 
@@ -68,6 +72,9 @@ Satu API REST berformat JSON, versi `/v1`, dipakai bersama oleh web dan mobile. 
 | POST /v1/kokok/triase | Menilai gejala; mengembalikan urgensi, langkah, dan sumber |
 | GET /v1/toko/rujukan | Toko berurut menurut total biaya untuk suatu campuran |
 | DELETE /v1/akun | Menghapus akun dan seluruh datanya |
+| POST /v1/auth/otp/minta | Mengirim kode OTP 6 angka ke WhatsApp lewat Fonnte (jeda 60 detik, maksimal 5 per jam per nomor) |
+| POST /v1/auth/otp/verifikasi | Mencocokkan kode, membuat sesi cookie, dan memindahkan data tamu perangkat ke akun |
+| GET /v1/auth/saya, POST /v1/auth/keluar | Status sesi dan keluar |
 
 Format galat seragam: `{ "kode": "...", "pesan": "...", "rinci": {...} }` dengan kode HTTP yang sesuai. Pesan ditulis dalam bahasa Indonesia sederhana agar bisa ditampilkan langsung ke pengguna.
 
@@ -98,6 +105,23 @@ Setiap modul memisahkan bagian yang pasti (aturan dan perhitungan) dari bagian y
 
 - Total biaya tiap toko dihitung dari kebutuhan bahan campuran dikali harga toko tersebut. Peringkat murni dari total biaya; status mitra hanya label.
 
+**Peran akun (tambahan, 21 November 2026)**
+
+| Peran | Fitur | Catatan |
+| --- | --- | --- |
+| Peternak | Penyusun pakan, catatan harian, toko, Kokok, mengajukan kandang sebagai peluang modal | Tamu (belum masuk) diperlakukan sebagai peternak sesuai mode tamu PRD |
+| Pengguna | Kokok (untuk ayam peliharaan) dan mencatat minat titip modal ke peternak | Tidak bisa membuka pakan, catatan, dan toko; server menolak dengan kode `KHUSUS_PETERNAK` |
+
+- Peran dipilih saat pertama masuk dengan nomor WhatsApp dan disimpan di `pengguna.peran_akun`. Satu peran per akun, bisa diganti dari Profil (`PUT /v1/auth/peran`); data kandang tetap tersimpan saat berganti peran.
+- Akun demo bersama untuk juri (`POST /v1/auth/demo`, Rani sebagai pengguna dan Pak Dedi sebagai peternak) mengikuti aturan peran yang sama, tidak bisa diganti perannya atau dihapus, dan dapat dimatikan lewat `AKUN_DEMO_AKTIF=false`. Agar data tamu tidak bocor ke akun bersama, akun demo hanya bisa dibuka di perangkat tanpa data kandang tamu.
+
+**Investasi ternak — Modul 5 (SIMULASI)**
+
+- Dokumen Risk Analysis dan Business Model Canvas menunda investasi sungguhan sampai ada mitra berizin OJK dan konsultasi hukum. Karena itu modul ini hanya simulasi: tidak ada uang yang berpindah, pengguna hanya mencatat minat.
+- Peternak mengajukan peluang (`POST /v1/investasi/peluang`) yang selalu dimulai dengan status menunggu pemeriksaan dokter hewan mitra, lalu mengatur izin tampil data catatan harian. Saat izin dimatikan, server tidak mengirim catatan kepada orang lain.
+- Pengguna mencatat minat (`POST /v1/investasi/peluang/{id}/minat`) dengan validasi minimal titip, sisa kebutuhan modal, dan status dibuka. Modal terkumpul dihitung dari modal awal contoh ditambah seluruh minat.
+- Tabel `peluang_investasi` dan `minat_investasi`; lima peluang contoh di-seed dari `apps/api/seed/peluang_investasi.json` dan ditandai sebagai data contoh.
+
 ## Offline dan sinkronisasi
 
 Setiap tulisan masuk ke IndexedDB lebih dulu dan masuk antrean outbox; pengguna tidak pernah menunggu server.
@@ -113,7 +137,7 @@ Setiap tulisan masuk ke IndexedDB lebih dulu dan masuk antrean outbox; pengguna 
 
 Tiga lapis: lindungi akses, kurangi data, dan batasi apa yang boleh dikatakan AI.
 
-- **Akses:** HTTPS di seluruh jalur, sesi bertoken berumur pendek, validasi skema di server untuk semua input, pembatasan laju per pengguna dan per alamat.
+- **Akses:** HTTPS di seluruh jalur, validasi skema di server untuk semua input, pembatasan laju per pengguna dan per alamat. Masuk dengan nomor WhatsApp + OTP (Fonnte); sesi berupa cookie `HttpOnly`, `SameSite=Lax`, dan `Secure` di production, sehingga token tidak bisa dibaca skrip. Tanpa token Fonnte di luar production, kode ditampilkan di layar (mode demo); di production tanpa token, masuk dinonaktifkan. Keluar akun mengirim antrean dulu lalu membersihkan data di perangkat. Kandang dan catatan hanya bisa diubah oleh pemiliknya.
 - **Rahasia:** kunci API LLM hanya ada di server, tidak pernah dikirim ke klien; disimpan sebagai variabel lingkungan.
 - **Privasi:** hanya data yang dibutuhkan; percakapan Kokok disimpan sebagai ringkasan untuk evaluasi; pengguna dapat menghapus seluruh data lewat DELETE /v1/akun.
 - **Batas AI:** tanpa dosis obat dan diagnosis pasti, jawaban selalu bersumber atau mengaku tidak tahu, dan peringkat toko tidak dipengaruhi komisi. Aturan ini diuji dengan kumpulan pertanyaan uji yang dijalankan sebelum setiap rilis.

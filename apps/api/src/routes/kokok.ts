@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { Router } from "express";
+import { Router, type Response } from "express";
 import {
   checkKokokOutputSafety,
   detectUnsafeUserAsk,
@@ -18,6 +18,7 @@ import type { GuidelineChunk, GuidelineRetriever, LlmAdapter } from "../adapters
 import type { DatabaseContext } from "../db/database.js";
 import { catatPemakaianLlm, hashSingkatUntukLog, hitungPemakaianHariIni } from "../lib/llmGuard.js";
 import { logger } from "../lib/logger.js";
+import { AWALAN_AKUN, kunciPemilik } from "../lib/pemilik.js";
 import { llmLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 
@@ -31,16 +32,14 @@ export interface KokokRouterDeps {
   dailyLlmLimit: number;
 }
 
+/** Pemilik untuk batas harian dan riwayat: akun bila sudah masuk, lalu perangkat, lalu alamat IP. */
 function ambilPerangkatId(
+  res: Response,
   bodyPerangkatId: string | undefined,
   headerVal: string | undefined,
   ip: string,
 ): string {
-  const kandidat = bodyPerangkatId ?? headerVal;
-  if (kandidat && kandidat.trim().length > 0) {
-    return kandidat.trim().slice(0, 128);
-  }
-  return `ip:${ip}`;
+  return kunciPemilik(res, bodyPerangkatId, headerVal) ?? `ip:${ip}`;
 }
 
 function petakanSumber(guidelines: readonly GuidelineChunk[]): SumberPanduan[] {
@@ -92,10 +91,11 @@ function simpanRiwayatRingkas(
     .prepare(
       `INSERT INTO percakapan_kokok
          (id, pengguna_id, perangkat_id, ringkasan, urgensi, sumber_dipakai, dibuat_pada)
-       VALUES (?, NULL, ?, ?, ?, ?, ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
     )
     .run(
       respons.id,
+      perangkatId.startsWith(AWALAN_AKUN) ? perangkatId.slice(AWALAN_AKUN.length) : null,
       perangkatId,
       ringkasanTersimpan,
       respons.urgensi,
@@ -112,6 +112,7 @@ export function createKokokRouter(deps: KokokRouterDeps): Router {
     try {
       const body = req.body as KokokTriaseRequest;
       const perangkatId = ambilPerangkatId(
+        res,
         body.perangkatId,
         req.header("x-device-id"),
         req.ip ?? "lokal",

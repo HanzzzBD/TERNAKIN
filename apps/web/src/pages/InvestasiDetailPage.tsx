@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useParams } from "react-router";
-import { formatAngka, formatRupiah } from "@ternakin/shared";
+import { formatAngka, formatRupiah, type PeluangInvestasi } from "@ternakin/shared";
 import {
   DataKandang,
   KartuPemeriksaan,
@@ -18,12 +18,10 @@ import {
   NumberInput,
   ShieldCheckIcon,
 } from "../components/ui";
-import {
-  PELUANG_INVESTASI,
-  TEKS_INVESTASI,
-  type PeluangInvestasi,
-} from "../content/investasiContent";
-import { tambahMinatTitip, useAkunDemo, useMinatTitip } from "../lib/akunDemo";
+import { TEKS_INVESTASI } from "../content/investasiContent";
+import { GalatAkun } from "../lib/akun";
+import { catatMinatTitip, usePeluang } from "../lib/investasi";
+import { usePeranAktif } from "../lib/peran";
 import "./InvestasiPage.css";
 
 function parseRupiah(teks: string): number {
@@ -32,17 +30,15 @@ function parseRupiah(teks: string): number {
 }
 
 function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
-  const akun = useAkunDemo();
-  const minat = useMinatTitip();
+  const { peran } = usePeranAktif();
   const [nominalTeks, setNominalTeks] = useState("");
+  const [sedangKirim, setSedangKirim] = useState(false);
   const [pahamRisiko, setPahamRisiko] = useState(false);
   const [galat, setGalat] = useState<string | null>(null);
   const [berhasil, setBerhasil] = useState<number | null>(null);
 
   const sisa = Math.max(0, peluang.kebutuhanModal - peluang.modalTerkumpul);
-  const minatDiSini = minat
-    .filter((m) => m.peluangId === peluang.id)
-    .reduce((jml, m) => jml + m.nominal, 0);
+  const minatDiSini = peluang.minatSaya;
 
   if (peluang.status === "menunggu-pemeriksaan") {
     return (
@@ -66,24 +62,27 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
     );
   }
 
-  if (!akun) {
+  if (peran === "tamu") {
     return (
       <Card variant="warm" className="tk-inv-cta-card">
-        <p className="tk-inv-cta-card__text">Masuk sebagai pengguna untuk mencoba titip modal.</p>
+        <p className="tk-inv-cta-card__text">
+          Masuk sebagai Pengguna untuk mencatat minat titip modal.
+        </p>
         <Link
           to={`/app/masuk?peran=pengguna&lanjut=/app/investasi/${peluang.id}`}
           className="tk-btn tk-btn--primary"
         >
-          Masuk akun demo
+          Masuk sebagai Pengguna
         </Link>
       </Card>
     );
   }
 
-  if (akun.peran !== "pengguna") {
+  if (peran !== "pengguna") {
     return (
       <Banner variant="info">
-        Titip modal hanya untuk akun pengguna. Anda sedang masuk sebagai peternak.
+        Titip modal hanya untuk akun berperan Pengguna. Ganti peran di halaman Profil bila Anda
+        ingin menitipkan modal.
       </Banner>
     );
   }
@@ -91,7 +90,7 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
   const nominal = parseRupiah(nominalTeks);
   const porsiModal = nominal > 0 ? (nominal / peluang.kebutuhanModal) * 100 : 0;
 
-  const handleKirim = (e: FormEvent) => {
+  const handleKirim = async (e: FormEvent) => {
     e.preventDefault();
     setBerhasil(null);
     if (nominal < peluang.minimalTitip) {
@@ -106,11 +105,18 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
       setGalat("Centang pernyataan risiko terlebih dahulu.");
       return;
     }
-    tambahMinatTitip({ peluangId: peluang.id, nominal });
-    setGalat(null);
-    setBerhasil(nominal);
-    setNominalTeks("");
-    setPahamRisiko(false);
+    setSedangKirim(true);
+    try {
+      await catatMinatTitip(peluang.id, nominal);
+      setGalat(null);
+      setBerhasil(nominal);
+      setNominalTeks("");
+      setPahamRisiko(false);
+    } catch (err) {
+      setGalat(err instanceof GalatAkun ? err.message : "Minat belum tercatat. Coba lagi.");
+    } finally {
+      setSedangKirim(false);
+    }
   };
 
   return (
@@ -122,7 +128,7 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
           Minat Anda di kandang ini: <strong className="tk-num">{formatRupiah(minatDiSini)}</strong>
         </p>
       )}
-      <form onSubmit={handleKirim} className="tk-inv-form" noValidate>
+      <form onSubmit={(e) => void handleKirim(e)} className="tk-inv-form" noValidate>
         <Field
           id="titip-nominal"
           label="Nominal modal"
@@ -159,8 +165,8 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
           </span>
         </label>
 
-        <Button type="submit" iconEnd={<ArrowRightIcon size={18} />}>
-          Catat minat titip modal
+        <Button type="submit" disabled={sedangKirim} iconEnd={<ArrowRightIcon size={18} />}>
+          {sedangKirim ? "Mencatat..." : "Catat minat titip modal"}
         </Button>
       </form>
 
@@ -177,16 +183,32 @@ function FormTitip({ peluang }: { peluang: PeluangInvestasi }) {
 
 export function InvestasiDetailPage() {
   const { id } = useParams();
-  const akun = useAkunDemo();
-  const peluang = PELUANG_INVESTASI.find((p) => p.id === id);
+  const { peran } = usePeranAktif();
+  const { data: peluang, galat, sedangMuat } = usePeluang(id);
 
-  // Peternak hanya boleh melihat kandangnya sendiri, tidak bisa membuka atau mendanai kandang lain
-  if (akun?.peran === "peternak" && id !== akun.peluangMilikId) {
+  if (!peluang) {
+    return (
+      <AppShell pageTitle="Investasi ternak">
+        <Link to="/app/investasi" className="tk-inv-back">
+          ← Semua peluang
+        </Link>
+        {sedangMuat ? (
+          <p className="tk-muted" role="status">
+            Memuat peluang...
+          </p>
+        ) : (
+          <Banner variant="offline">{galat ?? "Peluang tidak ditemukan."}</Banner>
+        )}
+      </AppShell>
+    );
+  }
+
+  // Peternak hanya melihat kandangnya sendiri, tidak membuka atau mendanai kandang lain
+  if (peran === "peternak" && !peluang.milikSaya) {
     return <Navigate to="/app/peternak" replace />;
   }
-  if (!peluang) return <Navigate to="/app/investasi" replace />;
 
-  const milikSendiri = akun?.peran === "peternak";
+  const milikSendiri = peluang.milikSaya;
 
   return (
     <AppShell pageTitle={milikSendiri ? "Kandang saya" : "Investasi ternak"}>

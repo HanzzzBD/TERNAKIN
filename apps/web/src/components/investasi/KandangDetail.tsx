@@ -1,6 +1,4 @@
-import { formatAngka } from "@ternakin/shared";
-import type { PeluangInvestasi } from "../../content/investasiContent";
-import { AKUN_DEMO, useIzinDataPeternak } from "../../lib/akunDemo";
+import { formatAngka, type PeluangInvestasi } from "@ternakin/shared";
 import { Card, ShieldCheckIcon, Sparkline, StethoscopeIcon } from "../ui";
 import { BilahModal, LencanaDokter, StatusPeluangChip } from "./PeluangUi";
 
@@ -86,10 +84,8 @@ export function DataKandang({
   /** Teks untuk peternak pemilik kandang, bukan untuk pengguna. */
   sudutPeternak?: boolean;
 }) {
-  const izinPeternakDemo = useIzinDataPeternak();
-  const izin = peluang.id === AKUN_DEMO.peternak.peluangMilikId ? izinPeternakDemo : true;
-
-  if (!izin) {
+  // Bila izin dimatikan, server tidak mengirim catatan ke orang lain; pemilik melihat pesan ini.
+  if (!peluang.izinData) {
     return (
       <Card>
         <h2 className="tk-inv-h2">Data kandang dari catatan harian</h2>
@@ -117,7 +113,15 @@ export function DataKandang({
             : "Rekam jejak siklus sebelumnya, diisi peternak setiap hari di Ternakin."}
       </p>
 
-      {!berjalan && (
+      {!berjalan && !peluang.siklusLalu && (
+        <p className="tk-muted">
+          {sudutPeternak
+            ? "Belum ada rekam jejak siklus di Ternakin. Catat harian setiap hari agar pengguna bisa melihat perkembangan kandang Anda."
+            : "Peternak ini baru bergabung; rekam jejak siklus belum tersedia."}
+        </p>
+      )}
+
+      {!berjalan && peluang.siklusLalu && (
         <dl className="tk-inv-stats">
           <div>
             <dt>Kematian</dt>
@@ -138,17 +142,19 @@ export function DataKandang({
         </dl>
       )}
 
-      <div className="tk-inv-sparks">
-        <Sparkline judul="Bobot rata-rata" satuan="g" data={titik((t) => t.bobotGram)} />
-        <Sparkline judul="Pakan per hari" satuan="kg" data={titik((t) => t.pakanKg)} />
-        <Sparkline
-          judul="Kematian kumulatif"
-          satuan="%"
-          aksen="hijau"
-          data={titik((t) => t.mortalitasPersen)}
-        />
-      </div>
-      <p className="tk-inv-footnote">Data contoh untuk prototipe.</p>
+      {peluang.catatan.length > 0 && (
+        <div className="tk-inv-sparks">
+          <Sparkline judul="Bobot rata-rata" satuan="g" data={titik((t) => t.bobotGram)} />
+          <Sparkline judul="Pakan per hari" satuan="kg" data={titik((t) => t.pakanKg)} />
+          <Sparkline
+            judul="Kematian kumulatif"
+            satuan="%"
+            aksen="hijau"
+            data={titik((t) => t.mortalitasPersen)}
+          />
+        </div>
+      )}
+      {peluang.isDemo && <p className="tk-inv-footnote">Data contoh untuk prototipe.</p>}
     </Card>
   );
 }

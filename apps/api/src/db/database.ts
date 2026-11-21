@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
+import { seedInvestasi } from "./investasiRepo.js";
 import {
   ambangPeringatanSchema,
   bahanMasterSchema,
@@ -17,6 +18,9 @@ import {
 const API_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const MIGRATION_001 = path.join(API_ROOT, "migrations", "001_init.sql");
 const MIGRATION_002 = path.join(API_ROOT, "migrations", "002_panduan_embedding.sql");
+const MIGRATION_003 = path.join(API_ROOT, "migrations", "003_akun_otp.sql");
+const MIGRATION_004 = path.join(API_ROOT, "migrations", "004_peran_investasi.sql");
+const DEFAULT_SEED_PELUANG = path.join(API_ROOT, "seed", "peluang_investasi.json");
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
 const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
 const DEFAULT_SEED_PANDUAN = path.join(API_ROOT, "seed", "panduan.json");
@@ -88,6 +92,12 @@ export function initDatabase(
   const sql = fs.readFileSync(MIGRATION_001, "utf-8");
   db.exec(sql);
   db.exec(fs.readFileSync(MIGRATION_002, "utf-8"));
+  db.exec(fs.readFileSync(MIGRATION_003, "utf-8"));
+  db.exec(fs.readFileSync(MIGRATION_004, "utf-8"));
+  // Peran aplikasi (peternak/pengguna); kolom lama "peran" tetap untuk peran sistem.
+  ensureColumn(db, "pengguna", "peran_akun", "TEXT");
+  ensureColumn(db, "pengguna", "nama", "TEXT");
+  ensureColumn(db, "pengguna", "is_demo", "INTEGER NOT NULL DEFAULT 0");
   ensureColumn(db, "kandang", "bahan_tersedia_json", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "catatan_harian", "dihapus_pada", "TEXT");
   ensureColumn(db, "toko", "kode", "TEXT NOT NULL DEFAULT ''");
@@ -108,6 +118,8 @@ export function initDatabase(
     const seedPanduanList = z.array(seedPanduanItemSchema).parse(rawPanduan);
     seedPanduan(db, seedPanduanList);
   }
+
+  seedInvestasi(db, DEFAULT_SEED_PELUANG);
 
   return {
     db,

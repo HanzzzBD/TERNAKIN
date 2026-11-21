@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
+import { KhususPeternak } from "./components/akun/KhususPeternak";
 import { captureSrcParam } from "./db/db";
 import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
@@ -35,12 +36,40 @@ export function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privasi" element={<PrivasiPage />} />
-        <Route path="/app" element={<FondasiPage />} />
-        <Route path="/app/pakan" element={<PakanPage />} />
-        <Route path="/app/catatan" element={<CatatanPage />} />
+        <Route
+          path="/app"
+          element={
+            <KhususPeternak alihkanPengguna>
+              <FondasiPage />
+            </KhususPeternak>
+          }
+        />
+        <Route
+          path="/app/pakan"
+          element={
+            <KhususPeternak>
+              <PakanPage />
+            </KhususPeternak>
+          }
+        />
+        <Route
+          path="/app/catatan"
+          element={
+            <KhususPeternak>
+              <CatatanPage />
+            </KhususPeternak>
+          }
+        />
         <Route path="/app/profil" element={<ProfilPage />} />
         <Route path="/app/tanya" element={<KokokPage />} />
-        <Route path="/app/toko" element={<TokoPage />} />
+        <Route
+          path="/app/toko"
+          element={
+            <KhususPeternak>
+              <TokoPage />
+            </KhususPeternak>
+          }
+        />
         <Route path="/app/masuk" element={<MasukPage />} />
         <Route path="/app/investasi" element={<InvestasiPage />} />
         <Route path="/app/investasi/:id" element={<InvestasiDetailPage />} />

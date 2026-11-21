@@ -7,23 +7,15 @@ import {
 } from "@ternakin/shared";
 import { listKandangByDevice, upsertKandang } from "../db/catatanRepo.js";
 import type { DatabaseContext } from "../db/database.js";
+import { kunciPemilik } from "../lib/pemilik.js";
 import { validate } from "../middleware/validate.js";
-
-function ambilPerangkatId(headerVal: string | undefined, bodyVal?: string): string | null {
-  const kandidat = bodyVal ?? headerVal;
-  if (!kandidat || kandidat.trim().length === 0) return null;
-  return kandidat.trim().slice(0, 128);
-}
 
 export function createKandangRouter(dbCtx: DatabaseContext): Router {
   const router = Router();
 
   // Sesuai SDD: GET /v1/kandang
   router.get("/", (req, res) => {
-    const perangkatId = ambilPerangkatId(
-      req.header("x-device-id"),
-      typeof req.query.perangkatId === "string" ? req.query.perangkatId : undefined,
-    );
+    const perangkatId = kunciPemilik(res, req.query.perangkatId, req.header("x-device-id"));
     if (!perangkatId) {
       const galat: GalatApi = {
         kode: "PERANGKAT_TIDAK_ADA",
@@ -40,7 +32,7 @@ export function createKandangRouter(dbCtx: DatabaseContext): Router {
   // Sesuai SDD: POST /v1/kandang
   router.post("/", validate(kandangCreateRequestSchema), (req, res) => {
     const body = req.body as KandangCreateRequest;
-    const perangkatId = ambilPerangkatId(req.header("x-device-id"), body.perangkatId);
+    const perangkatId = kunciPemilik(res, body.perangkatId, req.header("x-device-id"));
     if (!perangkatId) {
       const galat: GalatApi = {
         kode: "PERANGKAT_TIDAK_ADA",
@@ -61,6 +53,15 @@ export function createKandangRouter(dbCtx: DatabaseContext): Router {
       bahanTersedia: body.bahanTersedia ?? [],
       diubahPada: body.diubahPada ?? new Date().toISOString(),
     });
+
+    if (!tersimpan) {
+      const galat: GalatApi = {
+        kode: "KANDANG_BUKAN_MILIK",
+        pesan: "Kandang ini tersimpan atas nama perangkat atau akun lain.",
+      };
+      res.status(403).json(galat);
+      return;
+    }
 
     res.status(200).json({ kandang: tersimpan });
   });

@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import express from "express";
 import helmet from "helmet";
 import fs from "node:fs";
@@ -5,12 +6,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { GalatApi, KesehatanApi } from "@ternakin/shared";
 import { MockLlmAdapter } from "./adapters/mockLlm.js";
+import { DemoPengirimOtp, type PengirimOtp } from "./adapters/pengirimOtp.js";
 import { SharedSolverAdapter } from "./adapters/solverAdapter.js";
 import { SqliteGuidelineRetriever } from "./adapters/sqliteGuidelineRetriever.js";
 import type { GuidelineRetriever, LlmAdapter, SolverAdapter } from "./adapters/types.js";
 import { initDatabase, type DatabaseContext } from "./db/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { generalLimiter } from "./middleware/rateLimit.js";
+import { muatSesi, type OpsiCookieSesi } from "./middleware/sesi.js";
 import { createV1Router } from "./routes/v1.js";
 
 const DEFAULT_WEB_DIST = path.resolve(
@@ -31,6 +34,13 @@ export interface CreateAppOptions {
   staleDays?: number;
   dailyLlmLimit?: number;
   adminKey?: string;
+  /** null = OTP belum diatur. Bawaan: mode demo (untuk pengujian dan pengembangan). */
+  pengirimOtp?: PengirimOtp | null;
+  /** Rahasia HMAC kode OTP; bawaan SESSION_SECRET atau acak per proses. */
+  rahasiaOtp?: string;
+  cookieSesi?: OpsiCookieSesi;
+  /** Akun demo bersama untuk juri. Bawaan: aktif. */
+  akunDemoAktif?: boolean;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
@@ -45,6 +55,11 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   const llmAdapter = options.llmAdapter ?? new MockLlmAdapter();
   const solverAdapter = options.solverAdapter ?? new SharedSolverAdapter(dbCtx, staleDays);
   const guidelineRetriever = options.guidelineRetriever ?? new SqliteGuidelineRetriever(dbCtx.db);
+  const pengirimOtp =
+    options.pengirimOtp === undefined ? new DemoPengirimOtp() : options.pengirimOtp;
+  const rahasiaOtp =
+    options.rahasiaOtp || process.env.SESSION_SECRET || crypto.randomBytes(32).toString("hex");
+  const cookieSesi = options.cookieSesi ?? { aman: false, durasiMs: 30 * 24 * 60 * 60 * 1000 };
 
   app.disable("x-powered-by");
   app.use(helmet());
@@ -58,6 +73,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   app.use(
     "/v1",
     generalLimiter,
+    muatSesi(dbCtx.db),
     createV1Router({
       dbCtx,
       llmAdapter,
@@ -66,6 +82,10 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       staleDays,
       dailyLlmLimit,
       adminKey,
+      pengirimOtp,
+      rahasiaOtp,
+      cookieSesi,
+      akunDemoAktif: options.akunDemoAktif ?? true,
     }),
   );
 

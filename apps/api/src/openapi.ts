@@ -1,6 +1,14 @@
 import { z } from "zod";
 import {
   adminUpdateHargaRequestSchema,
+  ajuanPeluangRequestSchema,
+  aturPeranRequestSchema,
+  daftarPeluangResponseSchema,
+  izinDataRequestSchema,
+  masukDemoRequestSchema,
+  minatInvestasiRequestSchema,
+  minatSayaResponseSchema,
+  peluangInvestasiSchema,
   catatanPutRequestSchema,
   daftarTokoResponseSchema,
   dataReferensiSchema,
@@ -10,14 +18,18 @@ import {
   kokokTriaseRequestSchema,
   kokokTriaseResponseSchema,
   leadCreateRequestSchema,
+  mintaOtpRequestSchema,
+  mintaOtpResponseSchema,
   pakanHitungRequestSchema,
   pakanHitungResultSchema,
   pakanJelaskanRequestSchema,
   pakanJelaskanResponseSchema,
   pakanUraiRequestSchema,
   pakanUraiResponseSchema,
+  sesiAkunResponseSchema,
   sinkronRequestSchema,
   sinkronResponseSchema,
+  verifikasiOtpRequestSchema,
 } from "@ternakin/shared";
 
 export function buildOpenApiSpec() {
@@ -185,8 +197,189 @@ export function buildOpenApiSpec() {
       },
       "/v1/akun": {
         delete: {
-          summary: "Menghapus seluruh data akun atau mode tamu (SDD)",
+          summary:
+            "Menghapus seluruh data akun atau mode tamu (SDD). Dengan sesi: akun ikut dihapus.",
           responses: { "200": { description: "Seluruh data telah dihapus" } },
+        },
+      },
+      "/v1/auth/otp/minta": {
+        post: {
+          summary: "Meminta kode OTP 6 angka lewat WhatsApp (PRD F5)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(mintaOtpRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Kode dikirim (kodeDemo hanya ada pada mode demo)",
+              content: { "application/json": { schema: z.toJSONSchema(mintaOtpResponseSchema) } },
+            },
+            "429": {
+              description: "Terlalu sering; rinci.tungguDetik berisi sisa waktu tunggu",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
+            },
+            "502": { description: "Pengiriman WhatsApp gagal" },
+            "503": { description: "Layanan OTP belum diatur di server" },
+          },
+        },
+      },
+      "/v1/auth/otp/verifikasi": {
+        post: {
+          summary:
+            "Mencocokkan kode, membuat sesi (cookie HttpOnly tk_sesi), dan memindahkan data tamu perangkatId ke akun",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": { schema: z.toJSONSchema(verifikasiOtpRequestSchema) },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Berhasil masuk",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "400": {
+              description: "Kode salah, kedaluwarsa, atau terlalu banyak percobaan",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
+            },
+          },
+        },
+      },
+      "/v1/auth/saya": {
+        get: {
+          summary: "Status sesi saat ini",
+          responses: {
+            "200": {
+              description: "Sudah masuk",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "401": { description: "Belum masuk" },
+          },
+        },
+      },
+      "/v1/auth/keluar": {
+        post: {
+          summary: "Mengakhiri sesi di perangkat ini",
+          responses: { "200": { description: "Sesi diakhiri" } },
+        },
+      },
+      "/v1/auth/peran": {
+        put: {
+          summary:
+            "Memilih atau mengganti peran akun: peternak atau pengguna (data tetap tersimpan)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(aturPeranRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Peran diperbarui",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "403": { description: "Akun demo tidak bisa mengganti peran" },
+          },
+        },
+      },
+      "/v1/auth/demo": {
+        post: {
+          summary:
+            "Masuk ke akun demo bersama untuk juri (AKUN_DEMO_AKTIF); data tamu tidak dipindahkan",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(masukDemoRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Sesi akun demo",
+              content: { "application/json": { schema: z.toJSONSchema(sesiAkunResponseSchema) } },
+            },
+            "404": { description: "Akun demo dimatikan" },
+          },
+        },
+      },
+      "/v1/investasi/peluang": {
+        get: {
+          summary:
+            "[SIMULASI] Daftar peluang investasi ternak; catatan disembunyikan bila izin data dimatikan",
+          responses: {
+            "200": {
+              description: "Daftar peluang",
+              content: {
+                "application/json": { schema: z.toJSONSchema(daftarPeluangResponseSchema) },
+              },
+            },
+          },
+        },
+        post: {
+          summary:
+            "[SIMULASI] Peternak mengajukan peluang (status menunggu pemeriksaan dokter hewan)",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(ajuanPeluangRequestSchema) } },
+          },
+          responses: {
+            "201": { description: "Ajuan dibuat" },
+            "401": { description: "Belum masuk" },
+            "403": { description: "Bukan akun berperan peternak" },
+          },
+        },
+      },
+      "/v1/investasi/peluang/{id}": {
+        get: {
+          summary: "[SIMULASI] Detail satu peluang",
+          responses: {
+            "200": {
+              description: "Detail peluang",
+              content: {
+                "application/json": {
+                  schema: z.toJSONSchema(z.object({ peluang: peluangInvestasiSchema })),
+                },
+              },
+            },
+            "404": { description: "Tidak ditemukan" },
+          },
+        },
+      },
+      "/v1/investasi/peluang/{id}/izin": {
+        put: {
+          summary: "[SIMULASI] Peternak pemilik mengatur izin tampil data catatan harian",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(izinDataRequestSchema) } },
+          },
+          responses: {
+            "200": { description: "Izin diperbarui" },
+            "404": { description: "Bukan milik Anda" },
+          },
+        },
+      },
+      "/v1/investasi/peluang/{id}/minat": {
+        post: {
+          summary: "[SIMULASI] Pengguna mencatat minat titip modal (tanpa uang sungguhan)",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": { schema: z.toJSONSchema(minatInvestasiRequestSchema) },
+            },
+          },
+          responses: {
+            "201": { description: "Minat tercatat" },
+            "400": { description: "Di bawah minimal atau melebihi sisa kebutuhan" },
+            "401": { description: "Belum masuk" },
+            "403": { description: "Bukan akun berperan pengguna" },
+            "409": { description: "Peluang tidak sedang menerima modal" },
+          },
+        },
+      },
+      "/v1/investasi/minat-saya": {
+        get: {
+          summary: "[SIMULASI] Daftar minat titip modal milik pengguna yang masuk",
+          responses: {
+            "200": {
+              description: "Daftar minat",
+              content: { "application/json": { schema: z.toJSONSchema(minatSayaResponseSchema) } },
+            },
+          },
         },
       },
       "/v1/toko": {

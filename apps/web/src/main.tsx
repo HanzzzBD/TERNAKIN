@@ -7,12 +7,14 @@ import "./components/ui/ui.css";
 import "./components/layout/AppShell.css";
 import { captureSrcParam } from "./db/db";
 import { startSyncListeners } from "./db/sync";
+import { muatAkun } from "./lib/akun";
 import { initMotionPreference } from "./lib/motion";
 import { App } from "./App";
 
 initMotionPreference();
 captureSrcParam();
 startSyncListeners();
+void muatAkun();
 
 const rootEl = document.getElementById("root");
 if (!rootEl) {

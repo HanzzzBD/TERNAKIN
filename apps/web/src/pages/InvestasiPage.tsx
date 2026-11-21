@@ -4,13 +4,10 @@ import { formatRupiah } from "@ternakin/shared";
 import { KartuPeluang } from "../components/investasi/PeluangUi";
 import { AppShell } from "../components/layout/AppShell";
 import { Banner, Button, Card, Field, MapPinIcon, ShieldCheckIcon } from "../components/ui";
-import {
-  LOKASI_PILIHAN,
-  PELUANG_INVESTASI,
-  TEKS_INVESTASI,
-  type LokasiPilihanId,
-} from "../content/investasiContent";
-import { hitungJarakKm, useAkunDemo, useMinatTitip } from "../lib/akunDemo";
+import { LOKASI_PILIHAN, TEKS_INVESTASI, type LokasiPilihanId } from "../content/investasiContent";
+import { hitungJarakKm } from "../lib/akunDemo";
+import { useDaftarPeluang, useMinatSaya } from "../lib/investasi";
+import { usePeranAktif } from "../lib/peran";
 import "./InvestasiPage.css";
 
 type Filter = "semua" | "dibuka";
@@ -22,8 +19,9 @@ interface Titik {
 }
 
 export function InvestasiPage() {
-  const akun = useAkunDemo();
-  const minat = useMinatTitip();
+  const { peran } = usePeranAktif();
+  const daftarPeluang = useDaftarPeluang();
+  const minat = useMinatSaya(peran === "pengguna").data ?? [];
   const [lokasiId, setLokasiId] = useState<LokasiPilihanId>("kota-bandung");
   const [titikGps, setTitikGps] = useState<Titik | null>(null);
   const [pesanGps, setPesanGps] = useState<string | null>(null);
@@ -33,13 +31,14 @@ export function InvestasiPage() {
   const titikAsal: Titik = titikGps ?? lokasiPilihan;
 
   const daftar = useMemo(() => {
-    return PELUANG_INVESTASI.filter((p) => filter === "semua" || p.status === "dibuka")
+    return (daftarPeluang.data ?? [])
+      .filter((p) => filter === "semua" || p.status === "dibuka")
       .map((p) => ({
         peluang: p,
         jarak: hitungJarakKm(titikAsal.lat, titikAsal.lng, p.lat, p.lng),
       }))
       .sort((a, b) => a.jarak - b.jarak);
-  }, [filter, titikAsal.lat, titikAsal.lng]);
+  }, [daftarPeluang.data, filter, titikAsal.lat, titikAsal.lng]);
 
   const pakaiLokasiSaya = () => {
     if (!("geolocation" in navigator)) {
@@ -60,7 +59,7 @@ export function InvestasiPage() {
   const totalMinat = minat.reduce((jml, m) => jml + m.nominal, 0);
 
   // Peternak tidak melihat peluang peternak lain; menu Investasi membuka profil peternakannya
-  if (akun?.peran === "peternak") return <Navigate to="/app/peternak" replace />;
+  if (peran === "peternak") return <Navigate to="/app/peternak" replace />;
 
   return (
     <AppShell pageTitle="Investasi ternak">
@@ -79,31 +78,28 @@ export function InvestasiPage() {
 
       <Banner variant="info">{TEKS_INVESTASI.catatanPrototipe}</Banner>
 
-      {!akun && (
+      {peran === "tamu" && (
         <Card className="tk-inv-cta-card">
           <p className="tk-inv-cta-card__text">
-            Anda bisa melihat semua peluang tanpa akun. Untuk mencoba titip modal, masuk dengan akun
-            pengguna demo.
+            Anda bisa melihat semua peluang tanpa akun. Untuk mencatat minat titip modal, masuk
+            sebagai Pengguna.
           </p>
           <Link to="/app/masuk?peran=pengguna" className="tk-btn tk-btn--primary">
-            Masuk akun demo
+            Masuk sebagai Pengguna
           </Link>
         </Card>
       )}
 
-      {akun?.peran === "pengguna" && minat.length > 0 && (
+      {peran === "pengguna" && minat.length > 0 && (
         <Card className="tk-inv-minat">
           <h2 className="tk-inv-h2">Minat titip modal Anda</h2>
           <ul className="tk-inv-minat__list">
-            {minat.map((m) => {
-              const p = PELUANG_INVESTASI.find((x) => x.id === m.peluangId);
-              return (
-                <li key={`${m.peluangId}-${m.dibuatPada}`}>
-                  <Link to={`/app/investasi/${m.peluangId}`}>{p?.namaKandang ?? m.peluangId}</Link>
-                  <span className="tk-num">{formatRupiah(m.nominal)}</span>
-                </li>
-              );
-            })}
+            {minat.map((m) => (
+              <li key={m.id}>
+                <Link to={`/app/investasi/${m.peluangId}`}>{m.namaKandang}</Link>
+                <span className="tk-num">{formatRupiah(m.nominal)}</span>
+              </li>
+            ))}
           </ul>
           <p className="tk-inv-minat__total">
             Total minat (simulasi): <strong className="tk-num">{formatRupiah(totalMinat)}</strong>
@@ -162,6 +158,13 @@ export function InvestasiPage() {
           {daftar.length} kandang, terdekat dari {titikAsal.label}
         </span>
       </div>
+
+      {daftarPeluang.galat && <Banner variant="offline">{daftarPeluang.galat}</Banner>}
+      {daftarPeluang.sedangMuat && !daftarPeluang.data && (
+        <p className="tk-muted" role="status">
+          Memuat peluang...
+        </p>
+      )}
 
       <div className="tk-inv-grid">
         {daftar.map(({ peluang, jarak }) => (

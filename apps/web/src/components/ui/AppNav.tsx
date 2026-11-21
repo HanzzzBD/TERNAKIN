@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { NavLink } from "react-router";
-import { useAkunDemo } from "../../lib/akunDemo";
+import { usePeranAktif, type PeranAktif } from "../../lib/peran";
 import { ChatIcon, ClipboardIcon, FeedIcon, HomeIcon, SproutCoinIcon, StoreIcon } from "./Icons";
 
 export interface NavItem {
@@ -10,14 +10,37 @@ export interface NavItem {
   icon: ReactNode;
 }
 
-const DEFAULT_NAV_ITEMS: readonly NavItem[] = [
-  { to: "/app", label: "Beranda", end: true, icon: <HomeIcon size={22} /> },
-  { to: "/app/pakan", label: "Pakan", icon: <FeedIcon size={22} /> },
-  { to: "/app/catatan", label: "Catatan", icon: <ClipboardIcon size={22} /> },
-  { to: "/app/tanya", label: "Kokok", icon: <ChatIcon size={22} /> },
-  { to: "/app/toko", label: "Toko", icon: <StoreIcon size={22} /> },
-  { to: "/app/investasi", label: "Investasi", icon: <SproutCoinIcon size={22} /> },
-];
+const BERANDA: NavItem = { to: "/app", label: "Beranda", end: true, icon: <HomeIcon size={22} /> };
+const PAKAN: NavItem = { to: "/app/pakan", label: "Pakan", icon: <FeedIcon size={22} /> };
+const CATATAN: NavItem = {
+  to: "/app/catatan",
+  label: "Catatan",
+  icon: <ClipboardIcon size={22} />,
+};
+const KOKOK: NavItem = { to: "/app/tanya", label: "Kokok", icon: <ChatIcon size={22} /> };
+const TOKO: NavItem = { to: "/app/toko", label: "Toko", icon: <StoreIcon size={22} /> };
+const INVESTASI: NavItem = {
+  to: "/app/investasi",
+  label: "Investasi",
+  icon: <SproutCoinIcon size={22} />,
+};
+
+/**
+ * Menu per peran. Pengguna hanya Investasi dan Kokok; peternak membuka peluang kandangnya
+ * sendiri lewat tab Peluang; tamu (mode peternak) bisa melihat-lihat peluang investasi.
+ */
+const NAV_PER_PERAN: Record<PeranAktif, readonly NavItem[]> = {
+  tamu: [BERANDA, PAKAN, CATATAN, KOKOK, TOKO, INVESTASI],
+  peternak: [
+    BERANDA,
+    PAKAN,
+    CATATAN,
+    KOKOK,
+    TOKO,
+    { ...INVESTASI, to: "/app/peternak", label: "Peluang" },
+  ],
+  pengguna: [INVESTASI, KOKOK],
+};
 
 export interface AppNavProps {
   variant: "bottom" | "rail";
@@ -29,18 +52,12 @@ export interface AppNavProps {
 export function AppNav({
   variant,
   collapsed = false,
-  items = DEFAULT_NAV_ITEMS,
+  items,
   ariaLabel = "Navigasi utama",
 }: AppNavProps) {
   const isRailCollapsed = variant === "rail" && collapsed;
-  const akun = useAkunDemo();
-  // Untuk peternak, tab Investasi langsung membuka profil peternakannya sendiri
-  const daftarItem =
-    akun?.peran === "peternak"
-      ? items.map((item) =>
-          item.to === "/app/investasi" ? { ...item, to: "/app/peternak" } : item,
-        )
-      : items;
+  const { peran } = usePeranAktif();
+  const daftarItem = items ?? NAV_PER_PERAN[peran];
 
   return (
     <nav

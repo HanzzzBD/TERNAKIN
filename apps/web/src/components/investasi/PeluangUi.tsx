@@ -1,6 +1,10 @@
-import { formatAngka, formatRupiah } from "@ternakin/shared";
+import {
+  formatAngka,
+  formatRupiah,
+  type PeluangInvestasi,
+  type StatusPeluang,
+} from "@ternakin/shared";
 import { Link } from "react-router";
-import type { PeluangInvestasi, StatusPeluang } from "../../content/investasiContent";
 import { ArrowRightIcon, MapPinIcon, StethoscopeIcon } from "../ui";
 
 const LABEL_STATUS: Record<StatusPeluang, string> = {

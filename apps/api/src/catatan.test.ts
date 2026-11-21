@@ -23,42 +23,51 @@ describe("API Fase 3: Kandang, Catatan Harian, Sinkron, dan Hapus Akun", () => {
     expect(buatKandang.status).toBe(200);
     expect(buatKandang.body.kandang.nama).toBe("Kandang Lembang");
 
-    const simpan1 = await request(app).put(`/v1/catatan/${catatanId1}`).send({
-      kandangId,
-      tanggal: "2026-11-19",
-      pakanKg: 82,
-      telur: 610,
-      kematian: 1,
-      suhu: 27.5,
-      diubahPada: "2026-11-19T08:00:00.000Z",
-    });
+    const simpan1 = await request(app)
+      .put(`/v1/catatan/${catatanId1}`)
+      .set("x-device-id", deviceId)
+      .send({
+        kandangId,
+        tanggal: "2026-11-19",
+        pakanKg: 82,
+        telur: 610,
+        kematian: 1,
+        suhu: 27.5,
+        diubahPada: "2026-11-19T08:00:00.000Z",
+      });
     expect(simpan1.status).toBe(200);
     expect(simpan1.body.catatan.telur).toBe(610);
 
     // Menyimpan ulang tanggal yang sama dengan stempel waktu lebih baru memperbarui baris yang sama.
-    const simpan2 = await request(app).put(`/v1/catatan/${catatanId2}`).send({
-      kandangId,
-      tanggal: "2026-11-19",
-      pakanKg: 85,
-      telur: 630,
-      kematian: 0,
-      suhu: 28,
-      diubahPada: "2026-11-19T09:00:00.000Z",
-    });
+    const simpan2 = await request(app)
+      .put(`/v1/catatan/${catatanId2}`)
+      .set("x-device-id", deviceId)
+      .send({
+        kandangId,
+        tanggal: "2026-11-19",
+        pakanKg: 85,
+        telur: 630,
+        kematian: 0,
+        suhu: 28,
+        diubahPada: "2026-11-19T09:00:00.000Z",
+      });
     expect(simpan2.status).toBe(200);
     expect(simpan2.body.catatan.id).toBe(catatanId1);
     expect(simpan2.body.catatan.telur).toBe(630);
 
     // Kiriman dengan stempel waktu lebih lama kalah (Last-Write-Wins).
-    const simpanLama = await request(app).put(`/v1/catatan/${catatanId1}`).send({
-      kandangId,
-      tanggal: "2026-11-19",
-      pakanKg: 50,
-      telur: 100,
-      kematian: 9,
-      suhu: 35,
-      diubahPada: "2026-11-19T07:00:00.000Z",
-    });
+    const simpanLama = await request(app)
+      .put(`/v1/catatan/${catatanId1}`)
+      .set("x-device-id", deviceId)
+      .send({
+        kandangId,
+        tanggal: "2026-11-19",
+        pakanKg: 50,
+        telur: 100,
+        kematian: 9,
+        suhu: 35,
+        diubahPada: "2026-11-19T07:00:00.000Z",
+      });
     expect(simpanLama.status).toBe(200);
     expect(simpanLama.body.catatan.telur).toBe(630);
   });
@@ -158,7 +167,7 @@ describe("API Fase 3: Kandang, Catatan Harian, Sinkron, dan Hapus Akun", () => {
       jumlahEkor: 300,
     });
 
-    await request(app).put(`/v1/catatan/${catatanId}`).send({
+    await request(app).put(`/v1/catatan/${catatanId}`).set("x-device-id", deviceId).send({
       kandangId,
       tanggal: "2026-11-19",
       pakanKg: 35,

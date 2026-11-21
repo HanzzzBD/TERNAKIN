@@ -9,6 +9,9 @@ services:
       DATABASE_PATH: /data/ternakin.sqlite
       ADMIN_KEY: ${ADMIN_KEY:?Wajib mengisi ADMIN_KEY di .env}
       SESSION_SECRET: ${SESSION_SECRET:?Wajib mengisi SESSION_SECRET di .env}
+      FONNTE_TOKEN: ${FONNTE_TOKEN:-}
+      SESI_BERLAKU_HARI: ${SESI_BERLAKU_HARI:-30}
+      AKUN_DEMO_AKTIF: ${AKUN_DEMO_AKTIF:-true}
       LLM_PROVIDER: ${LLM_PROVIDER:-mock}
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_MODEL: ${LLM_MODEL:-gemini-3.5-flash-lite}

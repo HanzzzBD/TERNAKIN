@@ -1,6 +1,47 @@
 export { galatApiSchema, type GalatApi } from "./schemas/galat.js";
 export { kesehatanApiSchema, type KesehatanApi } from "./schemas/kesehatan.js";
 export {
+  PANJANG_KODE_OTP,
+  aturPeranRequestSchema,
+  masukDemoRequestSchema,
+  mintaOtpRequestSchema,
+  mintaOtpResponseSchema,
+  penggunaSayaSchema,
+  sesiAkunResponseSchema,
+  verifikasiOtpRequestSchema,
+  type AturPeranRequest,
+  type MasukDemoRequest,
+  type MintaOtpRequest,
+  type MintaOtpResponse,
+  type PenggunaSaya,
+  type SesiAkunResponse,
+  type VerifikasiOtpRequest,
+} from "./schemas/akun.js";
+export {
+  ajuanPeluangRequestSchema,
+  daftarPeluangResponseSchema,
+  izinDataRequestSchema,
+  minatInvestasiRequestSchema,
+  minatSayaItemSchema,
+  minatSayaResponseSchema,
+  peluangInvestasiSchema,
+  pemeriksaanDokterSchema,
+  peranAkunSchema,
+  siklusLaluSchema,
+  statusPeluangSchema,
+  titikCatatanSchema,
+  type AjuanPeluangRequest,
+  type IzinDataRequest,
+  type MinatInvestasiRequest,
+  type MinatSayaItem,
+  type PeluangInvestasi,
+  type PemeriksaanDokter,
+  type PeranAkun,
+  type StatusPeluang,
+  type TitikCatatan,
+} from "./schemas/investasi.js";
+export { normalisasiNomorPonsel, samarkanNomorPonsel } from "./lib/nomorPonsel.js";
+export {
   ambangReferensiSchema,
   bahanMasterSchema,
   dataReferensiSchema,

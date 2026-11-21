@@ -1,14 +1,16 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { BERANDA_PERAN, LABEL_PERAN, keluarDemo, useAkunDemo } from "../../lib/akunDemo";
+import { GalatAkun, keluarAkun } from "../../lib/akun";
+import { BERANDA_PERAN, LABEL_PERAN, namaTampil, usePeranAktif } from "../../lib/peran";
 import { ArrowRightIcon, LogOutIcon, RefreshIcon, UserIcon } from "../ui";
 
 /**
  * Chip akun di bilah atas aplikasi. Saat belum masuk berupa tautan "Masuk";
- * saat sudah masuk membuka menu kecil berisi halaman peran, ganti akun, dan keluar.
+ * saat sudah masuk membuka menu kecil berisi halaman peran, ganti peran, dan keluar.
  */
 export function AkunMenu() {
-  const akun = useAkunDemo();
+  const { akun, peran } = usePeranAktif();
+  const [galat, setGalat] = useState<string | null>(null);
   const navigate = useNavigate();
   const idMenu = useId();
   const [terbuka, setTerbuka] = useState(false);
@@ -43,11 +45,18 @@ export function AkunMenu() {
     );
   }
 
-  const keluar = (keHalamanMasuk: boolean) => {
-    setTerbuka(false);
-    keluarDemo();
-    if (keHalamanMasuk) void navigate("/app/masuk");
+  const keluar = async () => {
+    setGalat(null);
+    try {
+      await keluarAkun();
+      setTerbuka(false);
+      void navigate("/app");
+    } catch (err) {
+      setGalat(err instanceof GalatAkun ? err.message : "Belum bisa keluar. Coba lagi.");
+    }
   };
+
+  const labelPeran = akun.peran ? LABEL_PERAN[akun.peran] : "Pilih peran";
 
   return (
     <div ref={wadahRef} className="tk-akun-menu">
@@ -61,36 +70,44 @@ export function AkunMenu() {
       >
         <UserIcon size={16} />
         <span className="tk-akun-chip__text">
-          {akun.nama} · {LABEL_PERAN[akun.peran]}
+          {namaTampil(akun)} · {labelPeran}
         </span>
       </button>
 
       {terbuka && (
         <div id={idMenu} className="tk-akun-menu__panel">
           <p className="tk-akun-menu__who">
-            <strong>{akun.nama}</strong>
-            <span>Akun demo {LABEL_PERAN[akun.peran].toLowerCase()}</span>
+            <strong>{namaTampil(akun)}</strong>
+            <span>
+              {akun.isDemo ? "Akun demo " : "Akun "}
+              {labelPeran.toLowerCase()}
+            </span>
           </p>
           <Link
-            to={BERANDA_PERAN[akun.peran]}
+            to={peran === "peternak" ? "/app/peternak" : BERANDA_PERAN[peran]}
             className="tk-akun-menu__item"
             onClick={() => setTerbuka(false)}
           >
             <ArrowRightIcon size={18} />
-            {akun.peran === "peternak" ? "Kandang saya" : "Peluang investasi"}
+            {peran === "pengguna" ? "Peluang investasi" : "Kandang saya"}
           </Link>
-          <button type="button" className="tk-akun-menu__item" onClick={() => keluar(true)}>
+          <Link to="/app/profil" className="tk-akun-menu__item" onClick={() => setTerbuka(false)}>
             <RefreshIcon size={18} />
-            Ganti akun
-          </button>
+            {akun.isDemo ? "Profil akun" : "Ganti peran"}
+          </Link>
           <button
             type="button"
             className="tk-akun-menu__item tk-akun-menu__item--keluar"
-            onClick={() => keluar(false)}
+            onClick={() => void keluar()}
           >
             <LogOutIcon size={18} />
             Keluar
           </button>
+          {galat && (
+            <p className="tk-akun-menu__galat" role="alert">
+              {galat}
+            </p>
+          )}
         </div>
       )}
     </div>

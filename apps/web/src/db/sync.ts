@@ -5,6 +5,7 @@ import {
   type ItemOutboxSync,
   type Kandang,
 } from "@ternakin/shared";
+import { bacaAkunLokal, setelAkunLokal } from "../lib/akunCache";
 import { useOnlineStatus } from "../lib/pwa";
 import {
   createClientUuid,
@@ -249,9 +250,15 @@ function jadwalkanUlangFlush(): void {
   }, jeda);
 }
 
+/**
+ * Mengirim antrean outbox dan menarik perubahan dari server.
+ * Bila sudah masuk akun, tarikan tetap dilakukan walau perangkat kosong (data dari HP lain).
+ */
 export async function flushOutbox(): Promise<boolean> {
   if (sedangFlush) return false;
   if (typeof navigator !== "undefined" && !navigator.onLine) return false;
+  // Peran Pengguna tidak memakai kandang dan catatan; server juga menolaknya.
+  if (bacaAkunLokal()?.peran === "pengguna") return true;
 
   sedangFlush = true;
   emitSyncChange();
@@ -259,7 +266,7 @@ export async function flushOutbox(): Promise<boolean> {
   try {
     const outboxItems = await db.outbox.orderBy("seq").toArray();
     const jumlahKandang = await db.kandang.count();
-    if (outboxItems.length === 0 && jumlahKandang === 0) {
+    if (outboxItems.length === 0 && jumlahKandang === 0 && !bacaAkunLokal()) {
       retryCount = 0;
       return true;
     }
@@ -422,6 +429,17 @@ export async function hapusSemuaDataPengguna(): Promise<{ serverDihapus: boolean
     }
   }
 
+  await bersihkanDataLokal();
+  // Akun di server ikut terhapus bila sedang masuk.
+  if (serverDihapus) setelAkunLokal(null);
+  return { serverDihapus };
+}
+
+/**
+ * Menghapus seluruh salinan data di perangkat ini (kandang, catatan, antrean, riwayat, draf).
+ * Dipakai saat hapus data dan saat keluar akun. ID perangkat ikut diganti.
+ */
+export async function bersihkanDataLokal(): Promise<void> {
   try {
     await db.transaction(
       "rw",
@@ -449,7 +467,6 @@ export async function hapusSemuaDataPengguna(): Promise<{ serverDihapus: boolean
   }
 
   emitSyncChange();
-  return { serverDihapus };
 }
 
 export interface SyncStatusSnapshot {
