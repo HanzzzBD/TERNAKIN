@@ -147,7 +147,7 @@ function perluasToken(tokens: readonly string[]): Set<string> {
   return hasil;
 }
 
-function buatRingkasanKutipan(isi: string): string {
+export function buatRingkasanKutipan(isi: string): string {
   const kalimat = isi
     .split(/(?<=[.!?])\s+/)
     .map((k) => k.trim())

@@ -103,14 +103,18 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
         hasil.tokenKeluar,
       );
 
+      const sumber = hasil.sumber ?? deps.llmAdapter.sumber;
       const respons: PakanUraiResponse = {
         item: hasil.item,
         catatan: hasil.catatan,
-        sumber: deps.llmAdapter.sumber,
+        sumber,
         dariCache: false,
       };
 
-      simpanCacheLlm(deps.dbCtx.db, cacheKey, JSON.stringify(respons));
+      // Hasil cadangan (LLM sedang gagal) tidak disimpan agar percobaan berikutnya memakai LLM lagi.
+      if (sumber === deps.llmAdapter.sumber) {
+        simpanCacheLlm(deps.dbCtx.db, cacheKey, JSON.stringify(respons));
+      }
       res.status(200).json(respons);
     } catch (err) {
       next(err);
@@ -162,6 +166,7 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
         }
 
         const keluaran = await deps.llmAdapter.explainFeed(body.hasilSolver);
+        const sumber = keluaran.sumber ?? deps.llmAdapter.sumber;
         catatPemakaianLlm(
           deps.dbCtx.db,
           perangkatId,
@@ -183,7 +188,7 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
             ditolakAlasan:
               "Penjelasan otomatis dibuang karena menyebut angka yang tidak sesuai hasil hitungan.",
             dariCache: false,
-            sumber: deps.llmAdapter.sumber,
+            sumber,
           };
           res.status(200).json(ditolak);
           return;
@@ -193,9 +198,11 @@ export function createPakanRouter(deps: PakanRouterDeps): Router {
           penjelasan: keluaran.penjelasan,
           terverifikasi: true,
           dariCache: false,
-          sumber: deps.llmAdapter.sumber,
+          sumber,
         };
-        simpanCacheLlm(deps.dbCtx.db, cacheKey, JSON.stringify(respons));
+        if (sumber === deps.llmAdapter.sumber) {
+          simpanCacheLlm(deps.dbCtx.db, cacheKey, JSON.stringify(respons));
+        }
         res.status(200).json(respons);
       } catch (err) {
         next(err);

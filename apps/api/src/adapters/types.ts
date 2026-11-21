@@ -7,17 +7,22 @@ import type {
   UrgensiKokok,
 } from "@ternakin/shared";
 
+export type SumberLlm = "llm" | "mock";
+
 export interface ParseFeedOutput {
   item: ItemUraiPakan[];
   catatan: string[];
   tokenMasuk: number;
   tokenKeluar: number;
+  /** Diisi bila hasil berasal dari cadangan (mis. Gemini gagal lalu memakai mock). */
+  sumber?: SumberLlm;
 }
 
 export interface ExplainFeedOutput {
   penjelasan: string;
   tokenMasuk: number;
   tokenKeluar: number;
+  sumber?: SumberLlm;
 }
 
 export interface GuidelineChunk {
@@ -49,7 +54,7 @@ export interface TriageKokokOutput {
 }
 
 export interface LlmAdapter {
-  readonly sumber: "llm" | "mock";
+  readonly sumber: SumberLlm;
   parseFeedText(teks: string, katalogBahan: readonly BahanMaster[]): Promise<ParseFeedOutput>;
   explainFeed(hasilSolver: PakanHitungLayak): Promise<ExplainFeedOutput>;
   triageKokok(

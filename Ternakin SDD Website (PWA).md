@@ -20,17 +20,17 @@ Web dan mobile memanggil satu backend yang sama. Solver (berwarna) menghitung pa
 
 ## Stack teknologi
 
-Pilihan di bawah mengutamakan yang paling sedikit bagian bergerak. Kerangka web depan dan pustaka RAG masih usulan sampai dikonfirmasi.
+Pilihan di bawah mengutamakan yang paling sedikit bagian bergerak. Tabel ini mencerminkan yang sudah dibangun (diperbarui 21 November 2026).
 
 | Lapisan | Pilihan | Alasan |
 | --- | --- | --- |
-| Antarmuka | PWA (usulan: React + Vite, Workbox untuk service worker) | Bisa dipasang dari peramban dan berjalan offline |
-| Data lokal | IndexedDB (usulan: Dexie) | Penyimpanan terstruktur di perangkat untuk mode offline |
-| Backend | FastAPI (Python) | Cocok dengan SciPy, PuLP, dan ekosistem AI; dokumentasi API otomatis |
-| Basis data | SQLite dulu, lalu PostgreSQL | Mulai tanpa server tambahan; skema dijaga kompatibel |
-| Solver | SciPy linprog atau PuLP | Pemrograman linear untuk biaya terendah dengan batasan gizi |
-| LLM | API penyedia LLM (belum dipilih) | Mengurai teks bebas dan menjelaskan; dengan batas token dan cache |
-| Pencarian panduan | Indeks RAG (pustaka belum dipilih) | Jawaban Kokok berdasar panduan yang dikurasi |
+| Antarmuka | PWA: React + Vite, Workbox (vite-plugin-pwa) untuk service worker | Bisa dipasang dari peramban dan berjalan offline |
+| Data lokal | IndexedDB lewat Dexie | Penyimpanan terstruktur di perangkat untuk mode offline |
+| Backend | Node.js + Express + TypeScript (monorepo npm workspaces) | Satu bahasa dengan web; skema zod dan solver dibagi lewat `packages/shared`, sehingga hitungan offline di perangkat identik dengan server |
+| Basis data | SQLite (better-sqlite3) dulu, lalu PostgreSQL | Mulai tanpa server tambahan; skema dijaga kompatibel |
+| Solver | Simpleks pemrograman linear di `packages/shared/src/feed/solver.ts` | Biaya terendah dengan batasan gizi; berjalan di server dan di perangkat tanpa sinyal |
+| LLM | Google Gemini lewat REST (bawaan `gemini-3.5-flash-lite`, dapat diganti lewat `LLM_MODEL`), cadangan jawaban bawaan (mock) | Mengurai teks bebas, menjelaskan hasil, dan triase Kokok; dengan batas token, cache, dan batas harian. Tanpa kunci atau saat gagal, server tetap berjalan dengan jawaban bawaan |
+| Pencarian panduan | Embedding Gemini (`gemini-embedding-2`, 768 dimensi) disimpan di SQLite, kemiripan kosinus di proses Node; cadangan pencarian kata kunci + sinonim | Jawaban Kokok berdasar panduan yang dikurasi, tanpa layanan basis data vektor tambahan |
 | Hosting | VPS sekitar Rp500.000 per bulan, Docker Compose, nginx | Murah dan terkendali penuh |
 
 ## Model data
@@ -49,12 +49,13 @@ Sepuluh tabel cukup untuk seluruh MVP. Setiap catatan milik pengguna memakai ID 
 | harga\_toko | toko, bahan, harga, asal\_harga, diperbarui\_pada | Wajib ada asal dan waktu |
 | dokumen\_panduan | id, judul, sumber, isi, versi | Bahan indeks RAG, dikurasi manual |
 | percakapan\_kokok | id, pengguna, ringkasan, urgensi, sumber\_dipakai | Untuk evaluasi, tanpa menyimpan data pribadi berlebih |
+| panduan\_embedding (tambahan) | dokumen\_id, model, hash\_isi, dimensi, vektor | Indeks RAG; hanya panduan baru atau berubah yang di-embed ulang |
 
 Di perangkat, IndexedDB menyimpan salinan kandang, catatan\_harian, bahan, harga, toko, dan satu tabel outbox untuk perubahan yang belum terkirim.
 
 ## Desain API
 
-Satu API REST berformat JSON, versi `/v1`, dipakai bersama oleh web dan mobile. Dokumentasi OpenAPI dibuat otomatis oleh FastAPI dan menjadi kontrak untuk rekan yang membuat aplikasi mobile.
+Satu API REST berformat JSON, versi `/v1`, dipakai bersama oleh web dan mobile. Dokumentasi OpenAPI dibangun dari skema zod bersama dan tersedia di `GET /v1/openapi.json`; dokumen ini menjadi kontrak untuk rekan yang membuat aplikasi mobile.
 
 | Metode dan jalur | Fungsi |
 | --- | --- |
@@ -120,7 +121,7 @@ Tiga lapis: lindungi akses, kurangi data, dan batasi apa yang boleh dikatakan AI
 
 ## Deployment, pengujian, dan risiko teknis
 
-Satu VPS menjalankan semuanya lewat Docker Compose: nginx sebagai pintu masuk HTTPS, satu kontainer FastAPI, dan basis data. Rilis dilakukan dengan menarik citra baru lalu memulai ulang, dengan cadangan basis data harian.
+Satu VPS menjalankan semuanya lewat Docker Compose: nginx sebagai pintu masuk HTTPS, satu kontainer Node.js (API sekaligus menyajikan berkas PWA), dan basis data SQLite di volume. Rilis dilakukan dengan menarik citra baru lalu memulai ulang, dengan cadangan basis data harian.
 
 **Pengujian**
 
@@ -134,7 +135,8 @@ Satu VPS menjalankan semuanya lewat Docker Compose: nginx sebagai pintu masuk HT
 | Risiko | Dampak | Tindakan |
 | --- | --- | --- |
 | Satu orang mengerjakan semua | Jadwal molor | Urutan pengerjaan di PRD; tiap tahap bisa didemokan |
-| Penyedia LLM atau biayanya belum dipilih | Kokok tertunda | Pilih lebih awal; sediakan jawaban bawaan tanpa LLM |
+| Gemini gagal, lambat, atau biayanya melonjak | Kokok dan urai teks terganggu | Gemini dipilih; batas waktu, batas token, cache, dan batas harian per perangkat; jawaban bawaan otomatis dipakai saat gagal |
+| Jawaban LLM menurunkan tanda bahaya | Kasus berat dianggap ringan | Aturan bawaan menjadi lantai keselamatan: bila aturan menilai tinggi, jawaban LLM yang lebih rendah diganti |
 | Data SNI dan nutrisi tidak lengkap | Solver tidak akurat | Mulai dari beberapa bahan umum dan tandai sumbernya |
 | Jawaban Kokok keliru | Risiko bagi ayam peternak | Sumber wajib, penyaring dosis, rujukan ke ahli |
 | Sinkronisasi konflik | Data hilang | UUID, idempoten, aturan konflik tertulis |

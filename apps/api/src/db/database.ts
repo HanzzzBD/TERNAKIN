@@ -16,6 +16,7 @@ import {
 
 const API_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const MIGRATION_001 = path.join(API_ROOT, "migrations", "001_init.sql");
+const MIGRATION_002 = path.join(API_ROOT, "migrations", "002_panduan_embedding.sql");
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
 const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
 const DEFAULT_SEED_PANDUAN = path.join(API_ROOT, "seed", "panduan.json");
@@ -86,6 +87,7 @@ export function initDatabase(
 
   const sql = fs.readFileSync(MIGRATION_001, "utf-8");
   db.exec(sql);
+  db.exec(fs.readFileSync(MIGRATION_002, "utf-8"));
   ensureColumn(db, "kandang", "bahan_tersedia_json", "TEXT NOT NULL DEFAULT '[]'");
   ensureColumn(db, "catatan_harian", "dihapus_pada", "TEXT");
   ensureColumn(db, "toko", "kode", "TEXT NOT NULL DEFAULT ''");
