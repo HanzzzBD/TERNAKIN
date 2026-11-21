@@ -1,5 +1,5 @@
 {
-  "versi": "2026.11.demo-1",
+  "versi": "2026.11.demo-2",
   "isDemo": true,
   "catatanData": "Data contoh — angka kandungan bahan dan kebutuhan gizi perlu diverifikasi ke naskah resmi SNI pakan ayam petelur dan penasihat peternakan sebelum pilot lapangan.",
   "bahan": [
@@ -228,9 +228,9 @@
       "zatGizi": "fosfor",
       "label": "Fosfor",
       "satuan": "%",
-      "batasMin": 0.45,
+      "batasMin": 0.55,
       "batasMaks": 1.1,
-      "sumber": "Data contoh — rujukan sementara SNI pakan ayam ras petelur layer (perlu verifikasi resmi)",
+      "sumber": "Batas minimum 0,55% dari SNI 8290.5:2016 (Pakan ayam ras petelur bagian 5: masa produksi/layer), dikutip Hakim dkk. 2024, JINTP 22(2):122-128. Batas maksimum masih data contoh (perlu verifikasi resmi)",
       "isDemo": true
     }
   ],
