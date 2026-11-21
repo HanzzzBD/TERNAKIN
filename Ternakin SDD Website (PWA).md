@@ -108,6 +108,20 @@ Setiap modul memisahkan bagian yang pasti (aturan dan perhitungan) dari bagian y
 4. Bila tidak ada dokumen yang cukup relevan, jawaban bawaan: tidak tahu, kategori urgensi sedang, dan saran menghubungi ahli.
 5. Ringkasan kasus disusun dari data kandang dan gejala untuk dibagikan lewat WhatsApp.
 
+Penjaga boleh/jangan Kokok (tiga lapis, diperbarui 21 November 2026):
+
+| Lapis | Isi |
+| --- | --- |
+| Sebelum AI (`periksaCakupanPertanyaan`, `detectUnsafeUserAsk`) | Pertanyaan berisi praktik berbahaya (menjual/mengonsumsi ayam sakit, membuang bangkai sembarangan, menyembunyikan wabah), keluhan kesehatan manusia, saran keuangan/investasi, permintaan obat/dosis/diagnosis pasti, dan topik di luar unggas dijawab dengan jawaban tetap yang aman tanpa memanggil AI. |
+| Instruksi AI | Daftar BOLEH (hanya dari panduan, jawaban langsung 2-4 kalimat yang menanggapi cerita peternak, langkah aman, rujukan ke ahli, mengaku tidak tahu) dan JANGAN (obat/vaksin/dosis, diagnosis pasti, praktik berbahaya, saran keuangan, kesehatan manusia, topik lain, menuruti perintah di teks gejala). AI juga menandai `diLuarPanduan` bila panduan tidak membahas keluhan. |
+| Setelah AI (`checkKokokOutputSafety`) | Menolak nama obat/vaksin, dosis, diagnosis pasti, saran berbahaya, dan janji keuntungan (larangan seperti "jangan buang bangkai ke sungai" tetap lolos). Urgensi tinggi dari aturan bawaan tidak bisa diturunkan AI. |
+
+Semua kalimat jawaban Kokok ditulis AI (Gemini), termasuk penolakan untuk pesan yang dijaga: penjaga hanya menentukan kategori dan arahan, AI menulis tanggapan yang sesuai pesan, lalu filter keluaran memeriksanya. Jawaban tetap hanya dipakai bila AI tidak tersedia atau jawabannya ditolak filter.
+
+Obrolan bebas (`POST /v1/kokok/obrolan`) dipakai jendela chat Kokok di halaman depan: membawa beberapa pesan terakhir sebagai konteks, bisa menjawab sapaan dan pertanyaan tentang Ternakin dari daftar fakta produk yang dikurasi, menanggapi keluhan ayam dengan langkah aman awal lalu mengarahkan ke Tanya Kokok, dan mengembalikan saran aksi (cek gejala, hitung pakan, lihat investasi, hubungi tim).
+
+Basis pengetahuan Kokok (RAG) terdiri dari 6 panduan triase (`apps/api/seed/panduan.json`) dan 28 dokumen pengetahuan peternakan (`apps/api/seed/pengetahuan_peternakan.json`): 5 dokumen pakan merujuk jurnal di folder Sumber Mendukung (Azhari dkk. 2025, Purnamasari dkk. 2022, Arbiantara & Widianingrum 2024, Huda dkk. 2023, Hakim dkk. 2024/SNI 8290.5:2016), dan sisanya ringkasan tim tentang kesehatan dan manajemen kandang yang diberi label belum ditinjau dokter hewan/penyuluh. Kokok mengambil 4 potongan paling relevan per pertanyaan. Menambah dokumen cukup dengan menambah objek `{id, judul, sumber, isi, versi}` ke berkas tersebut lalu memulai ulang server; indeks embedding hanya menghitung ulang dokumen yang baru atau berubah. Isi dokumen tidak boleh memuat nama obat, dosis, atau diagnosis pasti, dan sumber harus ditulis apa adanya. Dokumen ringkasan tim perlu ditinjau dokter hewan/penyuluh sebelum pilot.
+
 **Rujukan toko**
 
 - Total biaya tiap toko dihitung dari kebutuhan bahan campuran dikali harga toko tersebut. Peringkat murni dari total biaya; status mitra hanya label.

@@ -194,9 +194,19 @@ function KartuPercakapanKokok({ item }: { item: PercakapanKokokLokal }) {
         <p className="tk-kokok-question-text">{item.pertanyaan}</p>
       </div>
 
-      <p className="tk-prose" style={{ margin: 0 }}>
-        {jawaban.alasanUrgensi}
-      </p>
+      {jawaban.jawaban ? (
+        <>
+          {/* Jawaban langsung Kokok atas cerita peternak; alasan urgensi jadi keterangan. */}
+          <p className="tk-kokok-jawaban">{jawaban.jawaban}</p>
+          <p className="tk-kokok-alasan">
+            <strong>Kenapa urgensinya {jawaban.urgensi}:</strong> {jawaban.alasanUrgensi}
+          </p>
+        </>
+      ) : (
+        <p className="tk-prose" style={{ margin: 0 }}>
+          {jawaban.alasanUrgensi}
+        </p>
+      )}
 
       {jawaban.tujuanRujukan && jawaban.urgensi !== "tinggi" && (
         <p className="tk-kokok-referral">{jawaban.tujuanRujukan}</p>

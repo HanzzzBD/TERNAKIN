@@ -416,3 +416,22 @@
   min-height: var(--tap-min);
   text-decoration: none;
 }
+
+/* Jawaban langsung Kokok (dari AI) dan keterangan alasan urgensi */
+.tk-kokok-jawaban {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-radius: 4px 16px 16px 16px;
+  background: var(--tk-peach);
+  border: 1px solid var(--tk-border-subtle);
+  color: var(--tk-ink);
+  font-size: var(--text-lg, 1.0625rem);
+  line-height: 1.6;
+}
+
+.tk-kokok-alasan {
+  margin: 0;
+  color: var(--tk-ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+}

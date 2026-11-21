@@ -319,6 +319,8 @@ describe("GeminiLlmAdapter", () => {
   it("triase: LLM tidak boleh menurunkan tanda bahaya tinggi", async () => {
     const { fetchFn } = buatFetchPalsu({
       generate: () => ({
+        diLuarPanduan: false,
+        jawaban: "Tidak apa-apa, Bapak/Ibu.",
         urgensi: "rendah",
         alasanUrgensi: "Tidak apa-apa.",
         panduanUmum: ["Tunggu saja."],
@@ -337,6 +339,8 @@ describe("GeminiLlmAdapter", () => {
   it("triase: jawaban LLM yang valid dipakai dan panduan + gejala dikirim sebagai data", async () => {
     const { fetchFn, panggilan } = buatFetchPalsu({
       generate: () => ({
+        diLuarPanduan: false,
+        jawaban: "Bapak/Ibu, ngorok pada ayam perlu diwaspadai karena mudah menular.",
         urgensi: "sedang",
         alasanUrgensi: "Gejala pernapasan perlu isolasi.",
         panduanUmum: ["Pisahkan ayam yang ngorok.", "Perbaiki ventilasi."],
@@ -352,11 +356,21 @@ describe("GeminiLlmAdapter", () => {
     const hasil = await adapter.triageKokok({ gejala: "Ayam ngorok", peringatan7Hari: [] }, [
       panduanPernapasan,
     ]);
-    expect(hasil).toMatchObject({ urgensi: "sedang", tokenMasuk: 120, tokenKeluar: 45 });
+    expect(hasil).toMatchObject({
+      urgensi: "sedang",
+      jawaban: "Bapak/Ibu, ngorok pada ayam perlu diwaspadai karena mudah menular.",
+      diLuarPanduan: false,
+      tokenMasuk: 120,
+      tokenKeluar: 45,
+    });
 
     const teksPesan = JSON.stringify(panggilan[0]!.body.contents);
     expect(teksPesan).toContain("<gejala>");
     expect(teksPesan).toContain("Gangguan pernapasan");
+    // Instruksi sistem memuat daftar boleh/jangan sesuai tujuan proyek.
+    const sistem = JSON.stringify(panggilan[0]!.body.systemInstruction);
+    expect(sistem).toContain("YANG JANGAN");
+    expect(sistem).toContain("saran keuangan");
   });
 
   it("triase: galat jaringan jatuh ke aturan bawaan", async () => {
@@ -409,6 +423,9 @@ describe("EmbeddingGuidelineRetriever", () => {
 
   it("mengurutkan panduan menurut makna dan jatuh ke kata kunci bila tidak ada yang relevan", async () => {
     const dbCtx = initDatabase(":memory:");
+    // Embedding tiruan hanya menghitung kata kunci triase; dokumen pengetahuan tanpa kata kunci itu
+    // akan bervektor sama dengan kueri apa pun. Uji ini memakai 6 panduan triase saja.
+    dbCtx.db.prepare("DELETE FROM dokumen_panduan WHERE id NOT LIKE 'panduan%'").run();
     const { fetchFn } = buatFetchPalsu({});
     const retriever = new EmbeddingGuidelineRetriever(
       dbCtx.db,
@@ -419,7 +436,9 @@ describe("EmbeddingGuidelineRetriever", () => {
     await retriever.sinkronkanIndeks();
 
     const diare = await retriever.search("kotoran encer, mencret sejak kemarin", 3);
-    expect(diare[0]?.id).toBe("panduan_diare");
+    // Dokumen pengetahuan lain (mis. alas basah musim hujan) bisa ikut relevan; panduan diare
+    // tetap harus masuk hasil teratas.
+    expect(diare.map((d) => d.id)).toContain("panduan_diare");
     expect(diare[0]?.ringkasanKutipan.length).toBeGreaterThan(0);
 
     const diLuar = await retriever.search("harga motor bekas di pasar", 3);
@@ -527,5 +546,51 @@ describe("Rute /v1/pakan/urai dengan Gemini", () => {
     const ketiga = await kirim();
     expect(ketiga.body).toMatchObject({ sumber: "llm", dariCache: true });
     dbCtx.close();
+  });
+});
+
+describe("GeminiLlmAdapter — obrolan Kokok", () => {
+  const mock = new MockLlmAdapter();
+
+  it("mengirim riwayat, arahan kategori, dan fakta Ternakin; memetakan urgensi tidak_ada → null", async () => {
+    const { fetchFn, panggilan } = buatFetchPalsu({
+      generate: () => ({
+        balasan: "Kokok tidak bisa menyebut obat, Bapak/Ibu. Yuk cek gejalanya dulu.",
+        aksi: "cek_gejala",
+        urgensi: "tidak_ada",
+      }),
+    });
+    const adapter = new GeminiLlmAdapter(buatClient(fetchFn), mock, { maksTokenKeluar: 600 });
+
+    const hasil = await adapter.ngobrol({
+      pesan: "obat apa ya?",
+      riwayat: [{ dari: "anda", teks: "ayam saya ngorok" }],
+      konteks: "landing",
+      kategori: "minta_obat",
+      panduan: [],
+    });
+
+    expect(hasil).toMatchObject({ aksi: "cek_gejala", urgensi: null, sumber: "llm" });
+    const isi = JSON.stringify(panggilan[0]!.body.contents);
+    expect(isi).toContain("Pengguna: ayam saya ngorok");
+    expect(isi).toContain("Arahan khusus");
+    expect(isi).toContain("<pesan>");
+    expect(JSON.stringify(panggilan[0]!.body.systemInstruction)).toContain("Gratis untuk peternak");
+  });
+
+  it("galat Gemini jatuh ke balasan cadangan yang tetap menanggapi pesan", async () => {
+    const fetchGagal = (async () => {
+      throw new TypeError("fetch failed");
+    }) as typeof fetch;
+    const adapter = new GeminiLlmAdapter(buatClient(fetchGagal), mock, { maksTokenKeluar: 600 });
+    const hasil = await adapter.ngobrol({
+      pesan: "halo",
+      riwayat: [],
+      konteks: "landing",
+      kategori: "di_luar_topik",
+      panduan: [],
+    });
+    expect(hasil.sumber).toBe("mock");
+    expect(hasil.balasan).toContain("Saya Kokok");
   });
 });

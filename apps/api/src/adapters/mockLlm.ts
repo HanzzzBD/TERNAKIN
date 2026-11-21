@@ -6,8 +6,11 @@ import {
   type PakanHitungLayak,
   type UrgensiKokok,
 } from "@ternakin/shared";
+import { balasObrolanCadangan } from "./obrolanCadangan.js";
 import type {
   ExplainFeedOutput,
+  ObrolanInput,
+  ObrolanOutput,
   GuidelineChunk,
   LlmAdapter,
   ParseFeedOutput,
@@ -61,6 +64,13 @@ function cariBahanCocok(namaMentah: string, katalog: readonly BahanMaster[]): Ba
 
   return terbaik?.bahan ?? null;
 }
+
+/** Panduan yang menandakan tanda bahaya: bila paling cocok, urgensi aturan bawaan = tinggi. */
+export const PANDUAN_BAHAYA_TINGGI: ReadonlySet<string> = new Set([
+  "panduan_kematian_mendadak",
+  "kewaspadaan_flu_burung",
+  "kewaspadaan_nd_tetelo",
+]);
 
 function estimasiToken(teks: string): number {
   return Math.max(1, Math.ceil(teks.length / 4));
@@ -173,7 +183,7 @@ export class MockLlmAdapter implements LlmAdapter {
     let urgensi: UrgensiKokok;
     if (
       polaTinggi.test(teks) ||
-      utama?.id === "panduan_kematian_mendadak" ||
+      PANDUAN_BAHAYA_TINGGI.has(utama?.id ?? "") ||
       /\bkematian\b/i.test(peringatanGabung)
     ) {
       urgensi = "tinggi";
@@ -245,5 +255,9 @@ export class MockLlmAdapter implements LlmAdapter {
       tokenMasuk: estimasiToken(`${input.gejala}\n${isiPanduan}`),
       tokenKeluar: estimasiToken(`${alasanUrgensi}\n${panduanUmum.join("\n")}`),
     };
+  }
+
+  async ngobrol(input: ObrolanInput): Promise<ObrolanOutput> {
+    return balasObrolanCadangan(input);
   }
 }

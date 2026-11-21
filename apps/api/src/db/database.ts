@@ -25,6 +25,7 @@ const DEFAULT_SEED_PELUANG = path.join(API_ROOT, "seed", "peluang_investasi.json
 const DEFAULT_SEED_REFERENSI = path.join(API_ROOT, "seed", "referensi.json");
 const DEFAULT_SEED_TOKO = path.join(API_ROOT, "seed", "toko.json");
 const DEFAULT_SEED_PANDUAN = path.join(API_ROOT, "seed", "panduan.json");
+const DEFAULT_SEED_PENGETAHUAN = path.join(API_ROOT, "seed", "pengetahuan_peternakan.json");
 
 const seedPanduanItemSchema = z.object({
   id: z.string().min(1),
@@ -123,10 +124,12 @@ export function initDatabase(
     seedToko(db, seedTokoList);
   }
 
-  if (fs.existsSync(DEFAULT_SEED_PANDUAN)) {
-    const rawPanduan: unknown = JSON.parse(fs.readFileSync(DEFAULT_SEED_PANDUAN, "utf-8"));
-    const seedPanduanList = z.array(seedPanduanItemSchema).parse(rawPanduan);
-    seedPanduan(db, seedPanduanList);
+  // Panduan triase awal + dokumen pengetahuan peternakan (pakan, kesehatan, manajemen kandang).
+  // Keduanya masuk ke dokumen_panduan sehingga ikut diindeks embedding dan dicari Kokok.
+  for (const berkas of [DEFAULT_SEED_PANDUAN, DEFAULT_SEED_PENGETAHUAN]) {
+    if (!fs.existsSync(berkas)) continue;
+    const mentah: unknown = JSON.parse(fs.readFileSync(berkas, "utf-8"));
+    seedPanduan(db, z.array(seedPanduanItemSchema).parse(mentah));
   }
 
   seedInvestasi(db, DEFAULT_SEED_PELUANG);

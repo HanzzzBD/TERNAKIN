@@ -1,5 +1,8 @@
 import type {
+  AksiObrolan,
   BahanMaster,
+  KategoriCakupan,
+  PesanRiwayat,
   ItemUraiPakan,
   PakanHitungLayak,
   PakanHitungRequest,
@@ -49,6 +52,10 @@ export interface TriageKokokOutput {
   urgensi: UrgensiKokok;
   alasanUrgensi: string;
   panduanUmum: string[];
+  /** Jawaban langsung yang menanggapi pertanyaan (kosong untuk jawaban bawaan/mock). */
+  jawaban?: string;
+  /** true bila AI menilai potongan panduan tidak membahas gejala ini. */
+  diLuarPanduan?: boolean;
   tokenMasuk: number;
   tokenKeluar: number;
 }
@@ -61,8 +68,32 @@ export interface LlmAdapter {
     input: TriageKokokInput,
     guidelines: readonly GuidelineChunk[],
   ): Promise<TriageKokokOutput>;
+  /** Obrolan bebas (popup & halaman Kokok): sapaan, pertanyaan aplikasi, dan keluhan ayam. */
+  ngobrol(input: ObrolanInput): Promise<ObrolanOutput>;
 }
 
 export interface SolverAdapter {
   optimize(req: PakanHitungRequest): Promise<PakanHitungResult>;
+}
+
+/** Kategori pesan obrolan; "boleh" = soal ayam/aplikasi, lainnya ditangani dengan hati-hati. */
+export type KategoriObrolan = KategoriCakupan | "minta_obat" | "minta_diagnosis";
+
+export interface ObrolanInput {
+  pesan: string;
+  riwayat: readonly PesanRiwayat[];
+  konteks: "landing" | "aplikasi";
+  kategori: KategoriObrolan;
+  /** Potongan panduan kesehatan yang relevan (kosong untuk sapaan/pertanyaan aplikasi). */
+  panduan: readonly GuidelineChunk[];
+}
+
+export interface ObrolanOutput {
+  balasan: string;
+  aksi: AksiObrolan;
+  urgensi: UrgensiKokok | null;
+  /** "mock" bila jawaban dari cadangan tanpa AI. */
+  sumber?: SumberLlm;
+  tokenMasuk: number;
+  tokenKeluar: number;
 }

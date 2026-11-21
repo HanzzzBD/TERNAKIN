@@ -19,6 +19,8 @@ const REF_KOKOK: DataReferensi = {
 const RES_TINGGI: KokokTriaseResponse = {
   id: "11111111-1111-4111-8111-111111111111",
   urgensi: "tinggi",
+  jawaban:
+    "Bapak/Ibu, kematian mendadak beberapa ekor adalah tanda bahaya. Segera pisahkan ayam dan hubungi dokter hewan.",
   alasanUrgensi:
     "Gejala mengarah pada tanda bahaya. Pemeriksaan dokter hewan sangat disarankan segera.",
   tujuanRujukan: "Segera hubungi dokter hewan atau dinas peternakan / puskeswan terdekat.",
@@ -92,6 +94,12 @@ describe("Layar Kokok (/app/tanya)", () => {
     await waitFor(() => {
       expect(screen.getByText(TEKS_KOKOK.judulUrgensiTinggi)).toBeInTheDocument();
     });
+
+    // Jawaban langsung Kokok tampil sebagai balasan, alasan urgensi jadi keterangan
+    expect(
+      screen.getByText(/kematian mendadak beberapa ekor adalah tanda bahaya/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Kenapa urgensinya tinggi:/)).toBeInTheDocument();
 
     expect(screen.getByText(/Lihat sumber pedoman yang dipakai/i)).toBeInTheDocument();
     const tautanWa = screen.getByRole("link", { name: TEKS_KOKOK.tombolKirimWa });

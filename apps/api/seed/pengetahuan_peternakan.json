@@ -1,0 +1,310 @@
+[
+  {
+    "id": "pakan_biaya_dan_formulasi",
+    "judul": "Pakan Adalah Biaya Terbesar: Kenapa Formulasi Perlu Dihitung",
+    "sumber": "Azhari dkk. 2025, Indo-MathEdu Intellectuals Journal 6(8):11579-11585 — Optimasi Formulasi Ayam Petelur dengan Pemrograman Linier",
+    "versi": "rujukan-jurnal-2025",
+    "isi": "Biaya pakan bisa mencapai sekitar 60-70% dari total biaya produksi ayam petelur, sehingga cara menyusun campuran sangat menentukan untung-rugi. Penelitian di BUMDes Lengkiti menunjukkan bahwa menghitung campuran dengan pemrograman linier (seperti fitur Pakan di Ternakin) bisa menurunkan biaya per kg tanpa mengurangi kecukupan protein, energi, kalsium, dan fosfor. Selisih per kg mungkin kecil, tetapi untuk puluhan ribu kg pakan per bulan penghematannya terasa. Keuntungan lain: saat harga jagung, dedak, atau bungkil kedelai naik-turun, campuran bisa dihitung ulang dengan cepat memakai harga terbaru."
+  },
+  {
+    "id": "pakan_efisiensi_konsentrat",
+    "judul": "Mengurangi Konsentrat Berlebih Tanpa Menurunkan Produksi Telur",
+    "sumber": "Purnamasari dkk. 2022, Jurnal Ilmu dan Teknologi Peternakan Indonesia 8(2):112-119 — Produktivitas dan Efisiensi Pakan Ayam Ras Petelur",
+    "versi": "rujukan-jurnal-2022",
+    "isi": "Banyak peternak memakai konsentrat layer dalam porsi besar, misalnya separuh dari campuran (jagung 33%, dedak 17%, konsentrat 50%). Penelitian pada ayam Lohmann Brown umur 21 minggu menunjukkan campuran yang disusun sesuai kebutuhan dengan konsentrat lebih rendah (sekitar 34-38%, jagung dan dedak dinaikkan) menghasilkan produksi telur, bobot telur, dan FCR yang tidak berbeda nyata, tetapi biaya pakan lebih murah sekitar Rp68-84 per ekor per hari. Artinya, menambah konsentrat melebihi kebutuhan belum tentu menambah telur, hanya menambah biaya. Pendampingan menyusun formula tetap disarankan agar gizi tetap cukup."
+  },
+  {
+    "id": "pakan_keseimbangan_nutrisi",
+    "judul": "Keseimbangan Nutrisi dan Premix Memengaruhi Konsumsi dan Bobot Ayam",
+    "sumber": "Arbiantara & Widianingrum 2024, Prosiding National Conference of Applied Animal Science (Politeknik Negeri Jember) — Evaluasi Produksi Ayam Layer dengan Komposisi Pakan Berbeda",
+    "versi": "rujukan-jurnal-2024",
+    "isi": "Pada dua peternakan rakyat ayam Isa Brown umur 17-28 minggu di Tulungagung, perbedaan komposisi jagung, bekatul, dan konsentrat serta pemakaian premix (campuran vitamin-mineral) berpengaruh nyata pada konsumsi pakan dan bobot badan rata-rata, meski produksi telur harian dan FCR tidak berbeda nyata dalam 3 bulan pengamatan. Pesannya: jumlah pakan bukan satu-satunya ukuran; keseimbangan protein, energi, kalsium, fosfor, vitamin, dan mineral menentukan produktivitas. Bahan perlu dicampur merata (homogen) agar setiap ayam mendapat gizi yang sama. Pantau konsumsi pakan dan bobot ayam secara berkala di catatan harian."
+  },
+  {
+    "id": "pakan_self_mixing",
+    "judul": "Meracik Pakan Sendiri (Self-Mixing / Semi Self-Mixing)",
+    "sumber": "Huda dkk. 2023, Jurnal Pengabdian Pendidikan Masyarakat 4(1) — Pembinaan Pembuatan Pakan Semi Self-Mixing Ayam Petelur di Bojonegoro",
+    "versi": "rujukan-jurnal-2023",
+    "isi": "Pakan semi self-mixing artinya peternak mencampur sendiri bahan lokal (jagung, dedak/bekatul) dengan konsentrat pabrikan, bukan membeli pakan jadi seluruhnya. Cara ini dipakai untuk menekan biaya saat harga pakan terus naik. Pelatihan di Bojonegoro menunjukkan sebagian besar peternak (sekitar 80%) mampu memahami cara meraciknya setelah pelatihan, praktik, dan pendampingan. Kunci keberhasilan: timbang bahan dengan benar sesuai formula, campur merata, gunakan bahan yang kering dan tidak berjamur, dan hitung ulang campuran bila harga atau bahan berubah."
+  },
+  {
+    "id": "pakan_mutu_aflatoksin",
+    "judul": "Mutu dan Keamanan Pakan: Kadar Air, Abu, Protein, Kalsium, dan Jamur",
+    "sumber": "Hakim dkk. 2024, Jurnal Ilmu Nutrisi dan Teknologi Pakan 22(2):122-128 — Evaluasi Mutu dan Keamanan Pakan Ayam Petelur Masa Produksi di Tasikmalaya (mengacu SNI 8290.5:2016)",
+    "versi": "rujukan-jurnal-2024",
+    "isi": "SNI 8290.5:2016 untuk pakan ayam petelur masa produksi mensyaratkan kadar air maksimal 13%, abu maksimal 14%, protein kasar minimal 16,5%, lemak minimal 3%, serat maksimal 7%, kalsium 3,25-4,25%, fosfor minimal 0,55%, dan aflatoksin maksimal 50 ppb. Uji sampel di Tasikmalaya menemukan banyak pakan, terutama racikan peternak dan dari poultry shop, tidak memenuhi syarat abu, protein, kalsium, dan aflatoksin. Aflatoksin berasal dari jamur pada jagung atau bahan lembap dan dapat menurunkan produksi serta kualitas telur. Simpan bahan di tempat kering, beri alas palet, jangan menumpuk terlalu lama, dan buang bahan yang menggumpal, berbau apek, atau berjamur."
+  },
+  {
+    "id": "pakan_penyimpanan",
+    "judul": "Cara Menyimpan Pakan dan Bahan Baku agar Tidak Berjamur",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Pakan dan bahan seperti jagung dan dedak mudah lembap lalu berjamur. Simpan di gudang yang kering, beratap rapat, dan cukup udara. Letakkan karung di atas palet kayu, tidak langsung di lantai atau menempel dinding. Pakai prinsip yang datang lebih dulu dipakai lebih dulu, dan jangan membeli terlalu banyak bila gudang lembap. Periksa bau dan warna sebelum dipakai: bahan yang apek, menggumpal, atau berbintik jamur jangan diberikan. Dedak juga cepat tengik, jadi sebaiknya dibeli secukupnya. Bersihkan sisa pakan basah di tempat pakan setiap hari."
+  },
+  {
+    "id": "air_minum",
+    "judul": "Air Minum: Kebutuhan dan Kebersihan",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam umumnya minum sekitar dua kali lebih banyak dari pakan yang dimakannya, dan lebih banyak lagi saat cuaca panas. Kekurangan air dengan cepat menurunkan konsumsi pakan dan produksi telur. Pastikan air selalu tersedia, bersih, dan tidak terlalu panas karena terjemur. Bersihkan tempat minum atau nipple setiap hari dan periksa ada yang bocor atau tersumbat. Bila konsumsi air tiba-tiba turun atau naik tajam, itu tanda awal ada masalah kesehatan atau lingkungan; catat dan perhatikan ayam lebih dekat. Sumber air sumur atau sungai sebaiknya dijaga dari pencemaran kotoran."
+  },
+  {
+    "id": "brooding_doc",
+    "judul": "Merawat Anak Ayam (DOC) di Masa Brooding",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Anak ayam belum bisa mengatur suhu tubuh sendiri, jadi minggu-minggu pertama butuh pemanas (brooder). Suhu di bawah pemanas biasanya dibuat sekitar 32-35°C pada minggu pertama lalu diturunkan bertahap tiap minggu. Lihat perilakunya: bergerombol rapat di bawah pemanas berarti kedinginan; menjauh dari pemanas, megap-megap, atau sayap terbuka berarti kepanasan; menyebar merata berarti nyaman. Siapkan alas sekam kering, air minum bersih bersuhu ruang sebelum DOC datang, dan pakan starter. Hindari angin langsung dan kepadatan berlebih. Anak ayam yang lemah, lesu, atau kotorannya menempel di dubur perlu dipisahkan dan dipantau."
+  },
+  {
+    "id": "kepadatan_ventilasi",
+    "judul": "Kepadatan Kandang, Ventilasi, dan Bau Amonia",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Kandang yang terlalu padat membuat ayam stres, mudah berkelahi, saling mematuk, dan penyakit cepat menular. Udara yang pengap dan bau amonia menyengat dari kotoran basah dapat merusak saluran napas ayam dan memicu ngorok. Jaga aliran udara dengan membuka tirai sesuai arah angin, beri jarak kandang dari dinding atau bangunan lain, dan bersihkan kotoran secara rutin. Bila mata manusia terasa pedih di dalam kandang, kadar amonia sudah terlalu tinggi. Alas atau litter yang basah sebaiknya diganti atau dikeringkan."
+  },
+  {
+    "id": "pencahayaan_petelur",
+    "judul": "Pencahayaan untuk Ayam Petelur",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Lama penyinaran memengaruhi produksi telur. Pada masa produksi, ayam petelur umumnya mendapat sekitar 16 jam cahaya per hari (gabungan cahaya matahari dan lampu), dan jadwalnya dibuat tetap setiap hari. Mengurangi lama cahaya secara tiba-tiba saat ayam sedang bertelur bisa menurunkan produksi. Cahaya yang terlalu terang atau tidak merata dapat memicu ayam saling mematuk. Bila produksi turun, periksa juga apakah ada lampu mati atau jadwal lampu berubah."
+  },
+  {
+    "id": "kerabang_tipis",
+    "judul": "Telur Kerabang Tipis, Lembek, atau Mudah Pecah",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Kerabang (cangkang) telur yang tipis, lembek, atau kasar bisa disebabkan kalsium pakan kurang atau tidak seimbang dengan fosfor, ayam sudah tua, stres panas sehingga makan berkurang, air minum kurang, atau penyakit tertentu yang mengganggu saluran telur. Langkah awal: periksa komposisi pakan dan kecukupan kalsium sesuai fase layer, pastikan pakan tercampur merata, air cukup, dan kandang tidak terlalu panas. Catat berapa persen telur yang bermasalah. Bila disertai produksi turun mendadak, ayam lesu, atau gejala pernapasan, segera konsultasikan ke penyuluh atau puskeswan karena bisa terkait penyakit menular."
+  },
+  {
+    "id": "patuk_bulu_kanibalisme",
+    "judul": "Ayam Saling Mematuk Bulu atau Kanibalisme",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Kebiasaan mematuk bulu bisa berubah menjadi kanibalisme bila ada luka berdarah. Pemicu umumnya kandang terlalu padat, cahaya terlalu terang, panas, ayam bosan, tempat pakan atau minum kurang sehingga berebut, serta pakan yang kekurangan protein atau garam. Pisahkan segera ayam yang terluka karena warna darah menarik ayam lain. Kurangi kepadatan, redupkan atau ratakan cahaya, tambah tempat pakan dan minum, dan periksa kecukupan gizi pakan. Bila berlanjut meski kondisi sudah diperbaiki, minta saran penyuluh."
+  },
+  {
+    "id": "rontok_bulu_molting",
+    "judul": "Bulu Rontok: Rontok Alami (Molting) atau Tanda Masalah",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam secara alami mengganti bulu (molting), biasanya disertai produksi telur berhenti atau turun untuk sementara. Molting juga bisa dipicu stres, misalnya kekurangan air atau pakan beberapa hari, perubahan cahaya mendadak, atau pindah kandang. Rontok bulu yang tidak wajar bisa disebabkan kutu atau tungau, saling patuk, atau kekurangan gizi. Periksa kulit di bawah bulu dekat dubur dan sayap untuk melihat ada parasit, dan pastikan air, pakan, serta jadwal cahaya stabil. Bila disertai ayam lesu, kurus, atau kematian, segera konsultasikan."
+  },
+  {
+    "id": "parasit_kutu_tungau",
+    "judul": "Kutu dan Tungau pada Ayam",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Kutu dan tungau membuat ayam gelisah, sering mematuk badannya sendiri, bulu kusam atau rontok, jengger pucat karena kehilangan darah, dan produksi telur turun. Tungau merah sering bersembunyi di celah kayu kandang dan keluar malam hari. Periksa bulu di sekitar dubur dan bawah sayap, serta celah tenggeran di malam hari dengan senter. Bersihkan kandang menyeluruh, ganti alas, tutup atau rapikan celah tempat bersembunyi, dan sediakan tempat mandi debu bila memungkinkan. Untuk pemilihan obat pembasmi parasit yang aman bagi ayam dan telur, tanyakan ke penyuluh atau dokter hewan."
+  },
+  {
+    "id": "cacingan",
+    "judul": "Kecurigaan Cacingan pada Ayam",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam yang cacingan bisa tampak kurus walau nafsu makan ada, bulu kusam, jengger pucat, kotoran encer, pertumbuhan lambat, atau produksi telur turun. Kadang cacing terlihat di kotoran. Risiko lebih besar pada ayam yang diumbar atau alas kandang lembap dan jarang dibersihkan. Langkah awal: jaga alas tetap kering, bersihkan kotoran rutin, dan pisahkan ayam yang sangat kurus. Pemeriksaan kotoran dan penentuan obat cacing serta jadwalnya sebaiknya lewat dokter hewan atau puskeswan."
+  },
+  {
+    "id": "kewaspadaan_nd_tetelo",
+    "judul": "Kewaspadaan Gejala Saraf dan Kotoran Hijau (Dugaan Tetelo/ND)",
+    "sumber": "Ringkasan Tim Ternakin — Kewaspadaan Penyakit Menular Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Gejala seperti leher terpuntir, berputar-putar, sayap atau kaki lumpuh, kejang, kotoran hijau encer, sesak napas, produksi telur anjlok dengan telur lembek atau tanpa kerabang, dan kematian yang meningkat cepat dapat mengarah pada penyakit menular berbahaya seperti tetelo (Newcastle Disease). Ini kondisi mendesak. Jangan memindahkan atau menjual ayam, pisahkan ayam sakit, batasi orang dan kendaraan keluar-masuk, dan segera hubungi dokter hewan, puskeswan, atau dinas peternakan. Kepastian penyakit hanya bisa lewat pemeriksaan ahli dan laboratorium."
+  },
+  {
+    "id": "kewaspadaan_flu_burung",
+    "judul": "Kewaspadaan Flu Burung (Avian Influenza) dan Keselamatan Manusia",
+    "sumber": "Ringkasan Tim Ternakin — Kewaspadaan Penyakit Menular Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Kematian mendadak dalam jumlah banyak, jengger dan pial kebiruan atau bengkak, pendarahan di kaki, kepala bengkak, dan produksi telur turun drastis perlu diwaspadai sebagai kemungkinan flu burung, yang bisa menular ke manusia. Segera laporkan ke dinas peternakan atau puskeswan, jangan menjual, memotong, atau mengonsumsi ayam sakit dan bangkai, serta jangan memindahkan ayam. Saat menangani ayam atau bangkai pakai masker, sarung tangan, dan sepatu tertutup, lalu cuci tangan dengan sabun. Bila ada orang yang demam atau sesak setelah kontak dengan unggas sakit, segera periksa ke Puskesmas dan sebutkan riwayat kontak."
+  },
+  {
+    "id": "kewaspadaan_gumboro",
+    "judul": "Kewaspadaan Ayam Muda Lesu Mendadak (Dugaan Gumboro)",
+    "sumber": "Ringkasan Tim Ternakin — Kewaspadaan Penyakit Menular Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Pada ayam muda, sering di umur sekitar 3-6 minggu, gejala lesu mendadak, bulu berdiri dan kusam, menunduk, gemetar, kotoran putih berair, dan ayam sering mematuk dubur sendiri dapat mengarah pada penyakit seperti gumboro yang melemahkan kekebalan. Kematian bisa naik dalam beberapa hari. Pisahkan ayam sakit, jaga kehangatan, air minum, dan kebersihan alas, catat jumlah ayam sakit dan mati setiap hari, lalu segera hubungi dokter hewan atau puskeswan untuk pemeriksaan dan arahan pencegahan di kelompok berikutnya."
+  },
+  {
+    "id": "kewaspadaan_snot_coryza",
+    "judul": "Muka Bengkak dan Hidung Berlendir Berbau (Dugaan Snot/Coryza)",
+    "sumber": "Ringkasan Tim Ternakin — Kewaspadaan Penyakit Menular Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Muka atau area bawah mata bengkak, keluar cairan atau lendir berbau dari hidung, mata berair atau lengket, ngorok, dan nafsu makan serta produksi telur turun dapat mengarah pada penyakit pernapasan menular seperti snot (coryza). Penyakit ini mudah menyebar lewat air minum dan kontak antar ayam. Pisahkan ayam bergejala, bersihkan tempat minum setiap hari, perbaiki ventilasi, hindari memasukkan ayam baru tanpa karantina, dan konsultasikan ke dokter hewan atau puskeswan untuk penanganan."
+  },
+  {
+    "id": "kewaspadaan_berak_kapur_doc",
+    "judul": "Anak Ayam Berak Kapur atau Dubur Lengket",
+    "sumber": "Ringkasan Tim Ternakin — Kewaspadaan Penyakit Unggas (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Anak ayam yang kotorannya putih seperti kapur dan menempel di dubur, lesu, bergerombol, tidak mau makan, serta banyak mati di minggu-minggu pertama perlu diwaspadai, karena bisa berkaitan dengan infeksi bawaan dari induk atau kondisi brooding yang buruk. Pisahkan anak ayam sakit, pastikan suhu brooder nyaman, air minum bersih, dan alas kering. Bersihkan dubur yang lengket dengan lembut. Catat asal DOC dan jumlah kematian, lalu hubungi dokter hewan atau puskeswan; laporkan juga ke pemasok DOC."
+  },
+  {
+    "id": "program_vaksinasi_umum",
+    "judul": "Prinsip Vaksinasi Ayam (Tanpa Merek dan Dosis)",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau dokter hewan)",
+    "versi": "uji-coba-0.2",
+    "isi": "Vaksinasi membantu mencegah penyakit menular seperti tetelo, gumboro, dan penyakit pernapasan. Jadwal dan jenis vaksin sebaiknya mengikuti program dari dokter hewan, puskeswan, atau pemasok bibit karena berbeda tiap daerah dan umur ayam. Prinsip umumnya: vaksin hanya diberikan pada ayam yang sehat, vaksin disimpan dingin sesuai petunjuk dan tidak terkena sinar matahari, alat dan air pelarut bersih, serta tanggal vaksinasi dicatat. Ayam yang baru divaksin bisa tampak sedikit lesu sebentar; bila gejala berat atau kematian meningkat, hubungi dokter hewan."
+  },
+  {
+    "id": "penanganan_bangkai",
+    "judul": "Menangani Bangkai Ayam dengan Aman",
+    "sumber": "Ringkasan Tim Ternakin — Prosedur Biosekuriti Kandang (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ambil bangkai secepatnya dari kandang memakai sarung tangan. Bangkai jangan dijual, dipotong, dimasak, diberikan ke hewan lain, atau dibuang ke sungai, selokan, kebun, maupun tempat sampah umum karena bisa menyebarkan penyakit. Kubur minimal sekitar 1 meter dan jauh dari sumber air, atau bakar hingga habis di lokasi peternakan. Cuci tangan dengan sabun dan bersihkan alat setelahnya. Catat jumlah ayam mati setiap hari; bila kematian mendadak atau meningkat tajam, laporkan ke dinas peternakan atau puskeswan dalam 24 jam."
+  },
+  {
+    "id": "pencatatan_harian",
+    "judul": "Membaca Catatan Harian: HDP, FCR, Kematian, dan Suhu",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Catatan harian membantu melihat masalah lebih awal. HDP (hen day production) adalah persentase telur dibanding jumlah ayam hidup hari itu; penurunan beberapa hari berturut-turut perlu dicari penyebabnya. FCR adalah perbandingan pakan yang habis dengan hasil (kg telur atau kg daging); makin kecil makin efisien. Kematian harian yang naik, konsumsi pakan atau air yang tiba-tiba turun, dan suhu kandang yang tinggi adalah tanda peringatan. Catat setiap hari pada jam yang sama agar mudah dibandingkan, dan bawa catatan ini saat berkonsultasi dengan penyuluh atau dokter hewan."
+  },
+  {
+    "id": "ayam_pedaging_dasar",
+    "judul": "Dasar Pemeliharaan Ayam Pedaging (Broiler)",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam pedaging tumbuh sangat cepat dan biasanya dipanen dalam sekitar 4-5 minggu. Karena itu masa brooding, kecukupan pakan dan air, ventilasi, dan kepadatan sangat menentukan bobot panen dan FCR. Pantau bobot rata-rata mingguan, konsumsi pakan, dan kematian. Ayam pedaging rentan stres panas dan masalah kaki bila tumbuh terlalu cepat atau alas basah. Perubahan mendadak seperti nafsu makan turun, banyak ayam duduk, atau kematian meningkat perlu segera dikonsultasikan ke dokter hewan atau penyuluh."
+  },
+  {
+    "id": "ayam_kampung_peliharaan",
+    "judul": "Merawat Ayam Kampung atau Ayam Peliharaan di Rumah",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam kampung atau ayam peliharaan di rumah tetap butuh kandang yang kering, teduh, terlindung dari hujan dan hewan pemangsa, serta tempat bertengger di malam hari. Sediakan air bersih setiap hari dan pakan yang cukup, misalnya campuran pakan jadi, jagung, dedak, dan sisa sayur segar (bukan makanan basi atau berjamur). Bersihkan kotoran rutin. Pisahkan ayam baru atau ayam yang tampak sakit setidaknya beberapa minggu sebelum digabung. Bila ada ayam lesu, ngorok, mencret, atau mati mendadak, jauhkan dari ayam lain dan tanyakan ke puskeswan atau dokter hewan terdekat."
+  },
+  {
+    "id": "karantina_ayam_baru",
+    "judul": "Karantina Ayam Baru Sebelum Digabung",
+    "sumber": "Ringkasan Tim Ternakin — Prosedur Biosekuriti Kandang (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Ayam yang baru dibeli atau baru kembali dari tempat lain bisa membawa penyakit walau tampak sehat. Tempatkan di kandang terpisah, idealnya sekitar 2-4 minggu, dan amati napas, kotoran, nafsu makan, serta tanda kutu. Urus ayam lama yang sehat lebih dulu, baru ayam karantina, dan cuci tangan serta ganti alas kaki setelahnya. Jangan berbagi tempat pakan dan minum. Gabungkan hanya bila selama masa karantina tidak ada gejala sakit."
+  },
+  {
+    "id": "nafsu_makan_turun_umum",
+    "judul": "Ayam Tidak Mau Makan: Daftar Periksa Awal",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Nafsu makan turun bisa disebabkan banyak hal: air minum habis atau tersumbat, pakan baru yang berbeda rasa atau berjamur, cuaca panas, ayam baru divaksin, stres karena pindah kandang atau suara keras, molting, atau awal penyakit. Periksa dulu air, kualitas dan perubahan pakan, suhu kandang, serta apakah ada gejala lain seperti ngorok, mencret, atau lesu. Catat berapa ekor terdampak dan sejak kapan. Bila tidak membaik dalam satu-dua hari, ada ayam mati, atau gejala lain muncul, hubungi penyuluh atau puskeswan."
+  },
+  {
+    "id": "hujan_dan_kelembapan",
+    "judul": "Musim Hujan: Kandang Lembap dan Alas Basah",
+    "sumber": "Ringkasan Tim Ternakin — Pengetahuan Umum Beternak Ayam (belum ditinjau penyuluh)",
+    "versi": "uji-coba-0.2",
+    "isi": "Saat musim hujan, alas atau litter mudah basah sehingga amonia naik, kaki ayam bermasalah, dan bibit penyakit pencernaan seperti penyebab kotoran berdarah lebih mudah berkembang. Perbaiki atap yang bocor, tutup tirai saat hujan dan angin kencang tetapi tetap jaga sirkulasi udara, ganti atau tambah alas kering di area yang basah, dan jaga tempat minum agar tidak tumpah. Pakan dan bahan baku juga lebih cepat berjamur, jadi simpan di tempat kering dan beli secukupnya."
+  },
+  {
+    "id": "asal_usul_domestikasi_ayam",
+    "judul": "Asal-Usul Ayam: Dari Ayam Hutan Merah ke Ayam Ternak",
+    "sumber": "Mongabay Indonesia 2022 (Sejak Kapan Ayam Dekat dengan Kehidupan Manusia); detikEdu 2022 (Fakta Menarik Ayam yang Dipelihara Manusia); Media Peternakan IPB (asal-usul ayam domestikasi)",
+    "versi": "rujukan-web-2026",
+    "isi": "Semua ayam ternak yang kita kenal berasal dari ayam hutan merah (Gallus gallus). Penelitian lintas universitas memperkirakan domestikasi ayam terjadi sekitar 1.500 SM di semenanjung Asia Tenggara, dan didukung oleh meluasnya pertanian padi kering yang menjadi habitat ayam hutan merah. Menariknya, di Eropa pada Zaman Besi ayam justru dihormati dan umumnya tidak dianggap sebagai makanan. Studi genetika molekuler mendukung pandangan bahwa asal-usul ayam domestik bersifat monofiletik, artinya berasal dari satu leluhur utama. Ayam asli Indonesia dikenal memiliki keragaman genetik yang kaya, meski sebagian sudah bercampur dengan ayam ras komersial."
+  },
+  {
+    "id": "perilaku_sosial_ayam",
+    "judul": "Perilaku Sosial Ayam: Pecking Order, Kecerdasan, dan Istilah Dasar",
+    "sumber": "Halodoc 2026 (Fakta Unik dan Cara Olah Ayam); detikBali (7 Fakta Menarik tentang Ayam); p2k.stekom.ac.id (ensiklopedia Ayam)",
+    "versi": "rujukan-web-2026",
+    "isi": "Ayam adalah hewan sosial yang hidup berkelompok dan membentuk hierarki dominasi yang disebut pecking order: ada ayam yang dominan dan ada yang mengalah saat berebut pakan atau tempat. Karena itu, mencampur ayam baru ke kelompok lama sering memicu perkelahian sementara. Ayam juga dilaporkan tergolong hewan yang cerdas. Istilah dasar yang berguna: ayam jantan dewasa disebut rooster atau cock, anak ayam disebut chick. Induk ayam menjaga anak-anaknya dan anak ayam terus mengikuti induknya selama beberapa minggu. Memahami hierarki ini membantu peternak menyediakan tempat pakan dan minum yang cukup banyak agar ayam yang lebih lemah tetap kebagian."
+  },
+  {
+    "id": "pembentukan_telur_24_jam",
+    "judul": "Bagaimana Sebutir Telur Terbentuk (Sekitar 24-25 Jam) dan Kenapa Ada Telur Kuning Ganda",
+    "sumber": "Fakultas Peternakan IPB (penjelasan Prof. Niken Ulupi tentang telur dalam telur / double yolk); Good News from Indonesia 2025 (Telur Ayam Berwarna-warni)",
+    "versi": "rujukan-web-2026",
+    "isi": "Seluruh proses, dari ovum dilepas oleh ovarium sampai telur utuh keluar dari tubuh, berlangsung sekitar 24-25 jam. Urutannya: kuning telur terbentuk, lalu ditambah putih telur, lalu dibungkus cangkang di dalam saluran reproduksi. Telur berkuning ganda (double yolk) terjadi ketika dua ovum terlepas bersamaan atau hampir bersamaan, padahal normalnya hanya satu. Penyebabnya bisa faktor genetik dan faktor manajemen yang membuat ayam panik atau stres sehingga gerakan peristaltik saluran reproduksi tidak normal. Karena itu telur yang terlalu besar tidak dipilih untuk ditetaskan; seleksi telur tetas biasanya memakai bobot sekitar 55-65 gram per butir."
+  },
+  {
+    "id": "struktur_dan_komposisi_telur",
+    "judul": "Struktur Telur: Cangkang, Putih Telur, dan Kuning Telur",
+    "sumber": "Handout Pengetahuan Bahan Pangan, Universitas Negeri Yogyakarta (Telur) — mengutip Sauveur 1988",
+    "versi": "rujukan-web-2026",
+    "isi": "Dari luar ke dalam, telur terdiri atas kerabang beserta selaput kerabang (sekitar 9,5% dari bobot telur), putih telur (sekitar 61,5%), dan kuning telur (sekitar 29%). Putih telur tidak tercampur dengan kuning telur karena ada kalaza dan membran vitelin yang elastis; kalaza juga membantu menahan posisi kuning telur. Putih telur kental akan tampak lebih cair pada telur yang sudah lama atau mulai menurun mutunya. Bobot per butir dipakai sebagai dasar pengelompokan mutu telur menurut ukuran."
+  },
+  {
+    "id": "warna_cangkang_telur",
+    "judul": "Kenapa Warna Cangkang Telur Bisa Berbeda",
+    "sumber": "Good News from Indonesia 2025 — Tak Cuma Putih dan Cokelat, Telur Ayam Ternyata Bisa Berwarna-warni (narasumber Prof. Ronny)",
+    "versi": "rujukan-web-2026",
+    "isi": "Telur berwarna putih terjadi karena pada tahap akhir pembentukan cangkang tidak ada pigmen yang ditambahkan, sehingga yang tampak hanya warna kalsium karbonat yang putih. Telur kebiruan terjadi ketika cangkang dilapisi pigmen oocyanin yang meresap ke dalam cangkang. Telur dengan bercak-bercak, mirip telur puyuh, berkaitan dengan proses pigmentasi: telur berputar di saluran reproduksi sehingga pigmen biasanya rata, tetapi bila putarannya lebih lambat dari semestinya, pigmen bisa membentuk bercak. Ayam kampung pada umumnya menghasilkan telur putih sampai agak krem. Warna cangkang berkaitan dengan jenis ayam, bukan ukuran kualitas gizi isi telur."
+  },
+  {
+    "id": "penetasan_telur_21_hari",
+    "judul": "Penetasan Telur Ayam: Lama, Suhu, Kelembapan, Pemutaran, dan Candling",
+    "sumber": "Kumpulan penelitian dan modul penetasan: Universitas Muhammadiyah Malang (LMS, Penetasan Telur); Unisba Blitar (jurnal Aves); UNG (jurnal JJEEE); Polije; UIN Sunan Gunung Djati (bab 1)",
+    "versi": "rujukan-web-2026",
+    "isi": "Telur ayam menetas dalam sekitar 21 hari, dan bisa mundur sampai paling lambat sekitar 23 hari. Penetasan alami oleh induk hanya mampu menampung belasan butir (sumber menyebut 10-14, sebagian lain maksimal sekitar 12), sedangkan mesin tetas bisa menampung lebih banyak sesuai kapasitas. Acuan yang banyak dipakai pada penelitian: suhu mesin sekitar 37,5-38 derajat Celsius; kelembapan sekitar 55-60% pada hari 1-18 lalu naik ke sekitar 65-70% pada hari 19-21. Telur diletakkan dengan bagian tumpul di atas dan miring sekitar 45 derajat, lalu dibalik beberapa kali sehari (misalnya 3-4 kali) mulai sekitar hari ke-3 sampai hari ke-18. Candling (meneropong telur) dilakukan beberapa kali, misalnya sekitar hari ke-5 sampai 7, ke-12 sampai 14, dan ke-18, untuk memisahkan telur kosong atau embrio mati. Angka persis berbeda antar sumber dan antar jenis mesin, jadi ikuti petunjuk mesin yang dipakai dan catat hasilnya."
+  },
+  {
+    "id": "penetasan_hari_menetas",
+    "judul": "Detik-Detik Menetas: Apa yang Terjadi Menjelang Hari ke-21",
+    "sumber": "Modul penetasan Universitas Muhammadiyah Malang (LMS); materi mesin tetas Universitas Negeri Makassar (ojs.unm.ac.id); penelitian jurnal Kandaga (Unpad)",
+    "versi": "rujukan-web-2026",
+    "isi": "Menjelang menetas, anak ayam melubangi kerabang dengan paruhnya secara melingkar, lalu keluar sendiri setelah lubang terbentuk, jadi sebaiknya tidak dibantu dengan tergesa-gesa. Pada hari-hari terakhir pembukaan mesin tetas sebaiknya dibatasi agar suhu dan kelembapan stabil. Pada sebuah penelitian perbandingan mesin tetas, sebagian besar telur menetas tepat pada hari ke-21, tetapi pada mesin dengan pengatur suhu yang kurang presisi masih ada anak ayam yang menetas di hari berikutnya. Ini menunjukkan stabilitas suhu memengaruhi keseragaman waktu tetas."
+  },
+  {
+    "id": "stres_panas_ayam",
+    "judul": "Stres Panas pada Ayam: Tanda, Dampak, dan Pencegahan",
+    "sumber": "Hy-Line (Pembaruan Teknis: Memahami Stres Panas pada Ayam Petelur); Suriansyah dkk. 2025, Jurnal Veteriner Nusantara (Undana); Jurnal Kedokteran Hewan 3(1) 2009 (dampak cekaman panas pada broiler); Universitas Airlangga (kombinasi vitamin pada heat stress)",
+    "versi": "rujukan-web-2026",
+    "isi": "Saat suhu lingkungan tinggi, ayam bernapas cepat dan dangkal dengan mulut terbuka (refleks gular) serta merentangkan sayap untuk melepas panas. Bila terengah-engah tidak cukup, ayam menjadi lesu, lalu bisa pingsan dan mati. Dampaknya luas: konsumsi pakan turun, pertumbuhan dan produksi telur menurun, kerabang telur menipis karena gangguan keseimbangan asam-basa akibat terengah-engah, daya tahan tubuh turun, dan kematian naik. Pada broiler, suhu kandang di atas sekitar 35 derajat Celsius dilaporkan merugikan performa, dan suatu kajian menyebut penurunan bobot badan sebesar 15-25% akibat cekaman panas. Perbedaan suhu siang yang panas dan malam yang dingin memperparah keadaan. Pencegahan lebih utama daripada pengobatan: ventilasi lancar, atap yang tidak menyimpan panas, air minum bersih dan selalu tersedia, kepadatan tidak berlebihan, serta mengatur pemberian pakan pada jam yang lebih sejuk. Penelitian juga mencoba suplemen vitamin C dan E; bila ingin memakainya, tanyakan ke dokter hewan atau penyuluh."
+  },
+  {
+    "id": "ragam_ayam_lokal_indonesia",
+    "judul": "Ragam Ayam Lokal Indonesia: Ada Puluhan Rumpun",
+    "sumber": "Jurnal peternakan (core.ac.uk, ulasan ayam lokal Indonesia); SMUJO / PSNMBI (rumpun ayam lokal); Jurnal Ilmu Ternak Unpad; Nataamijaya 2000 (dikutip Untari dkk., Buletin Peternakan)",
+    "versi": "rujukan-web-2026",
+    "isi": "Indonesia dilaporkan memiliki sekitar 31-32 rumpun ayam lokal. Ayam lokal yang tidak punya ciri khusus disebut ayam kampung, sedangkan yang berciri khas punya nama sendiri, misalnya pelung (Cianjur), sentul, kedu hitam, kedu putih, cemani (Kedu, Temanggung), nunukan (Kalimantan Timur), merawang (Bangka Belitung), gaok, dan banyak lagi. Menurut tipenya, ada yang cenderung pedaging (misalnya pelung, nagrak, gaok, sedayu), petelur (misalnya kedu hitam, kedu putih, nusa penida, nunukan, merawang, wareng, sumatera), dan dwiguna (misalnya sentul, kampung, siem). Ada pula tipe petarung dan ayam hias atau kesayangan. Meski produksinya lebih rendah dibanding ayam ras, ayam lokal umumnya lebih tahan penyakit tropis. Sayangnya sebagian rumpun terancam hilang karena tergeser ayam ras unggul, sehingga pelestariannya penting."
+  },
+  {
+    "id": "ayam_cemani",
+    "judul": "Ayam Cemani: Ayam Serba Hitam dari Kedu",
+    "sumber": "Siddiqui dkk. 2024, Tropical Animal Health and Production (Indonesian chicken species and description of Ayam Cemani chicken)",
+    "versi": "rujukan-web-2026",
+    "isi": "Ayam Cemani adalah rumpun langka yang berasal dari Desa Kedu, Temanggung, Jawa Tengah. Tubuhnya tampak hitam seluruhnya karena kondisi genetik yang disebut fibromelanosis (pigmen hitam menumpuk berlebih di banyak jaringan). Ulasan ilmiah melaporkan dagingnya relatif tinggi protein dan rendah lemak, dan ayam ini termasuk jenis yang harganya mahal. Fakta lain: Cemani adalah salah satu dari beberapa varian ayam Kedu (bersama kedu hitam, kedu putih, kedu merah, dan kedu lurik)."
+  },
+  {
+    "id": "ayam_kub_kampung_unggul",
+    "judul": "Ayam KUB (Kampung Unggul Balitbangtan): Ayam Kampung Hasil Seleksi",
+    "sumber": "Brosur Standar Budidaya Ayam KUB, Kementerian Pertanian (repository.pertanian.go.id); prosiding SNPBS UMS (evaluasi ayam KUB di Bantul); penelitian ayam KUB milik peternak pembibit (core.ac.uk)",
+    "versi": "rujukan-web-2026",
+    "isi": "KUB adalah ayam kampung murni hasil seleksi pada betina selama enam generasi dengan tujuan produksi telur yang lebih tinggi. Pada pemeliharaan intensif, produksi telur KUB dilaporkan sekitar 160-180 butir per induk per tahun (generasi lanjutan 'KUB Janaka' sekitar 200), sedangkan ayam kampung biasa maksimal sekitar 146. Puncak produksi dilaporkan sekitar 65-70% pada umur 30-35 minggu, dengan sifat mengeram sekitar 10% populasi. Pada penelitian di peternak pembibit, produksi telur 10% dicapai sekitar umur 26 minggu, jadi hasil lapangan bisa lebih rendah dari angka standar bila manajemen belum optimal. KUB bisa dipanen untuk daging pada umur sekitar 10-12 minggu. Keunggulannya meliputi mortalitas rendah dan daya tahan lebih baik dibanding ayam ras, tetapi kuncinya tetap manajemen pakan dan kandang."
+  },
+  {
+    "id": "pencernaan_ayam_dan_grit",
+    "judul": "Sistem Pencernaan Ayam: Tidak Punya Gigi, Punya Tembolok dan Empedal",
+    "sumber": "Eprints Universitas Muhammadiyah Malang (fisiologi pencernaan unggas); Jurnal Medika Veterinaria USK (histologi tembolok unggas); eXtension Poultry (Avian Digestive System); IDN Times (kenapa ayam makan kerikil)",
+    "versi": "rujukan-web-2026",
+    "isi": "Ayam tidak punya gigi. Jalur pencernaannya: paruh, kerongkongan, tembolok (kantung penyimpan makanan sementara di pangkal leher), proventrikulus (lambung kelenjar yang mengeluarkan asam dan enzim), empedal atau ampela (lambung otot yang menggiling pakan), lalu usus halus, usus besar, dan kloaka. Karena tidak bergigi, ayam yang makan biji-bijian utuh menelan kerikil kecil (grit) untuk membantu empedal menggiling. Ayam yang hanya diberi pakan jadi biasanya tidak perlu grit, sedangkan ayam umbaran atau yang diberi biji utuh biasanya butuh. Ada juga soluble grit seperti cangkang kerang atau tiram giling yang larut dan menjadi sumber kalsium, berguna bagi petelur agar cangkang telur tidak lembek. Pakan berukuran besar atau berserat panjang bisa menyumbat tembolok, jadi perhatikan ukuran bahan pakan."
+  },
+  {
+    "id": "ayam_kampung_vs_broiler_waktu_panen",
+    "judul": "Ayam Kampung vs Broiler: Beda Kecepatan Tumbuh dan Risiko",
+    "sumber": "Kementerian Pertanian (repository.pertanian.go.id, artikel ayam kampung dan persilangan KUB); prosiding SNPBS UMS (evaluasi KUB, kutipan mortalitas broiler)",
+    "versi": "rujukan-web-2026",
+    "isi": "Pertumbuhan ayam kampung lambat: umur panen sekitar 12 minggu, sedangkan ayam broiler jauh lebih cepat (salah satu sumber menyebut sekitar 4 minggu untuk mencapai umur panen). Kecepatan itu datang dengan risiko: sebuah ulasan menyebut mortalitas broiler dapat mencapai sekitar 13% dalam satu siklus budidaya, sementara ayam KUB dilaporkan memiliki mortalitas rendah dan lebih tahan penyakit. Ayam kampung juga disebut lebih tahan cuaca panas dan tidak boros pakan, serta cocok sebagai usaha sambilan karena butuh lahan sempit, modal relatif kecil, dan tenaga kerja sedikit. Kendala utamanya adalah produktivitas yang relatif rendah. Pilihan jenis ayam sebaiknya disesuaikan dengan modal, pasar, dan kemampuan mengelola kandang."
+  },
+  {
+    "id": "telur_turun_mendadak_penyebab",
+    "judul": "Produksi Telur Turun Mendadak: Daftar Kemungkinan Penyebab",
+    "sumber": "Retizen Republika (Produksi Telur Menurun Tiba-tiba? Faktor yang Membuat Ayam Petelur Berhenti Bertelur)",
+    "versi": "rujukan-web-2026",
+    "isi": "Bila produksi telur turun tiba-tiba, periksa berurutan: (1) rontok bulu alami, karena energi dialihkan membentuk bulu baru sehingga telur melambat atau berhenti sementara; ini bagian siklus hidup, bukan penyakit. (2) Nutrisi, karena pembentukan telur butuh pasokan protein, energi, kalsium, fosfor, vitamin, dan mineral setiap hari. (3) Air minum, karena kekurangan cairan menghambat pembentukan telur. (4) Pencahayaan: petelur membutuhkan sekitar 14-16 jam cahaya per hari agar hormon reproduksi bekerja baik. (5) Stres lingkungan seperti panas, bising, atau perubahan mendadak. (6) Penyakit, yang biasanya disertai nafsu makan turun, tubuh lemah, dan aktivitas berkurang. Catat tanggal mulai turunnya dan perubahan apa pun di kandang, lalu konsultasikan ke penyuluh atau dokter hewan bila ayam tampak sakit."
+  },
+  {
+    "id": "ayam_brahma_fakta_ras",
+    "judul": "Fakta Ras Ayam Brahma: Si Raksasa Lembut",
+    "sumber": "IDN Times (5 Fakta Ayam Brahma, Pernah Merajai Industri Daging di AS)",
+    "versi": "rujukan-web-2026",
+    "isi": "Ayam Brahma dikembangkan di Amerika Serikat pada tahun 1840-an dari persilangan ayam impor asal Shanghai (jenis Cochin) dengan ayam Chittagong dari India, jadi asal genetiknya sebenarnya Asia. Ras ini pernah menjadi komoditas mahal yang dihargai kalangan bangsawan dan sempat sangat berpengaruh di industri daging Amerika. Brahma dikenal bertubuh besar namun jinak dan ramah terhadap manusia, serta mampu beradaptasi di berbagai kondisi lingkungan. Fakta ini menunjukkan bahwa banyak ras ayam modern lahir dari persilangan lintas negara."
+  },
+  {
+    "id": "cangkang_telur_nilai_guna",
+    "judul": "Cangkang Telur: Dari Limbah Menjadi Sumber Kalsium Bernilai",
+    "sumber": "Agustiyanti dkk. 2018, Jom FTEKNIK 5(1), Universitas Riau (sintesis hidroksiapatit dari cangkang telur ayam ras); Good News from Indonesia 2025",
+    "versi": "rujukan-web-2026",
+    "isi": "Cangkang telur sebagian besar terbuat dari kalsium karbonat. Penelitian di Universitas Riau memanfaatkan cangkang telur ayam ras sebagai bahan dasar membuat precipitated calcium carbonate (PCC) berkemurnian tinggi, lalu mengolahnya menjadi hidroksiapatit, bahan yang dikembangkan sebagai pengganti struktur jaringan tulang dan gigi. Artinya limbah cangkang dari peternakan atau dapur punya potensi nilai tambah. Untuk keperluan peternakan, cangkang yang dibersihkan, dikeringkan, dan digiling juga lazim dipakai sebagai sumber kalsium; pastikan bersih dan tidak berbau agar tidak membawa kuman ke pakan."
+  }
+]

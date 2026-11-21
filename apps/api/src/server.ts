@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./config/muatEnvDulu.js";
 import crypto from "node:crypto";
 import { buatPenyediaLlm } from "./adapters/penyediaLlm.js";
 import {

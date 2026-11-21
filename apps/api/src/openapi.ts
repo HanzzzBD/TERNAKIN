@@ -23,6 +23,8 @@ import {
   galatApiSchema,
   kandangCreateRequestSchema,
   kesehatanApiSchema,
+  kokokObrolanRequestSchema,
+  kokokObrolanResponseSchema,
   kokokTriaseRequestSchema,
   kokokTriaseResponseSchema,
   leadCreateRequestSchema,
@@ -200,6 +202,25 @@ export function buildOpenApiSpec() {
               description: "Batas harian pertanyaan Kokok tercapai",
               content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
             },
+          },
+        },
+      },
+      "/v1/kokok/obrolan": {
+        post: {
+          summary:
+            "Obrolan bebas dengan Kokok (popup & aplikasi); balasan ditulis AI dengan penjaga boleh/jangan",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: z.toJSONSchema(kokokObrolanRequestSchema) } },
+          },
+          responses: {
+            "200": {
+              description: "Balasan Kokok beserta saran aksi",
+              content: {
+                "application/json": { schema: z.toJSONSchema(kokokObrolanResponseSchema) },
+              },
+            },
+            "429": { description: "Batas harian obrolan tercapai" },
           },
         },
       },

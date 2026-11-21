@@ -149,6 +149,14 @@ export {
   type RankStoresOptions,
 } from "./stores/rank.js";
 export {
+  aksiObrolanSchema,
+  kokokObrolanRequestSchema,
+  kokokObrolanResponseSchema,
+  pesanRiwayatSchema,
+  type AksiObrolan,
+  type KokokObrolanRequest,
+  type KokokObrolanResponse,
+  type PesanRiwayat,
   kokokTriaseRequestSchema,
   kokokTriaseResponseSchema,
   konteksKandangKokokSchema,
@@ -172,3 +180,10 @@ export {
   type HasilDeteksiInput,
   type HasilFilterKeluaran,
 } from "./kokok/safetyFilter.js";
+export {
+  jawabanPenjagaCakupan,
+  periksaCakupanPertanyaan,
+  type HasilCakupan,
+  type JawabanPenjaga,
+  type KategoriCakupan,
+} from "./kokok/penjagaCakupan.js";

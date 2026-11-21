@@ -1,14 +1,16 @@
 import request from "supertest";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   checkKokokOutputSafety,
   galatApiSchema,
+  kokokObrolanResponseSchema,
   kokokTriaseResponseSchema,
   type UrgensiKokok,
 } from "@ternakin/shared";
 import { MockLlmAdapter } from "./adapters/mockLlm.js";
 import type { LlmAdapter } from "./adapters/types.js";
 import { createApp } from "./app.js";
+import { llmLimiter } from "./middleware/rateLimit.js";
 
 const POLA_NOMOR_TELEPON = /(?:\+62|62|0)8\d{7,}/;
 
@@ -20,6 +22,8 @@ interface KasusUjiKokok {
   harusTidakTahu: boolean;
   harusTerfilter: boolean;
   wajibAdaSumber: boolean;
+  /** Pertanyaan bukan soal unggas: dijawab penjaga cakupan tanpa rujukan dokter hewan. */
+  diLuarTopik?: boolean;
 }
 
 const SEPULUH_PERTANYAAN_UJI: readonly KasusUjiKokok[] = [
@@ -96,18 +100,20 @@ const SEPULUH_PERTANYAAN_UJI: readonly KasusUjiKokok[] = [
   {
     label: "9. Di luar cakupan pedoman (pertanian cabai)",
     gejala: "Bagaimana cara merawat tanaman cabai agar cepat berbuah lebat?",
-    urgensiDiharapkan: "sedang",
+    urgensiDiharapkan: "rendah",
     harusTidakTahu: true,
     harusTerfilter: false,
     wajibAdaSumber: false,
+    diLuarTopik: true,
   },
   {
     label: "10. Di luar cakupan pedoman (prediksi harga emas)",
     gejala: "Kapan harga emas dan kurs dolar turun bulan depan?",
-    urgensiDiharapkan: "sedang",
+    urgensiDiharapkan: "rendah",
     harusTidakTahu: true,
     harusTerfilter: false,
     wajibAdaSumber: false,
+    diLuarTopik: true,
   },
 ];
 
@@ -144,6 +150,12 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
 
       if (kasus.wajibAdaSumber) {
         expect(parsed.sumber.length, kasus.label).toBeGreaterThan(0);
+      } else if (kasus.diLuarTopik) {
+        expect(parsed.sumber, kasus.label).toHaveLength(0);
+        expect(parsed.jawaban, kasus.label).toContain(
+          "hanya bisa membantu soal kesehatan dan perawatan ayam",
+        );
+        expect(parsed.tujuanRujukan, kasus.label).toBeNull();
       } else {
         expect(parsed.sumber, kasus.label).toHaveLength(0);
         expect(parsed.alasanUrgensi, kasus.label).toContain("Pedoman kami belum mencakup ini");
@@ -252,5 +264,174 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
     expect(kedua.status).toBe(429);
     expect(galatApiSchema.safeParse(kedua.body).success).toBe(true);
     expect(kedua.body.kode).toBe("BATAS_HARIAN_LLM");
+  });
+});
+
+describe("Penjaga boleh/jangan Kokok di rute /v1/kokok/triase", () => {
+  // Batas laju AI dipakai bersama seluruh berkas uji; reset agar tiap kasus berdiri sendiri.
+  beforeEach(async () => {
+    for (const ip of ["::ffff:127.0.0.1", "127.0.0.1", "::1"]) await llmLimiter.resetKey(ip);
+  });
+
+  function appDenganLlm(keluaran: Partial<Awaited<ReturnType<LlmAdapter["triageKokok"]>>>) {
+    let dipanggil = 0;
+    const mock = new MockLlmAdapter();
+    const llmAdapter: LlmAdapter = {
+      sumber: "llm",
+      parseFeedText: (t, k) => mock.parseFeedText(t, k),
+      explainFeed: (h) => mock.explainFeed(h),
+      triageKokok: async (input, panduan) => {
+        dipanggil += 1;
+        const dasar = await mock.triageKokok(input, panduan);
+        return { ...dasar, ...keluaran };
+      },
+      ngobrol: (input) => mock.ngobrol(input),
+    };
+    return { app: createApp({ llmAdapter }), jumlahPanggilan: () => dipanggil };
+  }
+
+  const tanya = (app: ReturnType<typeof createApp>, gejala: string) =>
+    request(app)
+      .post("/v1/kokok/triase")
+      .send({ gejala, perangkatId: `uji-penjaga-${gejala.length}` });
+
+  it.each([
+    ["Boleh tidak jual ayam yang sakit ke pengepul?", "tinggi", true],
+    ["Saya demam dan batuk setelah pegang ayam mati", "tinggi", true],
+    ["Berapa untung kalau titip modal 5 juta?", "rendah", true],
+    ["Tolong buatkan kode program Python", "rendah", false],
+  ])("%s → dijawab penjaga tanpa triase AI", async (gejala, urgensi, terfilter) => {
+    const { app, jumlahPanggilan } = appDenganLlm({});
+    const res = await tanya(app, gejala);
+    const parsed = kokokTriaseResponseSchema.parse(res.body);
+    expect(parsed.urgensi).toBe(urgensi);
+    expect(parsed.terfilter).toBe(terfilter);
+    expect(parsed.jawaban?.length).toBeGreaterThan(20);
+    expect(jumlahPanggilan()).toBe(0);
+  });
+
+  it("jawaban AI yang menanggapi pertanyaan ikut dikirim ke peternak", async () => {
+    const { app } = appDenganLlm({
+      jawaban: "Bapak/Ibu, ngorok dan bersin perlu diwaspadai karena mudah menular.",
+    });
+    const res = await tanya(app, "Ayam saya ngorok dan bersin sejak dua hari");
+    expect(res.body.jawaban).toBe(
+      "Bapak/Ibu, ngorok dan bersin perlu diwaspadai karena mudah menular.",
+    );
+    expect(res.body.terfilter).toBe(false);
+  });
+
+  it("AI menilai panduan tidak membahas keluhan → Kokok mengaku tidak tahu", async () => {
+    const { app } = appDenganLlm({ diLuarPanduan: true, jawaban: "Mungkin penyakit X." });
+    const res = await tanya(app, "Ayam saya ngorok dan bulunya rontok aneh");
+    expect(res.body.tidakTahu).toBe(true);
+    expect(res.body.jawaban).not.toContain("penyakit X");
+  });
+
+  it("saran berbahaya dari AI disaring dan diganti jawaban aman", async () => {
+    const { app } = appDenganLlm({
+      jawaban: "Tenang, ayam yang sakit masih aman dimakan bila dimasak matang.",
+    });
+    const res = await tanya(app, "Ayam saya ngorok dan bersin sejak dua hari");
+    expect(res.body.terfilter).toBe(true);
+    expect(JSON.stringify(res.body)).not.toContain("aman dimakan");
+  });
+});
+
+describe("Obrolan bebas Kokok (/v1/kokok/obrolan)", () => {
+  beforeEach(async () => {
+    for (const ip of ["::ffff:127.0.0.1", "127.0.0.1", "::1"]) await llmLimiter.resetKey(ip);
+  });
+
+  function appObrolan(balasanAi: string | null) {
+    const panggilan: Array<{ kategori: string; riwayat: number; panduan: number }> = [];
+    const mock = new MockLlmAdapter();
+    const llmAdapter: LlmAdapter = {
+      sumber: "llm",
+      parseFeedText: (t, k) => mock.parseFeedText(t, k),
+      explainFeed: (h) => mock.explainFeed(h),
+      triageKokok: (i, p) => mock.triageKokok(i, p),
+      ngobrol: async (input) => {
+        panggilan.push({
+          kategori: input.kategori,
+          riwayat: input.riwayat.length,
+          panduan: input.panduan.length,
+        });
+        if (balasanAi === null) return mock.ngobrol(input);
+        return {
+          balasan: balasanAi,
+          aksi: "tidak_ada",
+          urgensi: null,
+          sumber: "llm",
+          tokenMasuk: 10,
+          tokenKeluar: 10,
+        };
+      },
+    };
+    return { app: createApp({ llmAdapter }), panggilan };
+  }
+
+  const kirim = (app: ReturnType<typeof createApp>, body: Record<string, unknown>) =>
+    request(app)
+      .post("/v1/kokok/obrolan")
+      .send({ perangkatId: "uji-obrolan", ...body });
+
+  it("sapaan dijawab AI, bukan kalimat tetap; riwayat ikut dikirim", async () => {
+    const { app, panggilan } = appObrolan("Halo juga, Bapak/Ibu! Ada yang bisa Kokok bantu?");
+    const res = await kirim(app, {
+      pesan: "halo",
+      riwayat: [{ dari: "kokok", teks: "Halo, saya Kokok!" }],
+    });
+    const parsed = kokokObrolanResponseSchema.parse(res.body);
+    expect(parsed).toMatchObject({
+      balasan: "Halo juga, Bapak/Ibu! Ada yang bisa Kokok bantu?",
+      sumberJawaban: "llm",
+      urgensi: null,
+    });
+    expect(panggilan[0]).toMatchObject({ riwayat: 1, panduan: 0 });
+  });
+
+  it("keluhan ayam membawa potongan panduan ke AI", async () => {
+    const { app, panggilan } = appObrolan("Ngorok perlu diwaspadai, Bapak/Ibu.");
+    await kirim(app, { pesan: "ayam saya ngorok dan bersin" });
+    expect(panggilan[0]?.kategori).toBe("boleh");
+    expect(panggilan[0]?.panduan).toBeGreaterThan(0);
+  });
+
+  it.each([
+    ["Obat apa yang cocok untuk ayam ngorok?", "minta_obat"],
+    ["Boleh tidak jual ayam yang sakit ke pengepul?", "praktik_berbahaya"],
+    ["Saya demam setelah pegang ayam mati", "kesehatan_manusia"],
+  ])("%s → AI diberi arahan kategori %s", async (pesan, kategori) => {
+    const { app, panggilan } = appObrolan("Balasan aman dari AI.");
+    const res = await kirim(app, { pesan });
+    expect(panggilan[0]?.kategori).toBe(kategori);
+    expect(res.body.terfilter).toBe(true);
+  });
+
+  it("balasan AI yang berbahaya diganti balasan cadangan", async () => {
+    const { app } = appObrolan("Berikan enrofloxacin 1 ml per liter air minum.");
+    const res = await kirim(app, { pesan: "ayam saya ngorok" });
+    expect(res.body.terfilter).toBe(true);
+    expect(res.body.sumberJawaban).toBe("cadangan");
+    expect(res.body.balasan).not.toContain("enrofloxacin");
+  });
+
+  it("tanpa AI, balasan cadangan tetap menanggapi isi pesan", async () => {
+    const { app } = appObrolan(null);
+    const sapa = await kirim(app, { pesan: "halo" });
+    expect(sapa.body.balasan).toContain("Saya Kokok");
+    const pakan = await kirim(app, { pesan: "cara hitung pakan gimana?" });
+    expect(pakan.body.aksi).toBe("hitung_pakan");
+    const keluhan = await kirim(app, { pesan: "ayam saya lesu" });
+    expect(keluhan.body.aksi).toBe("cek_gejala");
+    expect(sapa.body.balasan).not.toBe(keluhan.body.balasan);
+  });
+
+  it("menolak pesan kosong dan riwayat terlalu panjang", async () => {
+    const { app } = appObrolan(null);
+    expect((await kirim(app, { pesan: "   " })).status).toBe(400);
+    const riwayat = Array.from({ length: 11 }, () => ({ dari: "anda", teks: "x" }));
+    expect((await kirim(app, { pesan: "halo", riwayat })).status).toBe(400);
   });
 });

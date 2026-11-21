@@ -9,7 +9,9 @@ import {
 } from "react";
 import { Link, useNavigate } from "react-router";
 import { LANDING_KOKOK_CHAT, type KokokChatPilihan } from "../../content/landingContent";
+import type { AksiObrolan } from "@ternakin/shared";
 import { db } from "../../db/db";
+import { kirimPesanKokok } from "../../lib/kokokObrolan";
 import { buatTautanWhatsAppTim } from "../../lib/wa";
 import { ArrowRightIcon, ArrowUpIcon, CloseIcon, KokokFigure, WhatsAppIcon } from "../ui";
 import "./KokokChatPopup.css";
@@ -17,7 +19,6 @@ import "./KokokChatPopup.css";
 const KUNCI_TEASER = "tk.kokokChat.teaser";
 const KUNCI_DRAF_PERTANYAAN = "kokok-pertanyaan";
 const JEDA_TEASER_MS = 4000;
-const JEDA_KETIK_MS = 650;
 
 type AksiPesan =
   | { jenis: "tautan"; label: string; ke: string }
@@ -41,6 +42,28 @@ function aksiDariPilihan(pilihan: KokokChatPilihan): AksiPesan | undefined {
     label: pilihan.aksi.label,
     href: buatTautanWhatsAppTim(pilihan.aksi.whatsapp),
   };
+}
+
+/** Tombol lanjutan dari saran aksi AI. */
+function aksiDariObrolan(aksi: AksiObrolan, pesanPengguna: string): AksiPesan | undefined {
+  switch (aksi) {
+    case "cek_gejala":
+      return { jenis: "gejala", label: LANDING_KOKOK_CHAT.tombolLanjutGejala, teks: pesanPengguna };
+    case "hitung_pakan":
+      return { jenis: "tautan", label: "Mulai hitung pakan", ke: "/app/pakan" };
+    case "lihat_investasi":
+      return { jenis: "tautan", label: "Lihat peluang", ke: "/app/investasi" };
+    case "hubungi_tim":
+      return {
+        jenis: "whatsapp",
+        label: "Buka WhatsApp",
+        href: buatTautanWhatsAppTim(
+          "Halo tim Ternakin, saya ingin bertanya setelah mengobrol dengan Kokok.",
+        ),
+      };
+    default:
+      return undefined;
+  }
 }
 
 function bacaTeaserDitutup(): boolean {
@@ -72,7 +95,6 @@ export function KokokChatPopup() {
   );
 
   const idBerikutnya = useRef(LANDING_KOKOK_CHAT.sapaan.length);
-  const timerRef = useRef<number[]>([]);
   const logRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const launcherRef = useRef<HTMLButtonElement | null>(null);
@@ -82,13 +104,6 @@ export function KokokChatPopup() {
     if (bacaTeaserDitutup()) return;
     const t = window.setTimeout(() => setTeaserTampil(true), JEDA_TEASER_MS);
     return () => window.clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    const daftar = timerRef.current;
-    return () => {
-      daftar.forEach((t) => window.clearTimeout(t));
-    };
   }, []);
 
   // Gulir ke pesan terbaru
@@ -123,19 +138,27 @@ export function KokokChatPopup() {
     setPesan((sebelum) => [...sebelum, { ...isi, id }]);
   };
 
-  const balasKokok = (isi: Omit<PesanObrolan, "id" | "dari">) => {
+  /**
+   * Kirim pesan ke Kokok (AI di server). Bila offline atau server gagal, pakai balasan cadangan
+   * yang sudah disiapkan pemanggil agar obrolan tetap berjalan.
+   */
+  const tanyaKokok = async (isi: string, cadangan: Omit<PesanObrolan, "id" | "dari">) => {
+    tambahPesan({ dari: "anda", teks: isi });
     setSedangMengetik(true);
-    const t = window.setTimeout(() => {
+    try {
+      const riwayat = pesan.map((p) => ({ dari: p.dari, teks: p.teks }));
+      const hasil = await kirimPesanKokok(isi, riwayat, "landing");
+      tambahPesan({ dari: "kokok", teks: hasil.balasan, aksi: aksiDariObrolan(hasil.aksi, isi) });
+    } catch {
+      tambahPesan({ dari: "kokok", ...cadangan });
+    } finally {
       setSedangMengetik(false);
-      tambahPesan({ dari: "kokok", ...isi });
-    }, JEDA_KETIK_MS);
-    timerRef.current.push(t);
+    }
   };
 
   const handlePilih = (pilihan: KokokChatPilihan) => {
     if (sedangMengetik) return;
-    tambahPesan({ dari: "anda", teks: pilihan.label });
-    balasKokok({ teks: pilihan.jawaban, aksi: aksiDariPilihan(pilihan) });
+    void tanyaKokok(pilihan.label, { teks: pilihan.jawaban, aksi: aksiDariPilihan(pilihan) });
   };
 
   const handleKirim = (e: FormEvent<HTMLFormElement>) => {
@@ -143,8 +166,7 @@ export function KokokChatPopup() {
     const isi = teks.trim();
     if (!isi || sedangMengetik) return;
     setTeks("");
-    tambahPesan({ dari: "anda", teks: isi });
-    balasKokok({
+    void tanyaKokok(isi, {
       teks: LANDING_KOKOK_CHAT.balasanGejala,
       aksi: { jenis: "gejala", label: LANDING_KOKOK_CHAT.tombolLanjutGejala, teks: isi },
     });

@@ -52,6 +52,8 @@ export const kokokTriaseResponseSchema = z.object({
   id: z.string().uuid(),
   urgensi: urgensiKokokSchema,
   alasanUrgensi: z.string().min(1),
+  /** Jawaban langsung dalam bahasa sehari-hari (opsional: riwayat lama belum punya). */
+  jawaban: z.string().optional(),
   tujuanRujukan: z.string().nullable(),
   panduanUmum: z.array(z.string().min(1)).min(1),
   sumber: z.array(sumberPanduanSchema),
@@ -73,3 +75,45 @@ export const percakapanKokokLokalSchema = z.object({
   dibuatPada: z.string().min(1),
 });
 export type PercakapanKokokLokal = z.infer<typeof percakapanKokokLokalSchema>;
+
+/* ---------- Obrolan bebas dengan Kokok (popup & halaman) ---------- */
+
+export const aksiObrolanSchema = z.enum([
+  "cek_gejala",
+  "hitung_pakan",
+  "lihat_investasi",
+  "hubungi_tim",
+  "tidak_ada",
+]);
+export type AksiObrolan = z.infer<typeof aksiObrolanSchema>;
+
+export const pesanRiwayatSchema = z.object({
+  dari: z.enum(["anda", "kokok"]),
+  teks: z.string().trim().min(1).max(800),
+});
+export type PesanRiwayat = z.infer<typeof pesanRiwayatSchema>;
+
+export const kokokObrolanRequestSchema = z.object({
+  pesan: z
+    .string()
+    .trim()
+    .min(1, "Tulis pesan untuk Kokok.")
+    .max(500, "Pesan terlalu panjang (maksimal 500 karakter)."),
+  /** Beberapa pesan terakhir agar Kokok paham konteks; paling banyak 10. */
+  riwayat: z.array(pesanRiwayatSchema).max(10).default([]),
+  konteks: z.enum(["landing", "aplikasi"]).default("landing"),
+  perangkatId: z.string().min(1).max(128).optional(),
+});
+export type KokokObrolanRequest = z.infer<typeof kokokObrolanRequestSchema>;
+
+export const kokokObrolanResponseSchema = z.object({
+  balasan: z.string().min(1),
+  aksi: aksiObrolanSchema,
+  /** Diisi bila pesan berisi keluhan ayam; null untuk sapaan atau pertanyaan aplikasi. */
+  urgensi: urgensiKokokSchema.nullable(),
+  sumber: z.array(sumberPanduanSchema),
+  /** "llm" = ditulis AI; "cadangan" = AI tidak tersedia/ditolak filter. */
+  sumberJawaban: z.enum(["llm", "cadangan"]),
+  terfilter: z.boolean(),
+});
+export type KokokObrolanResponse = z.infer<typeof kokokObrolanResponseSchema>;
