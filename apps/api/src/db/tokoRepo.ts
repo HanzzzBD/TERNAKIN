@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite.js";
 import type { AdminUpdateHargaRequest, HargaTokoItem, Toko } from "@ternakin/shared";
 
 interface TokoRow {
@@ -20,7 +20,7 @@ interface HargaTokoJoinRow {
   diperbarui_pada: string;
 }
 
-export function listTokoWithPrices(db: Database.Database): Toko[] {
+export function listTokoWithPrices(db: Database): Toko[] {
   const tokoRows = db.prepare("SELECT * FROM toko ORDER BY nama ASC").all() as TokoRow[];
   const hargaRows = db
     .prepare(
@@ -57,7 +57,7 @@ export function listTokoWithPrices(db: Database.Database): Toko[] {
 }
 
 export function updateTokoPrices(
-  db: Database.Database,
+  db: Database,
   tokoId: string,
   items: AdminUpdateHargaRequest["harga"],
 ): Toko | null {
@@ -96,7 +96,7 @@ export function updateTokoPrices(
 }
 
 export function insertLeadIdempotent(
-  db: Database.Database,
+  db: Database,
   lead: {
     clientId: string;
     tokoId: string;
@@ -147,7 +147,7 @@ function rentangMingguIso(minggu: string): { mulai: string; selesai: string } | 
 }
 
 export function getWeeklyLeadSummary(
-  db: Database.Database,
+  db: Database,
   minggu?: string,
 ): { minggu: string; rekap: LeadRekapRow[] } {
   const rentang = minggu ? rentangMingguIso(minggu) : null;

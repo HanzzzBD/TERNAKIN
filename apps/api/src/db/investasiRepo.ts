@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite.js";
 import { z } from "zod";
 import {
   pemeriksaanDokterSchema,
@@ -60,7 +60,7 @@ export const AKUN_DEMO_SERVER = {
 /** Kata sandi akun demo bersama, sengaja ditampilkan di halaman Masuk untuk juri. */
 export const SANDI_AKUN_DEMO = "demo1234";
 
-export function seedInvestasi(db: Database.Database, seedPath: string): void {
+export function seedInvestasi(db: Database, seedPath: string): void {
   if (!fs.existsSync(seedPath)) return;
   const daftar = z.array(seedPeluangSchema).parse(JSON.parse(fs.readFileSync(seedPath, "utf-8")));
   const sekarang = new Date().toISOString();
@@ -184,7 +184,7 @@ const SELECT_PELUANG = `
               WHERE m.peluang_id = p.id AND m.pengguna_id = @penggunaId), 0) AS minat_saya
   FROM peluang_investasi p`;
 
-export function listPeluang(db: Database.Database, penggunaId: string | null): PeluangInvestasi[] {
+export function listPeluang(db: Database, penggunaId: string | null): PeluangInvestasi[] {
   const rows = db
     .prepare(`${SELECT_PELUANG} ORDER BY p.rowid ASC`)
     .all({ penggunaId: penggunaId ?? "" }) as PeluangRow[];
@@ -192,7 +192,7 @@ export function listPeluang(db: Database.Database, penggunaId: string | null): P
 }
 
 export function getPeluang(
-  db: Database.Database,
+  db: Database,
   id: string,
   penggunaId: string | null,
 ): PeluangInvestasi | null {
@@ -204,7 +204,7 @@ export function getPeluang(
 
 /** Peternak mengajukan peluang baru; selalu mulai dari "menunggu-pemeriksaan" dokter hewan. */
 export function buatAjuanPeluang(
-  db: Database.Database,
+  db: Database,
   penggunaId: string,
   namaPeternak: string,
   ajuan: AjuanPeluangRequest,
@@ -241,7 +241,7 @@ export function buatAjuanPeluang(
 
 /** Mengubah izin tampil data catatan. Mengembalikan false bila peluang bukan milik pengguna. */
 export function aturIzinData(
-  db: Database.Database,
+  db: Database,
   peluangId: string,
   penggunaId: string,
   izin: boolean,
@@ -265,7 +265,7 @@ export type HasilMinat =
     };
 
 export function catatMinat(
-  db: Database.Database,
+  db: Database,
   peluangId: string,
   penggunaId: string,
   nominal: number,
@@ -293,7 +293,7 @@ export function catatMinat(
   return tx();
 }
 
-export function listMinatSaya(db: Database.Database, penggunaId: string): MinatSayaItem[] {
+export function listMinatSaya(db: Database, penggunaId: string): MinatSayaItem[] {
   const rows = db
     .prepare(
       `SELECT m.id, m.peluang_id, p.nama_kandang, m.nominal, m.dibuat_pada

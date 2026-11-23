@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
@@ -12,7 +12,7 @@ export function hashSingkatUntukLog(isi: string): string {
   return crypto.createHash("sha256").update(isi).digest("hex").slice(0, 12);
 }
 
-export function bacaCacheLlm(db: Database.Database, kunci: string): string | null {
+export function bacaCacheLlm(db: Database, kunci: string): string | null {
   const sekarang = new Date().toISOString();
   const row = db
     .prepare("SELECT nilai, kedaluwarsa_pada FROM cache_llm WHERE kunci = ?")
@@ -26,14 +26,14 @@ export function bacaCacheLlm(db: Database.Database, kunci: string): string | nul
   return row.nilai;
 }
 
-export function simpanCacheLlm(db: Database.Database, kunci: string, nilai: string): void {
+export function simpanCacheLlm(db: Database, kunci: string, nilai: string): void {
   const kedaluwarsa = new Date(Date.now() + CACHE_TTL_MS).toISOString();
   db.prepare(
     "INSERT OR REPLACE INTO cache_llm (kunci, nilai, kedaluwarsa_pada) VALUES (?, ?, ?)",
   ).run(kunci, nilai, kedaluwarsa);
 }
 
-export function hitungPemakaianHariIni(db: Database.Database, perangkatId: string): number {
+export function hitungPemakaianHariIni(db: Database, perangkatId: string): number {
   const awalHari = new Date();
   awalHari.setHours(0, 0, 0, 0);
   const row = db
@@ -45,7 +45,7 @@ export function hitungPemakaianHariIni(db: Database.Database, perangkatId: strin
 }
 
 export function catatPemakaianLlm(
-  db: Database.Database,
+  db: Database,
   perangkatId: string,
   rute: string,
   tokenMasuk: number,

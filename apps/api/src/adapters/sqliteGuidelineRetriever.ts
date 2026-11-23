@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 import type { GuidelineChunk, GuidelineRetriever } from "./types.js";
 
 interface DokumenPanduanRow {
@@ -210,7 +210,7 @@ function hitungSkorDokumen(
 }
 
 export class SqliteGuidelineRetriever implements GuidelineRetriever {
-  constructor(private readonly db: Database.Database) {}
+  constructor(private readonly db: Database) {}
 
   async search(query: string, k: number): Promise<GuidelineChunk[]> {
     const tokensAsli = [...new Set(tokenisasi(query))];

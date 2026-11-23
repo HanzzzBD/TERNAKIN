@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite.js";
 import { kunciAkun, type PenggunaSesi } from "../lib/pemilik.js";
 import { deleteAllDataByDevice } from "./catatanRepo.js";
 
@@ -28,7 +28,7 @@ export function buatKodeOtp(): string {
 
 /** Mengembalikan 0 bila boleh mengirim, atau jumlah detik yang harus ditunggu. */
 export function detikTungguOtp(
-  db: Database.Database,
+  db: Database,
   nomor: string,
   sekarang = Date.now(),
 ): number {
@@ -57,7 +57,7 @@ export function detikTungguOtp(
 }
 
 export function simpanOtp(
-  db: Database.Database,
+  db: Database,
   nomor: string,
   kodeHash: string,
   berlakuMs: number,
@@ -84,14 +84,14 @@ export function simpanOtp(
   return tx();
 }
 
-export function batalkanOtp(db: Database.Database, id: number): void {
+export function batalkanOtp(db: Database, id: number): void {
   db.prepare("DELETE FROM otp_permintaan WHERE id = ?").run(id);
 }
 
 export type HasilVerifikasiOtp = "cocok" | "salah" | "tidak_ada" | "terlalu_banyak";
 
 export function verifikasiOtp(
-  db: Database.Database,
+  db: Database,
   rahasia: string,
   nomor: string,
   kode: string,
@@ -147,7 +147,7 @@ function petakanPengguna(row: PenggunaRow): PenggunaSesi {
   };
 }
 
-export function cariPengguna(db: Database.Database, id: string): PenggunaSesi | null {
+export function cariPengguna(db: Database, id: string): PenggunaSesi | null {
   const row = db.prepare(`SELECT ${KOLOM_PENGGUNA} FROM pengguna p WHERE p.id = ?`).get(id) as
     PenggunaRow | undefined;
   return row ? petakanPengguna(row) : null;
@@ -155,7 +155,7 @@ export function cariPengguna(db: Database.Database, id: string): PenggunaSesi | 
 
 /** Menetapkan peran aplikasi akun (dipilih saat masuk atau diganti dari Profil). */
 export function aturPeranAkun(
-  db: Database.Database,
+  db: Database,
   penggunaId: string,
   peran: "peternak" | "pengguna",
 ): void {
@@ -167,7 +167,7 @@ export function aturPeranAkun(
  * bila akun belum punya peran (peran yang sudah ada diganti lewat Profil, bukan lewat login).
  */
 export function cariAtauBuatPengguna(
-  db: Database.Database,
+  db: Database,
   nomor: string,
   peranDipilih?: "peternak" | "pengguna",
 ): PenggunaSesi {
@@ -198,7 +198,7 @@ export function cariAtauBuatPengguna(
 }
 
 export function buatSesi(
-  db: Database.Database,
+  db: Database,
   penggunaId: string,
   durasiMs: number,
   sekarang = Date.now(),
@@ -216,7 +216,7 @@ export function buatSesi(
 }
 
 export function cariPenggunaDariToken(
-  db: Database.Database,
+  db: Database,
   token: string,
   sekarang = Date.now(),
 ): PenggunaSesi | null {
@@ -236,7 +236,7 @@ export function cariPenggunaDariToken(
   return petakanPengguna(row);
 }
 
-export function hapusSesi(db: Database.Database, token: string): void {
+export function hapusSesi(db: Database, token: string): void {
   db.prepare("DELETE FROM sesi WHERE token_hash = ?").run(hashToken(token));
 }
 
@@ -245,7 +245,7 @@ export function hapusSesi(db: Database.Database, token: string): void {
  * dipindah agar batas harian tidak bisa dilewati dengan cara masuk akun.
  */
 export function pindahkanDataTamu(
-  db: Database.Database,
+  db: Database,
   perangkatId: string,
   penggunaId: string,
 ): number {
@@ -269,7 +269,7 @@ export function pindahkanDataTamu(
 }
 
 /** Menghapus akun beserta seluruh datanya (DELETE /v1/akun saat sudah masuk). */
-export function hapusAkun(db: Database.Database, penggunaId: string): void {
+export function hapusAkun(db: Database, penggunaId: string): void {
   const tx = db.transaction(() => {
     deleteAllDataByDevice(db, kunciAkun(penggunaId));
     db.prepare("DELETE FROM kandang WHERE pengguna_id = ?").run(penggunaId);

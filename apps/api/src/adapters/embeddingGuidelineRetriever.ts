@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 import { logger } from "../lib/logger.js";
 import type { GeminiClient } from "./geminiClient.js";
 import { buatRingkasanKutipan } from "./sqliteGuidelineRetriever.js";
@@ -26,7 +26,7 @@ interface EmbeddingRow {
   dokumen_id: string;
   model: string;
   hash_isi: string;
-  vektor: Buffer;
+  vektor: Uint8Array;
 }
 
 interface EntriIndeks {
@@ -58,7 +58,7 @@ function keBlob(vektor: readonly number[]): Buffer {
   return Buffer.from(f32.buffer, f32.byteOffset, f32.byteLength);
 }
 
-function dariBlob(blob: Buffer): Float32Array {
+function dariBlob(blob: Uint8Array): Float32Array {
   // Salin ke buffer baru agar perataan (alignment) Float32 selalu benar.
   const salinan = new Uint8Array(blob.byteLength);
   salinan.set(blob);
@@ -86,7 +86,7 @@ export class EmbeddingGuidelineRetriever implements GuidelineRetriever {
   private readonly cacheKueri = new Map<string, Float32Array>();
 
   constructor(
-    private readonly db: Database.Database,
+    private readonly db: Database,
     private readonly client: GeminiClient,
     private readonly cadangan: GuidelineRetriever,
     private readonly opsi: EmbeddingGuidelineRetrieverOptions,

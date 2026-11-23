@@ -70,7 +70,7 @@ const paketDatar = {
   type: "module",
   main: "apps/api/dist/server.js",
   scripts: { start: "node apps/api/dist/server.js" },
-  engines: { node: ">=22.12" },
+  engines: { node: ">=22.16" },
   dependencies,
 };
 fs.writeFileSync(path.join(OUT_DIR, "package.json"), `${JSON.stringify(paketDatar, null, 2)}\n`);

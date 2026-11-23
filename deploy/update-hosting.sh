@@ -54,6 +54,15 @@ cp -a "$SRC_DIR/hosting-bundle/." "$APP_DIR/"
 mkdir -p "$APP_DIR/tmp"
 touch "$APP_DIR/tmp/restart.txt"
 
+# Alat build hanya dibutuhkan saat build. npm ci selalu memasang ulang dari nol, jadi menyimpannya
+# tidak mempercepat update berikutnya, hanya menghabiskan kuota disk dan inode hosting.
+# Set SIMPAN_NODE_MODULES=1 untuk mempertahankannya.
+if [ "${SIMPAN_NODE_MODULES:-0}" != "1" ]; then
+  echo "== Membersihkan alat build dari folder clone"
+  rm -rf "$SRC_DIR/node_modules" "$SRC_DIR"/apps/*/node_modules "$SRC_DIR"/packages/*/node_modules \
+    "$SRC_DIR/hosting-bundle" "$SRC_DIR/ternakin-hosting.tar.gz"
+fi
+
 echo
 echo "Selesai. Aplikasi dimulai ulang pada permintaan berikutnya (tmp/restart.txt)."
 if [ "$paket_lama" != "$(cat "$APP_DIR/package.json")" ]; then

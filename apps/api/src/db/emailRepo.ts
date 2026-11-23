@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite.js";
 import {
   JEDA_KIRIM_ULANG_MS,
   MAKS_OTP_PER_JAM,
@@ -30,7 +30,7 @@ function kunciKode(tujuan: TujuanKodeEmail, email: string): string {
 }
 
 export function detikTungguKodeEmail(
-  db: Database.Database,
+  db: Database,
   email: string,
   tujuan: TujuanKodeEmail,
   sekarang = Date.now(),
@@ -57,7 +57,7 @@ export function detikTungguKodeEmail(
 }
 
 export function simpanKodeEmail(
-  db: Database.Database,
+  db: Database,
   rahasia: string,
   email: string,
   tujuan: TujuanKodeEmail,
@@ -85,12 +85,12 @@ export function simpanKodeEmail(
   })();
 }
 
-export function batalkanKodeEmail(db: Database.Database, id: number): void {
+export function batalkanKodeEmail(db: Database, id: number): void {
   db.prepare("DELETE FROM kode_email WHERE id = ?").run(id);
 }
 
 export function verifikasiKodeEmail(
-  db: Database.Database,
+  db: Database,
   rahasia: string,
   email: string,
   tujuan: TujuanKodeEmail,
@@ -131,7 +131,7 @@ export interface AkunEmail {
   isDemo: boolean;
 }
 
-export function cariAkunEmail(db: Database.Database, email: string): AkunEmail | null {
+export function cariAkunEmail(db: Database, email: string): AkunEmail | null {
   const row = db
     .prepare("SELECT id, sandi_hash, email_terverifikasi, is_demo FROM pengguna WHERE email = ?")
     .get(email) as
@@ -149,7 +149,7 @@ export function cariAkunEmail(db: Database.Database, email: string): AkunEmail |
 
 /** Membuat akun email baru (belum terverifikasi), atau memperbarui akun yang belum diverifikasi. */
 export function simpanPendaftaranEmail(
-  db: Database.Database,
+  db: Database,
   data: { nama: string; email: string; sandiHash: string; peran: "peternak" | "pengguna" },
 ): string {
   const ada = cariAkunEmail(db, data.email);
@@ -171,11 +171,11 @@ export function simpanPendaftaranEmail(
   return id;
 }
 
-export function tandaiEmailTerverifikasi(db: Database.Database, penggunaId: string): void {
+export function tandaiEmailTerverifikasi(db: Database, penggunaId: string): void {
   db.prepare("UPDATE pengguna SET email_terverifikasi = 1 WHERE id = ?").run(penggunaId);
 }
 
-export function gantiSandi(db: Database.Database, penggunaId: string, sandiHash: string): void {
+export function gantiSandi(db: Database, penggunaId: string, sandiHash: string): void {
   db.prepare("UPDATE pengguna SET sandi_hash = ?, email_terverifikasi = 1 WHERE id = ?").run(
     sandiHash,
     penggunaId,
@@ -187,7 +187,7 @@ export function gantiSandi(db: Database.Database, penggunaId: string, sandiHash:
  * ada (Google sudah memverifikasi email), atau buat akun baru.
  */
 export function cariAtauBuatPenggunaGoogle(
-  db: Database.Database,
+  db: Database,
   profil: { sub: string; email: string; nama: string | null },
   peranDipilih?: "peternak" | "pengguna",
 ): PenggunaSesi {

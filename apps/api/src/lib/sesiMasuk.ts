@@ -1,5 +1,5 @@
 import type { Response } from "express";
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 import { samarkanNomorPonsel, type PenggunaSaya, type SesiAkunResponse } from "@ternakin/shared";
 import { buatSesi, hapusSesi, pindahkanDataTamu } from "../db/akunRepo.js";
 import { samarkanEmail } from "../db/emailRepo.js";
@@ -23,7 +23,7 @@ export function keSaya(p: PenggunaSesi): PenggunaSaya {
  * perangkat ke akun (kecuali akun demo bersama), ganti sesi lama, pasang cookie, kirim respons.
  */
 export function selesaikanMasuk(
-  db: Database.Database,
+  db: Database,
   res: Response,
   pengguna: PenggunaSesi,
   opsi: { perangkatIdMentah?: unknown; cookie: OpsiCookieSesi; rute: string; mobile?: boolean },

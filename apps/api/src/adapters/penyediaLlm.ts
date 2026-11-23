@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 import type { AppEnv } from "../config/env.js";
 import { logger } from "../lib/logger.js";
 import { EmbeddingGuidelineRetriever } from "./embeddingGuidelineRetriever.js";
@@ -32,7 +32,7 @@ export interface PenyediaLlm {
 
 export function buatPenyediaLlm(
   env: EnvLlm,
-  db: Database.Database,
+  db: Database,
   fetchFn?: typeof fetch,
 ): PenyediaLlm {
   const mock = new MockLlmAdapter();

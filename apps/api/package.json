@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@ternakin/shared": "*",
-    "better-sqlite3": "latest",
     "dotenv": "latest",
     "express": "latest",
     "express-rate-limit": "latest",
@@ -22,7 +21,6 @@
     "zod": "latest"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "latest",
     "@types/express": "latest",
     "@types/node": "latest",
     "@types/nodemailer": "^8.0.2",

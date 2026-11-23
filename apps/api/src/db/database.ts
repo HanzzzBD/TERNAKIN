@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import { Database } from "./sqlite.js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -65,7 +65,7 @@ const seedReferensiFileSchema = z.object({
 type SeedReferensiFile = z.infer<typeof seedReferensiFileSchema>;
 
 export interface DatabaseContext {
-  db: Database.Database;
+  db: Database;
   referensiMeta: {
     versi: string;
     isDemo: boolean;
@@ -148,7 +148,7 @@ export function initDatabase(
 }
 
 function ensureColumn(
-  db: Database.Database,
+  db: Database,
   table: string,
   column: string,
   definition: string,
@@ -159,7 +159,7 @@ function ensureColumn(
   }
 }
 
-function seedReferensi(db: Database.Database, seed: SeedReferensiFile): void {
+function seedReferensi(db: Database, seed: SeedReferensiFile): void {
   const upsertBahan = db.prepare(`
     INSERT OR REPLACE INTO bahan
       (id, nama, satuan, sinonim_json, batas_min_persen, batas_maks_persen, sumber_nutrisi, is_demo)
@@ -218,7 +218,7 @@ function seedReferensi(db: Database.Database, seed: SeedReferensiFile): void {
   runSeed();
 }
 
-function seedToko(db: Database.Database, list: readonly SeedTokoItem[]): void {
+function seedToko(db: Database, list: readonly SeedTokoItem[]): void {
   const insertToko = db.prepare(`
     INSERT OR IGNORE INTO toko (id, kode, nama, area, status_mitra, is_demo, nomor_wa)
     VALUES (@id, @kode, @nama, @area, @statusMitra, @isDemo, @nomorWa)
@@ -258,7 +258,7 @@ function seedToko(db: Database.Database, list: readonly SeedTokoItem[]): void {
   run();
 }
 
-function seedPanduan(db: Database.Database, list: readonly SeedPanduanItem[]): void {
+function seedPanduan(db: Database, list: readonly SeedPanduanItem[]): void {
   const upsertPanduan = db.prepare(`
     INSERT OR REPLACE INTO dokumen_panduan (id, judul, sumber, isi, versi)
     VALUES (@id, @judul, @sumber, @isi, @versi)

@@ -1,5 +1,5 @@
 import type { CookieOptions, Request, RequestHandler, Response } from "express";
-import type Database from "better-sqlite3";
+import type { Database } from "../db/sqlite.js";
 import { cariPenggunaDariToken } from "../db/akunRepo.js";
 
 export const NAMA_COOKIE_SESI = "tk_sesi";
@@ -60,7 +60,7 @@ export function hapusCookieSesi(res: Response, opsi: OpsiCookieSesi): void {
  * Memuat pengguna dari cookie sesi bila ada dan masih berlaku. Tidak pernah menolak permintaan:
  * tanpa sesi, permintaan diperlakukan sebagai mode tamu.
  */
-export function muatSesi(db: Database.Database): RequestHandler {
+export function muatSesi(db: Database): RequestHandler {
   return (req, res, next) => {
     // Web memakai cookie HttpOnly; aplikasi mobile (native) mengirim token sebagai Bearer.
     const token = bacaCookie(req, NAMA_COOKIE_SESI) ?? bacaBearer(req);

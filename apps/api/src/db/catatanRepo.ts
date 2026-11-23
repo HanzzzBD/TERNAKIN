@@ -1,4 +1,4 @@
-import type Database from "better-sqlite3";
+import type { Database } from "./sqlite.js";
 import { z } from "zod";
 import type { CatatanHarian, Kandang } from "@ternakin/shared";
 
@@ -58,7 +58,7 @@ function mapCatatan(row: CatatanRow): CatatanHarian {
   };
 }
 
-export function listKandangByDevice(db: Database.Database, perangkatId: string): Kandang[] {
+export function listKandangByDevice(db: Database, perangkatId: string): Kandang[] {
   const rows = db
     .prepare("SELECT * FROM kandang WHERE perangkat_id = ? ORDER BY diubah_pada DESC")
     .all(perangkatId) as KandangRow[];
@@ -70,7 +70,7 @@ export function listKandangByDevice(db: Database.Database, perangkatId: string):
  * Pemilik bisa berupa ID perangkat (mode tamu) atau `akun:<penggunaId>`.
  */
 export function pemilikKandang(
-  db: Database.Database,
+  db: Database,
   kandangId: string,
 ): string | null | undefined {
   const row = db.prepare("SELECT perangkat_id FROM kandang WHERE id = ?").get(kandangId) as
@@ -83,7 +83,7 @@ export function pemilikKandang(
  * ID yang sama sudah dimiliki pemilik lain, sehingga kandang tidak bisa diambil alih lewat ID.
  */
 export function upsertKandang(
-  db: Database.Database,
+  db: Database,
   perangkatId: string,
   kandang: Kandang,
 ): Kandang | null {
@@ -135,7 +135,7 @@ export function upsertKandang(
  * Menyimpan atau memperbarui satu catatan per (kandang_id, tanggal) dengan aturan
  * perubahan terbaru menang (Last-Write-Wins) menurut stempel waktu diubah_pada.
  */
-export function upsertCatatan(db: Database.Database, catatan: CatatanHarian): CatatanHarian | null {
+export function upsertCatatan(db: Database, catatan: CatatanHarian): CatatanHarian | null {
   const kandangAda = db.prepare("SELECT id FROM kandang WHERE id = ?").get(catatan.kandangId);
   if (!kandangAda) {
     return null;
@@ -205,7 +205,7 @@ export function upsertCatatan(db: Database.Database, catatan: CatatanHarian): Ca
 }
 
 export function softDeleteCatatan(
-  db: Database.Database,
+  db: Database,
   input: {
     id: string;
     kandangId: string;
@@ -229,7 +229,7 @@ export function softDeleteCatatan(
 }
 
 export function listCatatanByDevice(
-  db: Database.Database,
+  db: Database,
   perangkatId: string,
   sejak?: string | null,
 ): CatatanHarian[] {
@@ -256,18 +256,18 @@ export function listCatatanByDevice(
   return rows.map(mapCatatan);
 }
 
-export function isOpSudahDiproses(db: Database.Database, opId: string): boolean {
+export function isOpSudahDiproses(db: Database, opId: string): boolean {
   const row = db.prepare("SELECT op_id FROM outbox_diproses WHERE op_id = ?").get(opId);
   return Boolean(row);
 }
 
-export function tandaiOpDiproses(db: Database.Database, opId: string, perangkatId: string): void {
+export function tandaiOpDiproses(db: Database, opId: string, perangkatId: string): void {
   db.prepare(
     "INSERT OR IGNORE INTO outbox_diproses (op_id, perangkat_id, diproses_pada) VALUES (?, ?, ?)",
   ).run(opId, perangkatId, new Date().toISOString());
 }
 
-export function deleteAllDataByDevice(db: Database.Database, perangkatId: string): void {
+export function deleteAllDataByDevice(db: Database, perangkatId: string): void {
   const hapus = db.transaction(() => {
     db.prepare("DELETE FROM kandang WHERE perangkat_id = ?").run(perangkatId);
     db.prepare("DELETE FROM percakapan_kokok WHERE perangkat_id = ?").run(perangkatId);
