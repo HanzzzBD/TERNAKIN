@@ -6,6 +6,8 @@
 | `7835fd8` | 21 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): menambah masuk WhatsApp OTP, pembagian peran peternak/pengguna, dan investasi simulasi di server |
 | `8365142` | 21 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): menambah masuk dengan email + kata sandi dan Google, serta email kode berlogo Kokok |
 | `f499ebd` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): mewajibkan masuk untuk Kokok dan menambah pengingat masuk bagi tamu |
+| `af0181c` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): mewajibkan masuk untuk semua fitur di web dan Android |
+| `4a2b568` | 23 Nov | HanzzzBD | Claude Opus 5.5 | test(e2e): masuk per tes dan mengisolasi server e2e dari kredensial asli |
 
 ## Isi
 
@@ -39,6 +41,18 @@
 - Web dan mobile: Beranda menampilkan pengingat bahwa data tamu hanya tersimpan di perangkat, dengan tombol Masuk dan "Nanti saja". "Nanti saja" menyembunyikan pengingat selama 7 hari.
 - Tes: tes Kokok API kini masuk dengan akun demo, ditambah tes tamu ditolak 401, tes popup untuk tamu, dan tes `WajibMasuk`/`PengingatMasuk`. Hasil sebelum commit: API 131, web 49, dan shared 81 tes lolos, serta lint dan build lolos.
 
+**Semua fitur wajib masuk (`af0181c`).** Pemilik produk memutuskan menghapus mode tamu, menggantikan aturan `f499ebd` yang hanya mengunci Kokok. Keputusan diambil lewat empat pilihan: cakupan (semua fitur), platform (web dan Android), perilaku offline (tetap jalan setelah sekali masuk), dan penegakan (server ikut menolak).
+- API: `wajibMasuk` dipasang di `/kandang`, `/catatan`, `/sinkron`, `/pakan`, `/lead`, `/toko`, dan `/investasi`. Tetap terbuka: `/auth`, referensi pakan (`/referensi`, `/bahan`) untuk cache offline, `/unduhan`, `/openapi.json`, dan `DELETE /akun`.
+- Web: semua `/app/*` kecuali `/app/masuk` berada di bawah `WajibMasuk` (layout route) yang mengalihkan tamu ke `/app/masuk?lanjut=<tujuan>`. `penjagaSesi` (dipasang di `main.tsx`) menghapus status masuk lokal bila `/v1` selain `/v1/auth` menjawab 401. Galat jaringan tidak mengakhiri sesi. Pengingat masuk tamu dihapus. Setelah hapus akun, pesan konfirmasi dibawa lewat `sessionStorage` dan tampil di halaman Masuk.
+- Android: tab hanya terbuka untuk akun yang sudah memilih peran (`Stack.Protected`), selain itu layar Masuk setelah layar sambutan. Data pengguna disimpan di `AsyncStorage` (token tetap di SecureStore), sehingga aplikasi tetap terbuka saat dibuka tanpa sinyal. Sebelumnya status masuk hanya dibaca dari server. 401 dari API mengakhiri sesi lewat penangan terpusat di `api.ts`.
+- Tombol akun di header diperbesar dari 40px ke 48px. Masalah ini baru terlihat saat tes e2e berjalan dalam keadaan masuk.
+- Tes API memakai agen yang sudah masuk (`src/uji/masuk.ts`, dikecualikan dari build). Data tamu lama disiapkan langsung di basis data untuk menguji pemindahan ke akun, dan tes keamanan kepemilikan memakai dua akun. Tes baru memastikan tamu ditolak 401 di semua fitur dan rute publik tetap terbuka.
+- PRD (F5) dan SDD diperbarui.
+
+**Tes e2e masuk per tes (`4a2b568`).** Tiap tes Playwright masuk sebagai akun peternak baru lewat OTP mode demo, dengan IP tiruan per tes agar tidak terkena batas OTP per IP. Server e2e ikut membaca `.env` lokal yang berisi kredensial asli. Karena itu `playwright.config.ts` mengosongkan `FONNTE_TOKEN`, SMTP, `GOOGLE_CLIENT_ID`, dan `LLM_API_KEY`, dan helper memeriksa bahwa server dalam mode demo sebelum meminta OTP. Saat pengerjaan, port 4173 ternyata dipakai aplikasi lain sehingga Playwright memakai server yang salah. Permintaan OTP saat itu masuk ke server tersebut, bukan ke Fonnte. Port kini bisa diganti lewat `E2E_PORT`.
+
+Hasil sebelum commit: API 135, web 52, dan shared 81 tes lolos. E2E 23 (preview) dan 6 (dev) lolos. Lint, typecheck, dan bundle Android lolos.
+
 ## Keputusan yang tercatat
 
 - Investasi hanya simulasi. Tidak ada uang yang berpindah, dan tidak ada angka imbal hasil yang dijanjikan.
@@ -47,7 +61,10 @@
 - Akun demo tidak bisa diganti perannya atau dihapus.
 - Kepemilikan data diatur di server: kandang tidak bisa diambil alih lewat ID, dan catatan hanya bisa ditulis pemiliknya.
 - Dokumen untuk penilaian: semua nama peternak, kandang, dokter hewan, dan angka diberi label contoh.
-- Kokok wajib masuk, tetapi pakan, catatan, dan toko tetap bisa dipakai tanpa akun. Mewajibkan masuk untuk semua fitur tidak dipilih karena masuk butuh internet dan OTP, sedangkan Ternakin dirancang offline-first untuk peternak di kandang dengan sinyal lemah.
+- Kokok wajib masuk, tetapi pakan, catatan, dan toko tetap bisa dipakai tanpa akun (`f499ebd`). Keputusan ini digantikan `af0181c`.
+- Semua fitur wajib masuk (`af0181c`). Masalah offline-first ditangani dengan menyimpan status masuk di perangkat: masuk pertama butuh internet, setelah itu pakan dan catatan tetap jalan tanpa sinyal.
+- Server ikut menolak tamu, jadi aturan tidak bisa diakali dengan memanggil API langsung.
+- Tes e2e tidak boleh memakai layanan sungguhan: semua kredensial dikosongkan di konfigurasi Playwright.
 
 ---
 
@@ -298,3 +315,78 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | `apps/web/src/lib/kokokObrolan.ts` | 3 | 0 | diubah |
 | `apps/web/src/pages/FondasiPage.tsx` | 2 | 0 | diubah |
 | `apps/web/src/pages/KokokPage.tsx` | 7 | 0 | diubah |
+
+### `af0181c` — feat(akun): mewajibkan masuk untuk semua fitur di web dan Android
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 35 file, +621 / -573 baris
+
+**Isi pesan commit:**
+
+> Mode tamu dihapus (keputusan 23 Nov 2026). Landing dan /privasi tetap publik, dan aplikasi tetap bisa dipakai offline setelah sekali masuk.
+> - API: wajibMasuk di /kandang, /catatan, /sinkron, /pakan, /lead, /toko, dan /investasi (Kokok sudah dijaga). Tetap terbuka: /auth, referensi pakan, /unduhan, /openapi.json, dan DELETE /akun.
+> - Web: semua /app/* kecuali /app/masuk berada di bawah WajibMasuk (layout route) yang mengalihkan tamu ke /app/masuk?lanjut=<tujuan>. penjagaSesi menghapus status masuk lokal saat /v1 (bukan /v1/auth) menjawab 401. Pengingat masuk tamu dihapus. Setelah hapus akun, pesan konfirmasi tampil di halaman Masuk. Teks "bisa tanpa akun" diganti.
+> - Android: tab hanya terbuka untuk akun yang sudah memilih peran (Stack.Protected), selain itu layar Masuk. Data pengguna disimpan di AsyncStorage agar tetap masuk saat dibuka tanpa sinyal; 401 dari API mengakhiri sesi. Pengingat dan gerbang Kokok dihapus.
+> - Tombol akun di header diperbesar ke 48px (ukuran sentuh minimal).
+> - Tes API memakai agen yang sudah masuk (src/uji/masuk.ts, tidak ikut build); data tamu lama disiapkan langsung di basis data untuk tes pemindahan ke akun. Tes baru: tamu ditolak 401 di semua fitur dan rute publik tetap terbuka.
+> - PRD (F5) dan SDD diperbarui.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `Ternakin PRD Website (PWA).md` | 1 | 1 | diubah |
+| `Ternakin SDD Website (PWA).md` | 7 | 4 | diubah |
+| `apps/api/src/akun.test.ts` | 69 | 51 | diubah |
+| `apps/api/src/authEmail.test.ts` | 8 | 6 | diubah |
+| `apps/api/src/catatan.test.ts` | 51 | 53 | diubah |
+| `apps/api/src/gemini.test.ts` | 3 | 2 | diubah |
+| `apps/api/src/investasi.test.ts` | 47 | 11 | diubah |
+| `apps/api/src/pakan.test.ts` | 45 | 42 | diubah |
+| `apps/api/src/routes/v1.ts` | 12 | 2 | diubah |
+| `apps/api/src/toko.test.ts` | 25 | 20 | diubah |
+| `apps/api/src/uji/masuk.ts` | 56 | 0 | baru |
+| `apps/api/tsconfig.json` | 1 | 1 | diubah |
+| `apps/mobile/src/app/(tab)/index.tsx` | 0 | 2 | diubah |
+| `apps/mobile/src/app/(tab)/kokok.tsx` | 3 | 47 | diubah |
+| `apps/mobile/src/app/_layout.tsx` | 8 | 3 | diubah |
+| `apps/mobile/src/app/masuk.tsx` | 9 | 11 | diubah |
+| `apps/mobile/src/components/PengingatMasuk.tsx` | 0 | 71 | dihapus |
+| `apps/mobile/src/lib/api.ts` | 12 | 0 | diubah |
+| `apps/mobile/src/lib/sesi.tsx` | 50 | 8 | diubah |
+| `apps/web/src/App.test.tsx` | 29 | 1 | diubah |
+| `apps/web/src/App.tsx` | 40 | 49 | diubah |
+| `apps/web/src/components/akun/KartuAkunPeran.tsx` | 1 | 1 | diubah |
+| `apps/web/src/components/akun/MasukEmailCard.tsx` | 1 | 1 | diubah |
+| `apps/web/src/components/akun/MasukWhatsAppCard.tsx` | 1 | 1 | diubah |
+| `apps/web/src/components/akun/PengingatMasuk.tsx` | 0 | 60 | dihapus |
+| `apps/web/src/components/akun/WajibMasuk.test.tsx` | 24 | 60 | diubah |
+| `apps/web/src/components/akun/WajibMasuk.tsx` | 10 | 57 | diubah |
+| `apps/web/src/components/layout/AppShell.css` | 3 | 2 | diubah |
+| `apps/web/src/db/sync.ts` | 9 | 2 | diubah |
+| `apps/web/src/lib/penjagaSesi.test.ts` | 20 | 0 | baru |
+| `apps/web/src/lib/penjagaSesi.ts` | 42 | 0 | baru |
+| `apps/web/src/lib/pesanMasuk.ts` | 24 | 0 | baru |
+| `apps/web/src/main.tsx` | 3 | 0 | diubah |
+| `apps/web/src/pages/FondasiPage.tsx` | 1 | 3 | diubah |
+| `apps/web/src/pages/MasukPage.tsx` | 6 | 1 | diubah |
+
+### `4a2b568` — test(e2e): masuk per tes dan mengisolasi server e2e dari kredensial asli
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 8 file, +106 / -4 baris
+
+**Isi pesan commit:**
+
+> - e2e/masuk.ts: tiap tes masuk sebagai akun peternak baru lewat OTP mode demo (IP tiruan per tes lewat X-Forwarded-For agar tidak terkena batas OTP). Sebelum meminta OTP, helper memastikan server dalam mode demo dan berhenti bila tidak.
+> - playwright.config.ts: server e2e mengosongkan FONNTE_TOKEN, SMTP, GOOGLE_CLIENT_ID, dan LLM_API_KEY (LLM_PROVIDER=mock) karena server ikut membaca .env lokal. Port bisa diganti lewat E2E_PORT bila 4173 dipakai aplikasi lain.
+> - catatan-offline: setelah hapus akun, aplikasi pindah ke halaman Masuk dengan pesan.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/web/e2e/appshell.spec.ts` | 6 | 0 | diubah |
+| `apps/web/e2e/catatan-offline.spec.ts` | 11 | 1 | diubah |
+| `apps/web/e2e/kokok.spec.ts` | 6 | 0 | diubah |
+| `apps/web/e2e/masuk.ts` | 49 | 0 | baru |
+| `apps/web/e2e/offline.spec.ts` | 6 | 0 | diubah |
+| `apps/web/e2e/pakan-offline.spec.ts` | 6 | 0 | diubah |
+| `apps/web/e2e/toko-offline.spec.ts` | 6 | 0 | diubah |
+| `apps/web/playwright.config.ts` | 16 | 3 | diubah |
