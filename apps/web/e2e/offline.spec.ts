@@ -1,4 +1,10 @@
 import { expect, test } from "@playwright/test";
+import { masukSebagaiPeternak } from "./masuk";
+
+// Semua fitur aplikasi wajib masuk: tiap tes memakai akun peternak baru.
+test.beforeEach(async ({ page }) => {
+  await masukSebagaiPeternak(page);
+});
 
 interface WebManifest {
   id?: string;

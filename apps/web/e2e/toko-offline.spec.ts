@@ -1,5 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { masukSebagaiPeternak } from "./masuk";
+
+// Semua fitur aplikasi wajib masuk: tiap tes memakai akun peternak baru.
+test.beforeEach(async ({ page }) => {
+  await masukSebagaiPeternak(page);
+});
 
 test("rujukan toko urut murni dari biaya, harga usang bertanda, dan lead offline terkirim saat online", async ({
   context,

@@ -1,5 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { masukSebagaiPeternak } from "./masuk";
+
+// Semua fitur aplikasi wajib masuk: tiap tes memakai akun peternak baru.
+test.beforeEach(async ({ page }) => {
+  await masukSebagaiPeternak(page);
+});
 
 test("catatan harian tersimpan offline, memperbarui tanggal sama, memunculkan peringatan, lalu tersinkron saat online dan bisa dihapus lewat DELETE /v1/akun", async ({
   context,
@@ -53,8 +59,12 @@ test("catatan harian tersimpan offline, memperbarui tanggal sama, memunculkan pe
   await page.goto("/app/profil");
   await page.getByRole("button", { name: "Hapus data saya" }).click();
   await page.getByRole("button", { name: "Ya, hapus semua data saya" }).click();
+  // Akun ikut terhapus sehingga sesi berakhir: aplikasi pindah ke halaman Masuk dengan pesan.
+  await expect(page).toHaveURL(/\/app\/masuk/);
   await expect(
-    page.getByText(/Seluruh data kandang dan catatan Anda di perangkat dan server telah dihapus/i),
+    page.getByText(
+      /Akun Anda beserta seluruh data kandang dan catatan di perangkat dan server telah dihapus/i,
+    ),
   ).toBeVisible();
 });
 
