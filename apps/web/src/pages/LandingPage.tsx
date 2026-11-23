@@ -30,7 +30,6 @@ import {
   LANDING_HERO,
   LANDING_KEPERCAYAAN,
   LANDING_MARQUEE_BARIS_1,
-  LANDING_MARQUEE_BARIS_2,
   LANDING_MASALAH,
   LANDING_MODUL,
   LANDING_NAV_LINKS,
@@ -348,27 +347,16 @@ export function LandingPage() {
           </div>
         </section>
 
-        {/* 2. Strip kata kunci (marquee dua arah) */}
+        {/* 2. Strip kata kunci (marquee satu baris) */}
         <section className="tk-marquee-band" aria-label="Keunggulan utama Ternakin">
           <div className="tk-marquee-row tk-marquee-row--left">
             {[0, 1].map((dup) => (
               <div key={`m1-${dup}`} className="tk-marquee-track" aria-hidden={dup === 1}>
-                {LANDING_MARQUEE_BARIS_1.map((kata) => (
-                  <span key={`${dup}-${kata}`} className="tk-marquee-item">
+                {/* Kata diulang dua kali agar satu track lebih lebar dari layar lebar */}
+                {[...LANDING_MARQUEE_BARIS_1, ...LANDING_MARQUEE_BARIS_1].map((kata, i) => (
+                  <span key={`${dup}-${i}`} className="tk-marquee-item">
                     <span>{kata}</span>
                     <span className="tk-marquee-sep" aria-hidden="true" />
-                  </span>
-                ))}
-              </div>
-            ))}
-          </div>
-          <div className="tk-marquee-row tk-marquee-row--right" aria-hidden="true">
-            {[0, 1].map((dup) => (
-              <div key={`m2-${dup}`} className="tk-marquee-track">
-                {LANDING_MARQUEE_BARIS_2.map((kata) => (
-                  <span key={`${dup}-${kata}`} className="tk-marquee-item">
-                    <span>{kata}</span>
-                    <span className="tk-marquee-sep" />
                   </span>
                 ))}
               </div>

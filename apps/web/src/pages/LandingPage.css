@@ -817,35 +817,33 @@ html[data-motion="on"] .tk-hero-float {
   text-align: center;
 }
 
-/* 2. Strip kata kunci (marquee) */
+/* 2. Strip kata kunci (marquee satu baris) */
 .tk-marquee-band {
   background: var(--tk-orange);
   color: var(--tk-ink);
   padding-block: var(--space-4);
   overflow: hidden;
   border-block: 2px solid var(--tk-orange-dark);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
 }
 
+/* Tanpa gap antar track: jarak ada di padding track, agar geser -50% menyambung mulus */
 .tk-marquee-row {
   display: flex;
   width: max-content;
-  gap: var(--space-4);
 }
 
 .tk-marquee-track {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-6);
+  padding-right: var(--space-6);
   flex-shrink: 0;
 }
 
 .tk-marquee-item {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-6);
   font-weight: 800;
   font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
   font-stretch: var(--stretch-display);
@@ -862,11 +860,7 @@ html[data-motion="on"] .tk-hero-float {
 }
 
 html[data-motion="on"] .tk-marquee-row--left {
-  animation: tk-marquee-left 28s linear infinite;
-}
-
-html[data-motion="on"] .tk-marquee-row--right {
-  animation: tk-marquee-right 30s linear infinite;
+  animation: tk-marquee-left 32s linear infinite;
 }
 
 @keyframes tk-marquee-left {
@@ -878,18 +872,8 @@ html[data-motion="on"] .tk-marquee-row--right {
   }
 }
 
-@keyframes tk-marquee-right {
-  from {
-    transform: translateX(-50%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  html[data-motion="on"] .tk-marquee-row--left,
-  html[data-motion="on"] .tk-marquee-row--right {
+  html[data-motion="on"] .tk-marquee-row--left {
     animation: none;
   }
 }
@@ -1569,6 +1553,17 @@ html[data-motion="on"] .tk-marquee-row--right {
   color: var(--tk-white);
 }
 
+/* Aksen judul di latar hijau gelap: satu blok kuning penuh agar teks gelap terbaca */
+.tk-section--investasi .tk-accent-italic {
+  display: inline-block;
+  margin-top: 0.08em;
+  padding: 0.02em 0.22em 0.1em;
+  border-radius: 0.16em;
+  background: var(--tk-amber-soft);
+  color: var(--tk-ink);
+  box-shadow: 0 0.07em 0 var(--tk-orange);
+}
+
 .tk-section--investasi :focus-visible {
   outline-color: var(--tk-white);
 }
@@ -1601,6 +1596,7 @@ html[data-motion="on"] .tk-marquee-row--right {
   width: 100%;
   max-width: 400px;
   padding-top: 70px;
+  padding-bottom: var(--space-5);
 }
 
 .tk-invhl-visual__kokok {
@@ -1616,7 +1612,7 @@ html[data-motion="on"] .tk-marquee-row--right {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-5);
+  padding: var(--space-5) var(--space-5) var(--space-8);
   border-radius: 24px;
   background: var(--tk-white);
   color: var(--tk-ink);
@@ -1729,15 +1725,15 @@ html[data-motion="on"] .tk-marquee-row--right {
 }
 
 .tk-invhl-chip--1 {
-  bottom: 64px;
-  left: -14px;
+  bottom: 4px;
+  left: 8px;
   background: var(--tk-amber-soft);
   color: var(--tk-ink);
   rotate: -6deg;
 }
 
 .tk-invhl-chip--2 {
-  bottom: -14px;
+  bottom: 4px;
   right: 12px;
   background: var(--tk-white);
   color: var(--tk-ink);
@@ -1754,6 +1750,7 @@ html[data-motion="on"] .tk-marquee-row--right {
 }
 
 .tk-invhl-trust li {
+  height: 100%;
   display: flex;
   gap: var(--space-3);
   align-items: flex-start;
@@ -1775,7 +1772,8 @@ html[data-motion="on"] .tk-marquee-row--right {
 }
 
 .tk-invhl-trust h3 {
-  margin: 0 0 2px;
+  margin: 0 0 var(--space-1, 4px);
+  line-height: 1.3;
   font-size: var(--text-base);
   font-weight: 800;
   color: var(--tk-white);

@@ -159,6 +159,16 @@ html[data-motion="on"] .tk-kchat__teaser {
   transform-origin: bottom right;
 }
 
+/* Hanya log pesan yang boleh menyusut; bagian lain tetap utuh saat jawaban panjang */
+.tk-kchat__panel > * {
+  flex-shrink: 0;
+}
+
+.tk-kchat__panel > .tk-kchat__log {
+  flex: 1 1 auto;
+  min-height: 160px;
+}
+
 .tk-kchat__panel[hidden] {
   display: none;
 }
@@ -289,6 +299,8 @@ html[data-motion="on"] .tk-kchat__msg {
   font-size: var(--text-sm);
   line-height: 1.5;
   text-wrap: pretty;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
   color: var(--tk-ink);
 }
 
@@ -371,8 +383,9 @@ html[data-motion="on"] .tk-kchat__typing span[aria-hidden]:nth-of-type(4) {
   mask-image: linear-gradient(to right, black 82%, transparent);
   display: flex;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-4) var(--space-1);
+  padding: var(--space-3) var(--space-4) var(--space-2);
   overflow-x: auto;
+  overflow-y: hidden;
   scrollbar-width: thin;
   border-top: 1.5px solid var(--tk-border-subtle);
 }

@@ -58,14 +58,6 @@ export const LANDING_MARQUEE_BARIS_1 = [
   "Hitungan bisa diperiksa",
 ] as const;
 
-export const LANDING_MARQUEE_BARIS_2 = [
-  "Hitungan bisa diperiksa",
-  "Gratis untuk peternak",
-  "Harga toko di sekitar",
-  "Jalan tanpa sinyal",
-  "Tanpa alat tambahan",
-] as const;
-
 export const LANDING_MASALAH = {
   eyebrow: "KENAPA TERNAKIN",
   judul: "Pakan menyedot sebagian besar biaya. Ayam sakit tidak menunggu.",
