@@ -105,3 +105,16 @@ describe("Express API fondasi", () => {
     expect(suksesRes.body).toEqual({ ok: true, data: { nama: "Kandang A" } });
   });
 });
+
+describe("Header keamanan untuk masuk dengan Google", () => {
+  it("Referrer-Policy mengirim asal situs agar tombol Google (accounts.google.com/gsi) bisa memverifikasi origin", async () => {
+    const res = await request(createApp()).get("/health");
+    // "no-referrer" (bawaan helmet) membuat gsi/button menjawab 400.
+    expect(res.headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+    expect(res.headers["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
+    const csp = String(res.headers["content-security-policy"]);
+    expect(csp).toContain("script-src 'self' https://accounts.google.com/gsi/client");
+    expect(csp).toContain("frame-src 'self' https://accounts.google.com/gsi/");
+    expect(csp).toContain("connect-src 'self' https://accounts.google.com/gsi/");
+  });
+});

@@ -97,6 +97,10 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
         },
       },
       crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+      // Bawaan helmet "no-referrer" membuat iframe tombol Google tidak tahu asal situs, sehingga
+      // accounts.google.com/gsi/button menjawab 400 dan masuk dengan Google gagal. Kebijakan ini
+      // hanya mengirim asal (tanpa path/query) ke situs lain, sesuai anjuran Google Identity Services.
+      referrerPolicy: { policy: "strict-origin-when-cross-origin" },
     }),
   );
   app.use(express.json({ limit: "100kb" }));
