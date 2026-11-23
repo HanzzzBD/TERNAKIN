@@ -2,10 +2,20 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+/**
+ * Build di shared hosting (deploy/update-hosting.sh mengisi TERNAKIN_SW_TANPA_TERSER=1):
+ * workbox memadatkan service worker dengan terser di worker thread, dan CloudLinux menolak
+ * pembuatan thread itu ("Unable to write the service worker file. 'EAGAIN'"). Mode "development"
+ * melewati terser sehingga tidak ada worker thread; disableDevLogs menjaga SW tetap tanpa log.
+ * Build lain (laptop, Docker) tetap memakai mode bawaan (dipadatkan).
+ */
+const swTanpaTerser = process.env.TERNAKIN_SW_TANPA_TERSER === "1";
+
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      ...(swTanpaTerser ? { mode: "development" } : {}),
       registerType: "prompt",
       manifest: {
         id: "/app?source=pwa",
@@ -31,6 +41,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        disableDevLogs: true,
         navigateFallback: "/index.html",
         // /unduh/ = berkas APK dari server; jangan dialihkan service worker ke index.html.
         navigateFallbackDenylist: [/^\/v1\//, /^\/health$/, /^\/unduh\//],

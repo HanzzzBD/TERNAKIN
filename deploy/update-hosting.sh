@@ -41,11 +41,10 @@ npm ci -w @ternakin/shared -w @ternakin/api -w @ternakin/web --include-workspace
   --no-audit --no-fund
 
 echo "== Build dan menyusun paket runtime"
-# Batasi jumlah CPU yang terlihat Node agar minifier service worker tidak membuat puluhan
-# worker thread dan melampaui batas proses CloudLinux (galat "EAGAIN"). Lihat scripts/batasi-cpu.cjs.
-NODE_OPTIONS="--require \"$SRC_DIR/scripts/batasi-cpu.cjs\" ${NODE_OPTIONS:-}" \
-  TERNAKIN_MAKS_CPU="${TERNAKIN_MAKS_CPU:-2}" \
-  node scripts/paket-hosting.mjs
+# CloudLinux menolak pembuatan worker thread untuk terser saat workbox memadatkan service worker
+# ("Unable to write the service worker file. 'EAGAIN'"). Variabel ini membuat apps/web/vite.config.ts
+# membangun service worker tanpa terser (tanpa worker thread). Lihat komentar di vite.config.ts.
+TERNAKIN_SW_TANPA_TERSER=1 node scripts/paket-hosting.mjs
 
 echo "== Menyalin ke $APP_DIR"
 mkdir -p "$APP_DIR"
