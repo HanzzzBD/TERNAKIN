@@ -1,9 +1,13 @@
 import type { z } from "zod";
 import { ambilPerangkatId, ambilToken } from "./penyimpanan";
 
-/** Diisi saat build (eas.json) atau oleh scripts/dev.mjs saat pengembangan. */
+/**
+ * Diisi saat build (eas.json), oleh scripts/update.mjs saat EAS Update, atau oleh scripts/dev.mjs
+ * (tunnel laptop) saat pengembangan. Bawaan = server produksi, agar build/update yang lupa mengisi
+ * variabel ini tidak pernah mengarah ke tunnel laptop.
+ */
 export const API_URL = (
-  process.env.EXPO_PUBLIC_API_URL ?? "https://ternakin-api.orbit4.my.id"
+  process.env.EXPO_PUBLIC_API_URL || "https://ternakin.code-xpert.my.id"
 ).replace(/\/+$/, "");
 
 export class GalatApi extends Error {

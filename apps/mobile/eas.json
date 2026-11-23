@@ -12,12 +12,14 @@
     },
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "android": { "buildType": "apk" },
-      "env": { "EXPO_PUBLIC_API_URL": "https://ternakin-api.orbit4.my.id" }
+      "env": { "EXPO_PUBLIC_API_URL": "https://ternakin.code-xpert.my.id" }
     },
     "production": {
       "autoIncrement": true,
-      "env": { "EXPO_PUBLIC_API_URL": "https://ternakin-api.orbit4.my.id" }
+      "channel": "production",
+      "env": { "EXPO_PUBLIC_API_URL": "https://ternakin.code-xpert.my.id" }
     }
   },
   "submit": {

@@ -23,6 +23,7 @@
     "expo-status-bar": "~58.0.5",
     "expo-symbols": "~58.0.5",
     "expo-system-ui": "~58.0.7",
+    "expo-updates": "~58.0.22",
     "expo-web-browser": "~58.1.0",
     "react": "19.3.0",
     "react-dom": "19.3.0",
@@ -45,6 +46,8 @@
     "typecheck": "tsc --noEmit",
     "build:dev": "eas build --profile development --platform android",
     "build:preview": "eas build --profile preview --platform android",
+    "update": "node scripts/update.mjs",
+    "eas-build-post-install": "cd ../.. && npm run build -w @ternakin/shared",
     "doctor": "expo-doctor"
   },
   "private": true

@@ -21,6 +21,10 @@ Android Studio **tidak wajib**: APK dibangun di cloud oleh EAS.
 | --- | --- | --- |
 | `https://ternakin-api.orbit4.my.id` | `localhost:3000` | API (`npm run dev`) |
 | `https://ternakin-dev.orbit4.my.id` | `localhost:8081` | Metro / hot reload (`npm run mobile`) |
+| `https://ternakin.code-xpert.my.id` | Server produksi (shared hosting) | API untuk APK `preview` dan build `production` |
+
+Profil `development` memakai tunnel di laptop, jadi hanya jalan saat `npm run dev` dan `npm run tunnel`
+menyala. APK `preview` dan `production` memakai server produksi, jadi bisa dipakai tanpa laptop.
 
 Konfigurasi tunnel ada di `~/.cloudflared/ternakin-dev.yml` (contoh: `deploy/cloudflared/ternakin-dev.example.yml`).
 
@@ -66,6 +70,35 @@ eas build --profile production --platform android    # AAB untuk Play Store
 
 Build pertama akan menanyakan pembuatan keystore Android; pilih **ya** (disimpan aman di EAS).
 `EXPO_PUBLIC_API_URL` per profil diatur di `eas.json`.
+
+## Update tanpa pasang ulang APK (EAS Update)
+
+APK `preview` dan `production` memakai `expo-updates`. Perubahan JavaScript, tampilan, dan teks bisa dikirim
+ke HP yang sudah memasang APK tanpa build dan pasang ulang.
+
+**Sekali saja (setelah `expo-updates` ditambahkan):**
+
+```bash
+cd apps/mobile
+npx eas-cli@latest login
+npx eas-cli@latest build --profile preview --platform android   # APK baru; semua orang pasang sekali
+```
+
+**Setiap ada perubahan JS/tampilan:**
+
+```bash
+npm run update -w @ternakin/mobile -- "Pesan singkat perubahan"                # channel preview
+npm run update -w @ternakin/mobile -- --production "Pesan singkat perubahan"   # channel production
+```
+
+- Aplikasi memeriksa update saat dibuka. Update diunduh di latar belakang dan **tampil saat aplikasi
+  dibuka berikutnya** (tutup penuh lalu buka lagi).
+- `scripts/update.mjs` memaksa `EXPO_PUBLIC_API_URL` ke server produksi agar alamat tunnel dari `.env`
+  lokal tidak ikut terkirim.
+- `runtimeVersion` memakai kebijakan `fingerprint`. Bila ada perubahan native (menambah modul native,
+  mengubah konfigurasi native di `app.json`, atau upgrade Expo SDK), runtime berubah dan update **tidak**
+  dikirim ke APK lama. Build dan pasang APK baru untuk perubahan seperti itu.
+- Update hanya untuk APK `preview`/`production`. APK `development` tetap memakai Metro (hot reload).
 
 ## Sesi akun di mobile
 

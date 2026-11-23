@@ -4,6 +4,8 @@
     "slug": "ternakin",
     "owner": "hadrianrangga",
     "version": "0.1.0",
+    "runtimeVersion": { "policy": "fingerprint" },
+    "updates": { "url": "https://u.expo.dev/27299d3c-4a61-4156-a324-6ebfd71bd642" },
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "ternakin",
