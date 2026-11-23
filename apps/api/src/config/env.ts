@@ -21,6 +21,9 @@ const envSchema = z.object({
   SMTP_DARI: z.string().trim().default(""),
   // OAuth Client ID tipe Web untuk tombol "Masuk dengan Google"; kosong = tombol disembunyikan.
   GOOGLE_CLIENT_ID: z.string().trim().default(""),
+  // Proxy tepercaya (Express "trust proxy"): loopback = Cloudflare Tunnel di mesin yang sama,
+  // uniquelocal = nginx di jaringan Docker.
+  TRUST_PROXY: z.string().trim().min(1).default("loopback"),
   SESI_BERLAKU_HARI: z.coerce.number().int().min(1).max(365).default(30),
   LLM_PROVIDER: z.enum(["mock", "gemini"]).default("mock"),
   LLM_API_KEY: z.string().trim().default(""),

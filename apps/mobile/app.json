@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Ternakin",
+    "slug": "ternakin",
+    "owner": "hadrianrangga",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "ternakin",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#fff3e8",
+    "android": {
+      "package": "id.ternakin.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#fff3e8",
+        "foregroundImage": "./assets/images/android-icon-foreground.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "softwareKeyboardLayoutMode": "resize"
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#fff3e8",
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 160
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
+    "extra": {
+      "router": {
+        "asyncRoutes": {
+          "web": true
+        }
+      },
+      "eas": {
+        "projectId": "27299d3c-4a61-4156-a324-6ebfd71bd642"
+      }
+    }
+  }
+}

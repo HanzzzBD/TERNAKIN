@@ -22,6 +22,18 @@ export function bacaCookie(req: Request, nama: string): string | null {
   return null;
 }
 
+/** Token sesi dari header Authorization: Bearer (dipakai aplikasi mobile). */
+export function bacaBearer(req: Request): string | null {
+  const nilai = req.header("authorization");
+  const cocok = nilai ? /^Bearer\s+([A-Za-z0-9_-]{20,200})$/.exec(nilai.trim()) : null;
+  return cocok?.[1] ?? null;
+}
+
+/** Aplikasi mobile menandai dirinya agar token sesi dikembalikan di body respons masuk. */
+export function klienMobile(req: Request): boolean {
+  return req.header("x-ternakin-klien") === "mobile";
+}
+
 export interface OpsiCookieSesi {
   aman: boolean;
   durasiMs: number;
@@ -50,7 +62,8 @@ export function hapusCookieSesi(res: Response, opsi: OpsiCookieSesi): void {
  */
 export function muatSesi(db: Database.Database): RequestHandler {
   return (req, res, next) => {
-    const token = bacaCookie(req, NAMA_COOKIE_SESI);
+    // Web memakai cookie HttpOnly; aplikasi mobile (native) mengirim token sebagai Bearer.
+    const token = bacaCookie(req, NAMA_COOKIE_SESI) ?? bacaBearer(req);
     if (token) {
       const pengguna = cariPenggunaDariToken(db, token);
       if (pengguna) {

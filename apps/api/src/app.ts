@@ -48,6 +48,11 @@ export interface CreateAppOptions {
   /** Pemeriksa ID token Google; null = tombol Google disembunyikan. */
   verifikasiGoogle?: VerifikasiGoogle | null;
   googleClientId?: string | null;
+  /**
+   * Proxy tepercaya untuk membaca IP asli (X-Forwarded-For): "loopback" untuk Cloudflare Tunnel
+   * di mesin yang sama, "uniquelocal" untuk nginx di jaringan Docker. Bawaan: loopback.
+   */
+  trustProxy?: string;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
@@ -69,6 +74,8 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   const cookieSesi = options.cookieSesi ?? { aman: false, durasiMs: 30 * 24 * 60 * 60 * 1000 };
 
   app.disable("x-powered-by");
+  // Tanpa ini, semua permintaan lewat tunnel/nginx tampak dari satu IP dan batas laju menyatu.
+  app.set("trust proxy", options.trustProxy ?? "loopback");
   // Tombol "Masuk dengan Google" memuat skrip dan jendela dari accounts.google.com, dan
   // memakai popup: CSP dan Cross-Origin-Opener-Policy disesuaikan seperlunya saja.
   app.use(

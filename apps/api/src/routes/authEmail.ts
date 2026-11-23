@@ -43,7 +43,7 @@ import { logger } from "../lib/logger.js";
 import { cocokSandi, hashSandi, hashSandiTiruan } from "../lib/sandi.js";
 import { selesaikanMasuk } from "../lib/sesiMasuk.js";
 import { buatEmailKode, type IsiEmail } from "../lib/templateEmail.js";
-import type { OpsiCookieSesi } from "../middleware/sesi.js";
+import { klienMobile, type OpsiCookieSesi } from "../middleware/sesi.js";
 import { validate } from "../middleware/validate.js";
 
 export const BERLAKU_KODE_EMAIL_MS = 15 * 60 * 1000;
@@ -250,6 +250,7 @@ export function pasangRuteEmailGoogle(router: Router, deps: DepsEmailGoogle): vo
       selesaikanMasuk(db, res, pengguna, {
         perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
         cookie: deps.cookie,
+        mobile: klienMobile(req),
         rute: "/v1/auth/email/verifikasi",
       });
     },
@@ -318,6 +319,7 @@ export function pasangRuteEmailGoogle(router: Router, deps: DepsEmailGoogle): vo
         selesaikanMasuk(db, res, pengguna, {
           perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
           cookie: deps.cookie,
+          mobile: klienMobile(req),
           rute: "/v1/auth/email/masuk",
         });
       } catch (err) {
@@ -371,6 +373,7 @@ export function pasangRuteEmailGoogle(router: Router, deps: DepsEmailGoogle): vo
         selesaikanMasuk(db, res, pengguna, {
           perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
           cookie: deps.cookie,
+          mobile: klienMobile(req),
           rute: "/v1/auth/email/reset-sandi",
         });
       } catch (err) {
@@ -411,6 +414,7 @@ export function pasangRuteEmailGoogle(router: Router, deps: DepsEmailGoogle): vo
       selesaikanMasuk(db, res, pengguna, {
         perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
         cookie: deps.cookie,
+        mobile: klienMobile(req),
         rute: "/v1/auth/google",
       });
     } catch (err) {

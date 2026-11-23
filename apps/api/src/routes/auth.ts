@@ -35,7 +35,7 @@ import { hashSingkatUntukLog } from "../lib/llmGuard.js";
 import { logger } from "../lib/logger.js";
 import { ambilPenggunaSesi } from "../lib/pemilik.js";
 import { keSaya, selesaikanMasuk } from "../lib/sesiMasuk.js";
-import { hapusCookieSesi, type OpsiCookieSesi } from "../middleware/sesi.js";
+import { hapusCookieSesi, klienMobile, type OpsiCookieSesi } from "../middleware/sesi.js";
 import { validate } from "../middleware/validate.js";
 import { pasangRuteEmailGoogle, type DepsEmailGoogle } from "./authEmail.js";
 
@@ -208,6 +208,7 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       selesaikanMasuk(db, res, pengguna, {
         perangkatIdMentah: body.perangkatId ?? req.header("x-device-id"),
         cookie: deps.cookie,
+        mobile: klienMobile(req),
         rute: "/v1/auth/otp/verifikasi",
       });
     },
@@ -270,7 +271,11 @@ export function createAuthRouter(deps: AuthRouterDeps): Router {
       res.status(503).json(galat("AKUN_DEMO_BELUM_SIAP", "Akun demo belum disiapkan di server."));
       return;
     }
-    selesaikanMasuk(db, res, pengguna, { cookie: deps.cookie, rute: "/v1/auth/demo" });
+    selesaikanMasuk(db, res, pengguna, {
+      cookie: deps.cookie,
+      mobile: klienMobile(req),
+      rute: "/v1/auth/demo",
+    });
   });
 
   // GET /v1/auth/konfigurasi — cara masuk yang tersedia, untuk menyusun halaman Masuk.

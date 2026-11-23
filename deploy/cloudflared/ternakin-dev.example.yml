@@ -1,0 +1,17 @@
+# Contoh konfigurasi Cloudflare Tunnel untuk pengembangan Ternakin.
+# 1. cloudflared tunnel login
+# 2. cloudflared tunnel create ternakin-dev
+# 3. cloudflared tunnel route dns ternakin-dev ternakin-api.<domain-anda>
+#    cloudflared tunnel route dns ternakin-dev ternakin-dev.<domain-anda>
+# 4. Salin berkas ini ke ~/.cloudflared/ternakin-dev.yml, isi ID tunnel dan hostname,
+#    lalu jalankan `npm run tunnel` dari akar repo.
+# Berkas kredensial (*.json) bersifat rahasia: jangan dimasukkan ke git.
+tunnel: <ID-TUNNEL>
+credentials-file: <HOME>/.cloudflared/<ID-TUNNEL>.json
+
+ingress:
+  - hostname: ternakin-api.<domain-anda> # API (npm run dev, port 3000)
+    service: http://localhost:3000
+  - hostname: ternakin-dev.<domain-anda> # Metro Expo (npm run mobile, port 8081)
+    service: http://localhost:8081
+  - service: http_status:404

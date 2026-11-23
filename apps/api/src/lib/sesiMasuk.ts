@@ -26,7 +26,7 @@ export function selesaikanMasuk(
   db: Database.Database,
   res: Response,
   pengguna: PenggunaSesi,
-  opsi: { perangkatIdMentah?: unknown; cookie: OpsiCookieSesi; rute: string },
+  opsi: { perangkatIdMentah?: unknown; cookie: OpsiCookieSesi; rute: string; mobile?: boolean },
 ): void {
   const perangkatId = bersihkanPerangkatId(opsi.perangkatIdMentah);
   const kandangDipindahkan =
@@ -34,9 +34,15 @@ export function selesaikanMasuk(
 
   const tokenLama = res.locals.tokenSesi as string | undefined;
   if (tokenLama) hapusSesi(db, tokenLama);
-  setelCookieSesi(res, buatSesi(db, pengguna.id, opsi.cookie.durasiMs), opsi.cookie);
+  const token = buatSesi(db, pengguna.id, opsi.cookie.durasiMs);
+  setelCookieSesi(res, token, opsi.cookie);
 
   logger.info({ rute: opsi.rute, pengguna: pengguna.id, kandangDipindahkan }, "Pengguna masuk");
-  const respons: SesiAkunResponse = { pengguna: keSaya(pengguna), kandangDipindahkan };
+  const respons: SesiAkunResponse = {
+    pengguna: keSaya(pengguna),
+    kandangDipindahkan,
+    // Aplikasi mobile menyimpan token di SecureStore dan mengirimnya sebagai Bearer.
+    ...(opsi.mobile ? { token } : {}),
+  };
   res.status(200).json(respons);
 }

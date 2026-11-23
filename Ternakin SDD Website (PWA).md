@@ -25,9 +25,10 @@ Pilihan di bawah mengutamakan yang paling sedikit bagian bergerak. Tabel ini men
 | Lapisan | Pilihan | Alasan |
 | --- | --- | --- |
 | Antarmuka | PWA: React + Vite, Workbox (vite-plugin-pwa) untuk service worker | Bisa dipasang dari peramban dan berjalan offline |
+| Aplikasi Android | Expo SDK 58 + Expo Router + TypeScript (`apps/mobile`), dibangun lewat EAS Build | Memakai `@ternakin/shared` yang sama dengan web; sesi lewat token Bearer di SecureStore (header `X-Ternakin-Klien: mobile`), bukan cookie |
 | Data lokal | IndexedDB lewat Dexie | Penyimpanan terstruktur di perangkat untuk mode offline |
 | Backend | Node.js + Express + TypeScript (monorepo npm workspaces) | Satu bahasa dengan web; skema zod dan solver dibagi lewat `packages/shared`, sehingga hitungan offline di perangkat identik dengan server |
-| Basis data | SQLite (better-sqlite3) dulu, lalu PostgreSQL | Mulai tanpa server tambahan; skema dijaga kompatibel |
+| Basis data | SQLite (better-sqlite3), juga di production; PostgreSQL hanya bila perlu multi-instance | Mulai tanpa server tambahan; skema dijaga kompatibel |
 | Solver | Simpleks pemrograman linear di `packages/shared/src/feed/solver.ts` | Biaya terendah dengan batasan gizi; berjalan di server dan di perangkat tanpa sinyal |
 | LLM | Google Gemini lewat REST (bawaan `gemini-3.5-flash-lite`, dapat diganti lewat `LLM_MODEL`), cadangan jawaban bawaan (mock) | Mengurai teks bebas, menjelaskan hasil, dan triase Kokok; dengan batas token, cache, dan batas harian. Tanpa kunci atau saat gagal, server tetap berjalan dengan jawaban bawaan |
 | Pencarian panduan | Embedding Gemini (`gemini-embedding-2`, 768 dimensi) disimpan di SQLite, kemiripan kosinus di proses Node; cadangan pencarian kata kunci + sinonim | Jawaban Kokok berdasar panduan yang dikurasi, tanpa layanan basis data vektor tambahan |

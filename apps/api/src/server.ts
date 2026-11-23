@@ -64,6 +64,7 @@ const app = createApp({
   pengirimOtp,
   rahasiaOtp,
   akunDemoAktif: env.AKUN_DEMO_AKTIF,
+  trustProxy: env.TRUST_PROXY,
   pengirimEmail,
   googleClientId,
   verifikasiGoogle: googleClientId ? buatVerifikasiGoogle(googleClientId) : null,

@@ -14,8 +14,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "npm run build -w @ternakin/shared && npm run typecheck -w @ternakin/api && npm run typecheck -w @ternakin/web",
-    "test": "npm run build -w @ternakin/shared && npm run test --workspaces --if-present"
+    "typecheck": "npm run build -w @ternakin/shared && npm run typecheck -w @ternakin/api && npm run typecheck -w @ternakin/web && npm run typecheck -w @ternakin/mobile",
+    "test": "npm run build -w @ternakin/shared && npm run test --workspaces --if-present",
+    "mobile": "npm run build -w @ternakin/shared && npm run dev -w @ternakin/mobile",
+    "tunnel": "node scripts/tunnel.mjs"
   },
   "devDependencies": {
     "@eslint/js": "latest",
@@ -28,5 +30,9 @@
     "typescript": "latest",
     "typescript-eslint": "latest",
     "vitest": "latest"
+  },
+  "overrides": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   }
 }

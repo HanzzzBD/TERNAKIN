@@ -50,6 +50,8 @@ export const sesiAkunResponseSchema = z.object({
   pengguna: penggunaSayaSchema,
   /** Jumlah kandang tamu yang dipindahkan ke akun saat masuk. */
   kandangDipindahkan: z.number().int().min(0).optional(),
+  /** Hanya untuk aplikasi mobile (header X-Ternakin-Klien: mobile); web memakai cookie. */
+  token: z.string().optional(),
 });
 export type SesiAkunResponse = z.infer<typeof sesiAkunResponseSchema>;
 

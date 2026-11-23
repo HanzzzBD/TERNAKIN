@@ -12,6 +12,8 @@ services:
       FONNTE_TOKEN: ${FONNTE_TOKEN:-}
       SESI_BERLAKU_HARI: ${SESI_BERLAKU_HARI:-30}
       AKUN_DEMO_AKTIF: ${AKUN_DEMO_AKTIF:-true}
+      # nginx berada di jaringan Docker (alamat privat), bukan loopback
+      TRUST_PROXY: ${TRUST_PROXY:-uniquelocal}
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-465}
       SMTP_USER: ${SMTP_USER:-}

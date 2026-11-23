@@ -13,6 +13,10 @@ export default tseslint.config(
       "**/coverage/**",
       "**/playwright-report/**",
       "**/test-results/**",
+      "apps/mobile/.expo/**",
+      "apps/mobile/android/**",
+      "apps/mobile/ios/**",
+      "apps/mobile/expo-env.d.ts",
     ],
   },
   js.configs.recommended,
@@ -29,6 +33,16 @@ export default tseslint.config(
     },
   },
   {
+    // Aplikasi mobile (Expo / React Native): aturan hooks sama dengan web; gambar lokal wajib
+    // dimuat dengan require() agar ikut dibundel Metro.
+    files: ["apps/mobile/src/**/*.{ts,tsx}"],
+    plugins: { "react-hooks": reactHooks },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      "@typescript-eslint/no-require-imports": ["error", { allow: ["\\.(png|jpe?g|webp|gif)$"] }],
+    },
+  },
+  {
     rules: {
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-unused-vars": [
@@ -37,6 +51,12 @@ export default tseslint.config(
       ],
       "no-console": "error",
     },
+  },
+  {
+    // Skrip CLI Node (tunnel, Metro): boleh memakai process dan console.
+    files: ["scripts/**/*.mjs", "apps/mobile/scripts/**/*.mjs"],
+    languageOptions: { globals: { process: "readonly", console: "readonly" } },
+    rules: { "no-console": "off" },
   },
   prettierConfig,
 );
