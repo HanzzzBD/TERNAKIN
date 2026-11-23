@@ -7,6 +7,7 @@
 | `34d2d69` | 23 Nov | HanzzzBD | tidak tercatat | setup deployv2.1 |
 | `6c0206c` | 23 Nov | HanzzzBD | tidak tercatat | setup.deployv2.1.1 |
 | `f7dfa72` | 23 Nov | HanzzzBD | Claude Opus 5.5 | chore(lint): mengenali scripts/*.cjs sebagai CommonJS Node |
+| `76b8669` | 23 Nov | HanzzzBD | Claude Opus 5.5 | fix(deploy): membangun service worker tanpa terser saat build di shared hosting |
 
 Commit `68c80e9` sampai `6c0206c` tidak mencantumkan trailer `Co-Authored-By`. Kodenya dibuat dalam satu sesi Claude Code: `scripts/paket-hosting.mjs` dengan Claude Haiku 5.5, lalu `deploy/update-hosting.sh` dan migrasi ke `node:sqlite` dengan Claude Opus 5.5, begitu juga `scripts/batasi-cpu.cjs` di `6c0206c`. Keterangan ini berasal dari sesi pengerjaan, bukan dari pesan commit.
 
@@ -49,6 +50,12 @@ Ternakin dipasang di shared hosting jagoanhosting (cPanel, CloudLinux Node.js Se
 - Hasil build tidak berubah: dengan batas 1 CPU, `sw.js` dan `workbox-ccc5761b.js` tetap sama hash dan ukurannya, dan tetap dipadatkan.
 - `f7dfa72`: `eslint.config.js` mengenali `scripts/**/*.cjs` sebagai CommonJS Node, karena berkas preload itu membuat `npm run lint` gagal.
 
+**Koreksi: service worker tanpa terser di server (`76b8669`).** Setelah `6c0206c` dipasang, build di server tetap gagal dengan `EAGAIN` yang sama. Diagnosis di atas ternyata tidak tepat. Plugin terser membuat worker secara bertahap, sebanyak tugas yang ada, yaitu 1–2 worker, bukan sebanyak `os.cpus()`. Pesan `EAGAIN` adalah galat Node saat gagal membuat **satu** worker thread itu, karena proses build (rolldown memakai thread sebanyak inti CPU server) sudah dekat batas thread akun CloudLinux.
+- `vite.config.ts`: bila `TERNAKIN_SW_TANPA_TERSER=1`, workbox memakai mode `development`, sehingga tidak memanggil terser dan tidak membuat worker thread. `disableDevLogs: true` menjaga service worker tanpa log debug.
+- `update-hosting.sh` mengisi variabel itu. Preload `scripts/batasi-cpu.cjs` dan aturan eslint `*.cjs` dari `6c0206c`/`f7dfa72` dihapus.
+- Uji dengan meniru server, yaitu pembuatan worker thread dipaksa gagal dengan `EAGAIN`: tanpa perbaikan, galat yang persis sama muncul. Dengan perbaikan, langkah build `update-hosting.sh` berhasil dan paket hosting terbentuk.
+- Build laptop dan Docker tetap dipadatkan (`workbox-ccc5761b.js`, 22 KB). Di server, runtime workbox tidak dipadatkan (178 KB), dan hanya diunduh sekali lalu disimpan di cache service worker.
+
 ## Hasil verifikasi
 
 Dijalankan di mesin pengembang (Windows, Node 26) sebelum commit:
@@ -66,7 +73,7 @@ Tidak diuji di mesin pengembang: Node 22.23 itu sendiri. Situs kemudian berjalan
 - Document root subdomain tidak boleh mengarah ke folder clone, agar `.git` tidak bisa diunduh.
 - Memakai `node:sqlite` alih-alih modul native, agar aplikasi jalan di server dengan GLIBC lama. Format berkas database tidak berubah.
 - Alur update: `cd ~/TERNAKIN && git pull && bash deploy/update-hosting.sh`.
-- Jumlah thread build dibatasi lewat preload, bukan dengan mengganti mode workbox ke `development`, agar service worker yang dikirim ke pengguna tetap dipadatkan dan tanpa log debug.
+- Di server, service worker dibangun tanpa terser (mode workbox `development` dengan `disableDevLogs`), karena pembuatan worker thread ditolak CloudLinux. Keputusan awal di `6c0206c` (membatasi jumlah CPU lewat preload) dibatalkan di `76b8669` karena tidak menyelesaikan masalah.
 
 ---
 
@@ -159,3 +166,22 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | File | + | − | Status |
 |---|---:|---:|---|
 | `eslint.config.js` | 9 | 0 | diubah |
+
+### `76b8669` — fix(deploy): membangun service worker tanpa terser saat build di shared hosting
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 4 file, +15 / -33 baris
+
+**Isi pesan commit:**
+
+> Build di server masih gagal dengan "Unable to write the service worker file. 'EAGAIN'" setelah 6c0206c. Pesan itu berasal dari Node yang gagal membuat satu worker thread untuk terser (workbox memadatkan service worker), karena proses build sudah dekat batas thread akun CloudLinux. Membatasi os.cpus() tidak membantu: terser hanya membuat 1-2 worker.
+> - vite.config.ts: bila TERNAKIN_SW_TANPA_TERSER=1, workbox memakai mode "development" sehingga tidak memanggil terser (tanpa worker thread). disableDevLogs menjaga service worker tanpa log. Build laptop/Docker tetap dipadatkan seperti sebelumnya.
+> - update-hosting.sh mengisi TERNAKIN_SW_TANPA_TERSER=1 dan tidak lagi memasang preload.
+> - scripts/batasi-cpu.cjs dan aturan eslint untuk *.cjs dihapus. Diuji dengan meniru server (pembuatan worker thread dipaksa gagal "EAGAIN"): tanpa perbaikan galat yang sama muncul, dengan perbaikan paket hosting terbentuk.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/web/vite.config.ts` | 11 | 0 | diubah |
+| `deploy/update-hosting.sh` | 4 | 5 | diubah |
+| `eslint.config.js` | 0 | 9 | diubah |
+| `scripts/batasi-cpu.cjs` | 0 | 19 | dihapus |
