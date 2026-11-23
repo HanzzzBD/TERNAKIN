@@ -41,6 +41,8 @@ const envSchema = z.object({
   RAG_AMBANG_KEMIRIPAN: z.coerce.number().min(0).max(1).default(0.6),
   LLM_DAILY_LIMIT_PER_DEVICE: z.coerce.number().int().positive().default(20),
   STALE_DAYS: z.coerce.number().int().positive().default(7),
+  // Folder berisi ternakin.apk untuk tombol "Unduh untuk Android". Kosong = <folder database>/unduhan.
+  UNDUHAN_DIR: z.string().trim().default(""),
 });
 
 export type AppEnv = z.infer<typeof envSchema>;

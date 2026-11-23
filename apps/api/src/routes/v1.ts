@@ -20,6 +20,7 @@ import { createPakanRouter } from "./pakan.js";
 import { createReferensiRouter } from "./referensi.js";
 import { createSinkronRouter } from "./sinkron.js";
 import { createTokoRouter } from "./toko.js";
+import { createUnduhanRouter } from "./unduhan.js";
 
 export interface V1RouterDeps {
   dbCtx: DatabaseContext;
@@ -36,6 +37,8 @@ export interface V1RouterDeps {
   pengirimEmail: PengirimEmail | null;
   verifikasiGoogle: VerifikasiGoogle | null;
   googleClientId: string | null;
+  /** Folder APK Android untuk GET /v1/unduhan; null = tidak tersedia. */
+  unduhanDir: string | null;
 }
 
 export function createV1Router(deps: V1RouterDeps): Router {
@@ -45,6 +48,9 @@ export function createV1Router(deps: V1RouterDeps): Router {
   router.get("/openapi.json", (_req, res) => {
     res.status(200).json(openApiDoc);
   });
+
+  // Info unduhan APK Android: terbuka untuk semua (tamu juga), dipakai tombol unduh di web.
+  router.use("/unduhan", createUnduhanRouter(deps.unduhanDir));
 
   // Fitur khusus peternak (dan tamu): ditolak untuk akun berperan Pengguna.
   // Harus dipasang sebelum router fitur tersebut.

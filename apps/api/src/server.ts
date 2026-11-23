@@ -1,5 +1,6 @@
 import "./config/muatEnvDulu.js";
 import crypto from "node:crypto";
+import path from "node:path";
 import { buatPenyediaLlm } from "./adapters/penyediaLlm.js";
 import {
   DemoPengirimEmail,
@@ -65,6 +66,13 @@ const app = createApp({
   rahasiaOtp,
   akunDemoAktif: env.AKUN_DEMO_AKTIF,
   trustProxy: env.TRUST_PROXY,
+  // APK Android disimpan di luar folder aplikasi (bawaan di samping database) agar tidak terhapus
+  // saat deploy. Dipasang lewat deploy/pasang-apk.sh.
+  unduhanDir:
+    env.UNDUHAN_DIR ||
+    (env.DATABASE_PATH === ":memory:"
+      ? null
+      : path.join(path.dirname(path.resolve(env.DATABASE_PATH)), "unduhan")),
   pengirimEmail,
   googleClientId,
   verifikasiGoogle: googleClientId ? buatVerifikasiGoogle(googleClientId) : null,

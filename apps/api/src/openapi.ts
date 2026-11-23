@@ -27,6 +27,7 @@ import {
   kokokObrolanResponseSchema,
   kokokTriaseRequestSchema,
   kokokTriaseResponseSchema,
+  unduhanResponseSchema,
   leadCreateRequestSchema,
   mintaOtpRequestSchema,
   mintaOtpResponseSchema,
@@ -229,6 +230,18 @@ export function buildOpenApiSpec() {
               content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
             },
             "429": { description: "Batas harian obrolan tercapai" },
+          },
+        },
+      },
+      "/v1/unduhan": {
+        get: {
+          summary:
+            "Info unduhan APK Android (tersedia, ukuran, waktu diperbarui). Berkasnya di GET /unduh/ternakin.apk",
+          responses: {
+            "200": {
+              description: "Info unduhan",
+              content: { "application/json": { schema: z.toJSONSchema(unduhanResponseSchema) } },
+            },
           },
         },
       },

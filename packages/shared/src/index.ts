@@ -187,3 +187,10 @@ export {
   type JawabanPenjaga,
   type KategoriCakupan,
 } from "./kokok/penjagaCakupan.js";
+export {
+  URL_UNDUH_ANDROID,
+  infoUnduhanAndroidSchema,
+  unduhanResponseSchema,
+  type InfoUnduhanAndroid,
+  type UnduhanResponse,
+} from "./schemas/unduhan.js";

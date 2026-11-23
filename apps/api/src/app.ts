@@ -16,6 +16,7 @@ import { initDatabase, type DatabaseContext } from "./db/database.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import { generalLimiter } from "./middleware/rateLimit.js";
 import { muatSesi, type OpsiCookieSesi } from "./middleware/sesi.js";
+import { pasangRuteUnduhApk } from "./routes/unduhan.js";
 import { createV1Router } from "./routes/v1.js";
 
 const DEFAULT_WEB_DIST = path.resolve(
@@ -53,6 +54,8 @@ export interface CreateAppOptions {
    * di mesin yang sama, "uniquelocal" untuk nginx di jaringan Docker. Bawaan: loopback.
    */
   trustProxy?: string;
+  /** Folder berisi ternakin.apk untuk diunduh dari web; null = unduhan APK tidak tersedia. */
+  unduhanDir?: string | null;
 }
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
@@ -123,8 +126,11 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
         options.pengirimEmail === undefined ? new DemoPengirimEmail() : options.pengirimEmail,
       verifikasiGoogle: options.verifikasiGoogle ?? null,
       googleClientId: options.googleClientId ?? null,
+      unduhanDir: options.unduhanDir ?? null,
     }),
   );
+
+  pasangRuteUnduhApk(app, options.unduhanDir ?? null);
 
   app.use(
     express.static(webDistDir, {

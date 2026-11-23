@@ -6,6 +6,7 @@ import { InvestasiHighlight } from "../components/landing/InvestasiHighlight";
 import { KokokChatPopup } from "../components/landing/KokokChatPopup";
 import { KokokHeroStage } from "../components/landing/KokokHeroStage";
 import { PhoneFrame } from "../components/landing/PhoneFrame";
+import { TombolUnduhAndroid } from "../components/landing/TombolUnduhAndroid";
 import {
   Accordion,
   ArrowRightIcon,
@@ -338,6 +339,7 @@ export function LandingPage() {
                   <WhatsAppIcon size={20} />
                   <span>{LANDING_HERO.tombolWa}</span>
                 </a>
+                <TombolUnduhAndroid className="tk-btn--secondary tk-landing-inline-btn" />
               </div>
             </div>
 
@@ -564,6 +566,7 @@ export function LandingPage() {
               >
                 {LANDING_PENUTUP.tombolPasang}
               </Button>
+              <TombolUnduhAndroid className="tk-btn--secondary tk-landing-inline-btn" />
             </div>
             {pesanPasang && <Banner variant="info">{pesanPasang}</Banner>}
             <p className="tk-cta-note">{LANDING_PENUTUP.catatanPrototipe}</p>

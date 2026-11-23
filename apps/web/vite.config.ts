@@ -32,7 +32,8 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/v1\//, /^\/health$/],
+        // /unduh/ = berkas APK dari server; jangan dialihkan service worker ke index.html.
+        navigateFallbackDenylist: [/^\/v1\//, /^\/health$/, /^\/unduh\//],
         globPatterns: ["**/*.{js,css,html,svg,woff2,png,webp,json}"],
         runtimeCaching: [
           {
