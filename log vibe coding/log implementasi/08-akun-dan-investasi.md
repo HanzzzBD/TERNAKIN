@@ -5,6 +5,7 @@
 | `54c305d` | 20 Nov | hasbywira90 | Claude Opus 5.5 | feat(investasi): menambah prototipe Modul 5 investasi ternak dan akun demo |
 | `7835fd8` | 21 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): menambah masuk WhatsApp OTP, pembagian peran peternak/pengguna, dan investasi simulasi di server |
 | `8365142` | 21 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): menambah masuk dengan email + kata sandi dan Google, serta email kode berlogo Kokok |
+| `f499ebd` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): mewajibkan masuk untuk Kokok dan menambah pengingat masuk bagi tamu |
 
 ## Isi
 
@@ -30,6 +31,14 @@
 - Akun Google ditautkan ke akun email yang sama. Bila akun email itu belum terverifikasi, sandinya dihapus agar tidak bisa diambil alih pendaftar palsu.
 - Halaman Masuk menampilkan tombol Google, form email, lalu WhatsApp sebagai pilihan kedua.
 
+**Kokok wajib masuk dan pengingat untuk tamu (`f499ebd`).** Mode tamu tetap ada, tetapi Kokok kini khusus akun.
+- API: middleware `wajibMasuk` dipasang di seluruh rute `/v1/kokok`. Tamu yang memanggil `/v1/kokok/triase` atau `/v1/kokok/obrolan` mendapat `401 BELUM_MASUK`. Akun demo dihitung sudah masuk, jadi juri tetap bisa mencoba Kokok. OpenAPI mencantumkan respons 401.
+- Web: halaman Tanya Kokok dibungkus `WajibMasuk`. Tamu melihat ajakan masuk yang kembali ke `/app/tanya` setelah masuk, dan draf pertanyaan tetap tersimpan. Respons 401 (sesi berakhir di server) menghapus status masuk lokal.
+- Popup Kokok di landing: kolom ketik diganti tombol "Masuk untuk ngobrol" bagi tamu. Pertanyaan cepat tetap dijawab dengan teks FAQ yang sudah tertulis, tanpa memanggil server.
+- Mobile: tab Kokok menampilkan ajakan masuk untuk tamu, dan menyegarkan sesi bila server membalas 401.
+- Web dan mobile: Beranda menampilkan pengingat bahwa data tamu hanya tersimpan di perangkat, dengan tombol Masuk dan "Nanti saja". "Nanti saja" menyembunyikan pengingat selama 7 hari.
+- Tes: tes Kokok API kini masuk dengan akun demo, ditambah tes tamu ditolak 401, tes popup untuk tamu, dan tes `WajibMasuk`/`PengingatMasuk`. Hasil sebelum commit: API 131, web 49, dan shared 81 tes lolos, serta lint dan build lolos.
+
 ## Keputusan yang tercatat
 
 - Investasi hanya simulasi. Tidak ada uang yang berpindah, dan tidak ada angka imbal hasil yang dijanjikan.
@@ -38,6 +47,7 @@
 - Akun demo tidak bisa diganti perannya atau dihapus.
 - Kepemilikan data diatur di server: kandang tidak bisa diambil alih lewat ID, dan catatan hanya bisa ditulis pemiliknya.
 - Dokumen untuk penilaian: semua nama peternak, kandang, dokter hewan, dan angka diberi label contoh.
+- Kokok wajib masuk, tetapi pakan, catatan, dan toko tetap bisa dipakai tanpa akun. Mewajibkan masuk untuk semua fitur tidak dipilih karena masuk butuh internet dan OTP, sedangkan Ternakin dirancang offline-first untuk peternak di kandang dengan sinyal lemah.
 
 ---
 
@@ -251,3 +261,40 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | `packages/shared/src/index.ts` | 16 | 0 | diubah |
 | `packages/shared/src/schemas/akun.ts` | 78 | 0 | diubah |
 
+
+### `f499ebd` — feat(akun): mewajibkan masuk untuk Kokok dan menambah pengingat masuk bagi tamu
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 20 file, +580 / -58 baris
+
+**Isi pesan commit:**
+
+> - API: middleware wajibMasuk; /v1/kokok/triase dan /v1/kokok/obrolan menolak tamu dengan 401 BELUM_MASUK. Akun demo dihitung sudah masuk. OpenAPI mencantumkan 401.
+> - Web: halaman Tanya Kokok dibungkus WajibMasuk (ajakan masuk, kembali ke /app/tanya setelah masuk). Popup Kokok di landing mengganti kolom ketik dengan ajakan masuk; pertanyaan cepat tetap dijawab teks tetap tanpa memanggil server. Respons 401 menghapus status masuk lokal.
+> - Mobile: tab Kokok menampilkan ajakan masuk untuk tamu dan menyegarkan sesi saat 401.
+> - Web dan mobile: pengingat di Beranda bahwa data tamu hanya tersimpan di perangkat, dengan tombol Masuk dan "Nanti saja" (disembunyikan 7 hari).
+> - Pakan, catatan, dan toko tetap bisa dipakai tamu (mode tamu PRD).
+> - Tes: Kokok API masuk dengan akun demo, tes tamu ditolak, tes popup tamu, dan tes WajibMasuk/PengingatMasuk. SDD diperbarui.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `Ternakin SDD Website (PWA).md` | 3 | 1 | diubah |
+| `apps/api/src/kokok.test.ts` | 76 | 24 | diubah |
+| `apps/api/src/middleware/peran.ts` | 14 | 1 | diubah |
+| `apps/api/src/openapi.ts` | 8 | 0 | diubah |
+| `apps/api/src/routes/kokok.ts` | 9 | 0 | diubah |
+| `apps/mobile/src/app/(tab)/index.tsx` | 2 | 0 | diubah |
+| `apps/mobile/src/app/(tab)/kokok.tsx` | 51 | 3 | diubah |
+| `apps/mobile/src/components/PengingatMasuk.tsx` | 71 | 0 | baru |
+| `apps/web/src/App.tsx` | 14 | 1 | diubah |
+| `apps/web/src/components/akun/PengingatMasuk.tsx` | 60 | 0 | baru |
+| `apps/web/src/components/akun/WajibMasuk.test.tsx` | 90 | 0 | baru |
+| `apps/web/src/components/akun/WajibMasuk.tsx` | 64 | 0 | baru |
+| `apps/web/src/components/landing/KokokChatPopup.css` | 14 | 0 | diubah |
+| `apps/web/src/components/landing/KokokChatPopup.test.tsx` | 32 | 3 | diubah |
+| `apps/web/src/components/landing/KokokChatPopup.tsx` | 41 | 24 | diubah |
+| `apps/web/src/components/layout/AppShell.css` | 15 | 1 | diubah |
+| `apps/web/src/content/landingContent.ts` | 4 | 0 | diubah |
+| `apps/web/src/lib/kokokObrolan.ts` | 3 | 0 | diubah |
+| `apps/web/src/pages/FondasiPage.tsx` | 2 | 0 | diubah |
+| `apps/web/src/pages/KokokPage.tsx` | 7 | 0 | diubah |

@@ -10,6 +10,7 @@
 | `68e6e8d` | 20 Nov | hasbywira90 | Claude Opus 5.5 | feat(landing): menonjolkan Kokok, menambah alur per peran, dan merapikan navbar |
 | `d426d14` | 23 Nov | hasbywira90 | Claude Sonnet 5.5 | fix(landing): melonggarkan strip kata kunci dan membuat aksen judul investasi satu strip terbaca |
 | `80dfe02` | 23 Nov | hasbywira90 | tidak tercatat | Revert "fix(landing): melonggarkan strip kata kunci dan membuat aksen judul investasi satu strip terbaca" |
+| `bea6f2e` | 23 Nov | hasbywira90 | Claude Opus 5.5 | setup deployv2.1 |
 
 ## Isi
 
@@ -25,11 +26,16 @@
 
 **Strip kata kunci (`d426d14`, `80dfe02`).** `d426d14` melonggarkan jarak strip oranye dan membuat aksen judul investasi "hasil dibagi." menjadi satu blok strip di latar hijau gelap, agar terbaca. `80dfe02` me-revert commit itu. Efek bersihnya nol, sehingga kode landing kembali ke kondisi `68e6e8d`.
 
+**Strip, aksen investasi, dan popup Kokok (`bea6f2e`).** Judul commit ini sama dengan commit deploy `34d2d69`, tetapi isinya perbaikan tampilan landing.
+- Strip kata kunci menjadi satu baris dengan animasi loop yang mulus. Daftar kata di `landingContent.ts` dipangkas (8 baris dihapus).
+- Aksen judul investasi "hasil dibagi." menjadi blok kuning yang terbaca. Label kartu contoh tidak lagi menutupi isi, dan tinggi kartu jaminan disamakan.
+- Di popup Kokok, saat jawaban panjang, hanya log pesan yang menyusut. Tombol pertanyaan cepat dan kolom ketik tidak lagi terpotong.
+
 ## Keputusan yang tercatat
 
 - Navbar ponsel dibuka hanya saat diketuk, tidak saat kursor lewat. Menu melayang di atas konten agar tidak mendorong halaman.
 - Teks landing dipangkas agar pengguna tidak kebingungan. Klaim dan testimoni tidak dibuat.
-- Commit `d426d14` dibatalkan dengan revert, bukan perbaikan baru.
+- Commit `d426d14` dibatalkan dengan revert, bukan perbaikan baru. Perbaikan strip dan aksen investasi kemudian dikerjakan ulang di `bea6f2e`.
 
 ---
 
@@ -194,3 +200,21 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 |---|---:|---:|---|
 | `apps/web/src/pages/LandingPage.css` | 5 | 14 | diubah |
 
+
+### `bea6f2e` — setup deployv2.1
+
+- **Tanggal:** 2026-11-23 · **Penulis:** hasbywira90 · **Model:** Claude Opus 5.5
+- **Ringkasan:** 4 file, +44 / -53 baris
+
+**Isi pesan commit:**
+
+> - Kokok: hanya log pesan yang menyusut saat jawaban panjang, agar tombol cepat dan kolom ketik tidak terpotong
+> - Landing: strip kata kunci jadi satu baris dengan loop animasi yang mulus
+> - Investasi: aksen 'hasil dibagi.' jadi blok kuning terbaca, label kartu contoh tidak lagi menutupi isi, kartu jaminan disamakan tingginya
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/web/src/components/landing/KokokChatPopup.css` | 14 | 1 | diubah |
+| `apps/web/src/content/landingContent.ts` | 0 | 8 | diubah |
+| `apps/web/src/pages/LandingPage.css` | 26 | 28 | diubah |
+| `apps/web/src/pages/LandingPage.tsx` | 4 | 16 | diubah |
