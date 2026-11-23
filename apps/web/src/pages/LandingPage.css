@@ -821,32 +821,31 @@ html[data-motion="on"] .tk-hero-float {
 .tk-marquee-band {
   background: var(--tk-orange);
   color: var(--tk-ink);
-  padding-block: var(--space-6);
-  margin-block: var(--space-10, 40px);
+  padding-block: var(--space-4);
   overflow: hidden;
   border-block: 2px solid var(--tk-orange-dark);
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-2);
 }
 
 .tk-marquee-row {
   display: flex;
   width: max-content;
-  gap: var(--space-8);
+  gap: var(--space-4);
 }
 
 .tk-marquee-track {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-4);
   flex-shrink: 0;
 }
 
 .tk-marquee-item {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-3);
   font-weight: 800;
   font-size: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);
   font-stretch: var(--stretch-display);
@@ -1572,14 +1571,6 @@ html[data-motion="on"] .tk-marquee-row--right {
 
 .tk-section--investasi :focus-visible {
   outline-color: var(--tk-white);
-}
-
-/* Aksen judul di latar hijau gelap: satu strip penuh agar teks gelap terbaca */
-.tk-section--investasi .tk-accent-italic {
-  background: var(--tk-amber-soft);
-  color: var(--tk-ink);
-  padding: 0 0.2em 0.04em;
-  border-radius: 0.16em;
 }
 
 .tk-invhl-layout {
