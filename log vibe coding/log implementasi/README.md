@@ -5,7 +5,7 @@
 | **Proyek** | Ternakin — asisten digital peternak ayam (PWA) |
 | **Branch** | `Dev-Website` |
 | **Periode commit** | 19–23 November 2026 |
-| **Cakupan** | 62 commit di branch ini, dari dokumen PRD/SDD sampai semua fitur wajib masuk (`4a2b568`). Commit yang hanya memperbarui log ini (`8ee78b1`, `8add65e`, `58edcbc`, dan commit log berikutnya) tidak dicatat |
+| **Cakupan** | 64 commit di branch ini, dari dokumen PRD/SDD sampai perbaikan masuk dengan Google (`476f232`). Commit yang hanya memperbarui log ini (`8ee78b1`, `8add65e`, `58edcbc`, `d0dd3f5`, dan commit log berikutnya) tidak dicatat |
 | **Sumber model AI** | Trailer `Co-Authored-By` di pesan commit. Commit tanpa trailer ditulis "tidak tercatat" |
 
 ## Cara membaca
@@ -30,7 +30,7 @@ Log percakapan per permintaan (prompt asli, bug, dan koreksi) dulu ada di `log v
 | [05-toko-rujukan.md](05-toko-rujukan.md) | Rujukan toko pakan dan antrean lead WhatsApp | 3 |
 | [06-kokok.md](06-kokok.md) | Triase, obrolan AI, penjaga keselamatan, basis pengetahuan | 6 |
 | [07-landing.md](07-landing.md) | Landing page, floating navbar, popup Kokok, strip kata kunci | 9 |
-| [08-akun-dan-investasi.md](08-akun-dan-investasi.md) | Masuk WhatsApp/email/Google, peran, Modul 5 investasi, wajib masuk untuk semua fitur | 6 |
+| [08-akun-dan-investasi.md](08-akun-dan-investasi.md) | Masuk WhatsApp/email/Google, peran, Modul 5 investasi, wajib masuk untuk semua fitur, perbaikan masuk Google | 8 |
 | [09-aplikasi-mobile.md](09-aplikasi-mobile.md) | Aplikasi Android Expo, sesi Bearer, EAS Update, unduhan APK dari website | 3 |
 | [10-deploy-shared-hosting.md](10-deploy-shared-hosting.md) | Paket runtime, skrip update dari git clone, migrasi ke `node:sqlite`, build service worker di server | 6 |
 
@@ -40,7 +40,7 @@ Commit `f81ef84` (log percakapan Hasby) tidak masuk ke berkas fitur mana pun. Co
 
 | Model (dari trailer) | Jumlah commit | Keterangan |
 |---|---|---|
-| Claude Opus 5.5 | 20 | `578cbb8` dan `332fc60` sampai `658c81f` (20–21 Nov), termasuk `f81ef84`, serta `bea6f2e`, `f499ebd`, `b4d9731`, `8b0cd50`, `f7dfa72`, `76b8669`, `af0181c`, dan `4a2b568` (23 Nov) |
+| Claude Opus 5.5 | 22 | `578cbb8` dan `332fc60` sampai `658c81f` (20–21 Nov), termasuk `f81ef84`, serta `bea6f2e`, `f499ebd`, `b4d9731`, `8b0cd50`, `f7dfa72`, `76b8669`, `af0181c`, `4a2b568`, `8c72aa9`, dan `476f232` (23 Nov) |
 | Claude Sonnet 5.5 | 3 | `3252682`, `ffb10af` (dokumen PRD/SDD), dan `d426d14` (landing) |
 | Claude Haiku 5.5 | 1 | `e1e7197` (aplikasi mobile) |
 | Tidak tercatat | 38 | Sebagian besar commit 19 Nov (`bd2b287` sampai `76d9c4f`), `80dfe02` (revert), dan empat commit deploy (`68c80e9`, `b0cdc09`, `34d2d69`, `6c0206c`) |

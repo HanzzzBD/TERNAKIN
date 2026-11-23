@@ -8,6 +8,8 @@
 | `f499ebd` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): mewajibkan masuk untuk Kokok dan menambah pengingat masuk bagi tamu |
 | `af0181c` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(akun): mewajibkan masuk untuk semua fitur di web dan Android |
 | `4a2b568` | 23 Nov | HanzzzBD | Claude Opus 5.5 | test(e2e): masuk per tes dan mengisolasi server e2e dari kredensial asli |
+| `8c72aa9` | 23 Nov | HanzzzBD | Claude Opus 5.5 | fix(api): mengirim asal situs ke Google agar tombol masuk dengan Google berfungsi |
+| `476f232` | 23 Nov | HanzzzBD | Claude Opus 5.5 | fix(mobile): menampilkan penyebab gagal masuk dengan Google |
 
 ## Isi
 
@@ -53,6 +55,10 @@
 
 Hasil sebelum commit: API 135, web 52, dan shared 81 tes lolos. E2E 23 (preview) dan 6 (dev) lolos. Lint, typecheck, dan bundle Android lolos.
 
+**Perbaikan masuk dengan Google di web (`8c72aa9`).** Masuk dengan Google gagal di semua browser web, ponsel maupun desktop, padahal origin `https://ternakin.code-xpert.my.id` sudah terdaftar di Google Cloud. Penyebabnya `Referrer-Policy: no-referrer` bawaan helmet. Iframe `accounts.google.com/gsi/button` tidak menerima asal situs, sehingga Google menjawab 400. Pembuktian langsung ke Google: tanpa Referer 400, dengan Referer situs 200, dan dengan Referer situs lain 403. Kebijakan diganti ke `strict-origin-when-cross-origin`, yang ke situs lain hanya mengirim asal tanpa path atau query. Tes baru menjaga header ini bersama COOP dan CSP untuk Google. Yang diperiksa dan tidak bermasalah: `GOOGLE_CLIENT_ID` terbaca server, CSP untuk skrip/iframe/koneksi GSI, COOP untuk popup, verifikasi token di `/v1/auth/google`, dan JWKS Google terjangkau.
+
+**Pesan galat Google di Android (`476f232`).** Semua kegagalan sebelumnya tampil sebagai "Masuk dengan Google gagal". `DEVELOPER_ERROR` (kode 10, SHA-1 APK belum terdaftar sebagai OAuth client Android) kini tampil dengan pesan jelas, dan galat lain menyertakan kodenya. Perubahan JS ini dikirim lewat EAS Update.
+
 ## Keputusan yang tercatat
 
 - Investasi hanya simulasi. Tidak ada uang yang berpindah, dan tidak ada angka imbal hasil yang dijanjikan.
@@ -65,6 +71,8 @@ Hasil sebelum commit: API 135, web 52, dan shared 81 tes lolos. E2E 23 (preview)
 - Semua fitur wajib masuk (`af0181c`). Masalah offline-first ditangani dengan menyimpan status masuk di perangkat: masuk pertama butuh internet, setelah itu pakan dan catatan tetap jalan tanpa sinyal.
 - Server ikut menolak tamu, jadi aturan tidak bisa diakali dengan memanggil API langsung.
 - Tes e2e tidak boleh memakai layanan sungguhan: semua kredensial dikosongkan di konfigurasi Playwright.
+- `Referrer-Policy` memakai `strict-origin-when-cross-origin`, bukan `no-referrer`, karena tombol Google membutuhkan asal situs.
+- Untuk masuk dengan Google di Android, client OAuth bertipe Android (paket `id.ternakin.app` dan SHA-1 keystore EAS) didaftarkan di proyek Google Cloud yang sama dengan client Web. Aplikasi tetap memakai Client ID Web.
 
 ---
 
@@ -390,3 +398,32 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | `apps/web/e2e/pakan-offline.spec.ts` | 6 | 0 | diubah |
 | `apps/web/e2e/toko-offline.spec.ts` | 6 | 0 | diubah |
 | `apps/web/playwright.config.ts` | 16 | 3 | diubah |
+
+### `8c72aa9` — fix(api): mengirim asal situs ke Google agar tombol masuk dengan Google berfungsi
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 2 file, +17 / -0 baris
+
+**Isi pesan commit:**
+
+> Helmet bawaan memasang Referrer-Policy: no-referrer, sehingga iframe accounts.google.com/gsi/button tidak tahu asal situs dan menjawab 400. Masuk dengan Google di web (ponsel dan desktop) gagal walau origin sudah terdaftar di Google Cloud. Diuji langsung ke Google: tanpa Referer 400, dengan Referer ternakin.code-xpert.my.id 200, dengan Referer situs lain 403.
+> - referrerPolicy: strict-origin-when-cross-origin (ke situs lain hanya asal, tanpa path).
+> - Tes header: Referrer-Policy, Cross-Origin-Opener-Policy, dan CSP untuk Google.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/api/src/app.test.ts` | 13 | 0 | diubah |
+| `apps/api/src/app.ts` | 4 | 0 | diubah |
+
+### `476f232` — fix(mobile): menampilkan penyebab gagal masuk dengan Google
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 1 file, +12 / -0 baris
+
+**Isi pesan commit:**
+
+> Sebelumnya semua kegagalan tampil sebagai "Masuk dengan Google gagal", sehingga penyebab tidak terlihat. DEVELOPER_ERROR (kode 10, SHA-1 APK belum terdaftar sebagai OAuth client Android) kini tampil dengan pesan jelas, dan galat lain menyertakan kodenya.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/mobile/src/lib/akun.ts` | 12 | 0 | diubah |
