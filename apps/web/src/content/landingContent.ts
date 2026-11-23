@@ -284,4 +284,8 @@ export const LANDING_KOKOK_CHAT = {
     "Terima kasih sudah bercerita. Untuk menilai seberapa mendesak, saya perlu membaca pedoman di halaman Tanya Kokok. Cerita Anda sudah saya bawa ke sana.",
   tombolLanjutGejala: "Lanjut cek gejala",
   catatanAman: "Kokok tidak memberi diagnosis atau dosis obat.",
+  /** Tamu: Kokok khusus akun, jadi kolom ketik diganti ajakan masuk. */
+  ajakMasuk:
+    "Untuk ngobrol bebas dan cek gejala ayam bersama Kokok, masuk dulu ya. Daftarnya gratis.",
+  tombolMasuk: "Masuk untuk ngobrol",
 } as const;

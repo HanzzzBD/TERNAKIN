@@ -27,6 +27,7 @@ import {
 } from "../components/ui";
 import { DOKTER_HEWAN_MITRA } from "../content/investasiContent";
 import { db, getOrCreateDeviceId, type CatatanLokal, type KandangLokal } from "../db/db";
+import { setelAkunLokal } from "../lib/akunCache";
 import { useOnlineStatus } from "../lib/pwa";
 import { muatReferensiPakan } from "../lib/referensi";
 import { TEKS_KOKOK } from "../lib/teks";
@@ -410,6 +411,12 @@ export function KokokPage() {
             ? parsedGalat.data.pesan
             : "Batas pertanyaan ke Kokok hari ini sudah tercapai. Coba lagi besok.",
         );
+        return;
+      }
+
+      if (res.status === 401) {
+        // Sesi di server sudah berakhir: hapus status masuk lokal agar ajakan masuk tampil.
+        setelAkunLokal(null);
         return;
       }
 

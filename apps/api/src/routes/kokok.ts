@@ -31,6 +31,7 @@ import type { DatabaseContext } from "../db/database.js";
 import { catatPemakaianLlm, hashSingkatUntukLog, hitungPemakaianHariIni } from "../lib/llmGuard.js";
 import { logger } from "../lib/logger.js";
 import { AWALAN_AKUN, kunciPemilik } from "../lib/pemilik.js";
+import { wajibMasuk } from "../middleware/peran.js";
 import { llmLimiter } from "../middleware/rateLimit.js";
 import { validate } from "../middleware/validate.js";
 
@@ -118,6 +119,14 @@ function simpanRiwayatRingkas(
 
 export function createKokokRouter(deps: KokokRouterDeps): Router {
   const router = Router();
+
+  // Kokok hanya untuk yang sudah masuk (termasuk akun demo). Tamu tetap bisa memakai pakan,
+  // catatan, dan toko tanpa akun.
+  router.use(
+    wajibMasuk(
+      "Masuk dulu untuk bertanya ke Kokok. Fitur pakan, catatan, dan toko tetap bisa dipakai tanpa akun.",
+    ),
+  );
 
   /**
    * Jawaban untuk pesan yang dijaga (minta obat, praktik berbahaya, di luar topik, dll.):

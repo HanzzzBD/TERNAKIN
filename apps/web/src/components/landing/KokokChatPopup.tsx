@@ -11,6 +11,7 @@ import { Link, useNavigate } from "react-router";
 import { LANDING_KOKOK_CHAT, type KokokChatPilihan } from "../../content/landingContent";
 import type { AksiObrolan } from "@ternakin/shared";
 import { db } from "../../db/db";
+import { useAkun } from "../../lib/akun";
 import { kirimPesanKokok } from "../../lib/kokokObrolan";
 import { buatTautanWhatsAppTim } from "../../lib/wa";
 import { ArrowRightIcon, ArrowUpIcon, CloseIcon, KokokFigure, WhatsAppIcon } from "../ui";
@@ -86,6 +87,7 @@ export function KokokChatPopup() {
   const idJudul = `${idDasar}-judul`;
   const idInput = `${idDasar}-input`;
 
+  const akun = useAkun();
   const [terbuka, setTerbuka] = useState(false);
   const [teaserTampil, setTeaserTampil] = useState(false);
   const [sedangMengetik, setSedangMengetik] = useState(false);
@@ -144,6 +146,11 @@ export function KokokChatPopup() {
    */
   const tanyaKokok = async (isi: string, cadangan: Omit<PesanObrolan, "id" | "dari">) => {
     tambahPesan({ dari: "anda", teks: isi });
+    // Kokok khusus akun: tamu hanya mendapat jawaban tertulis dari pertanyaan cepat, tanpa server.
+    if (!akun) {
+      tambahPesan({ dari: "kokok", ...cadangan });
+      return;
+    }
     setSedangMengetik(true);
     try {
       const riwayat = pesan.map((p) => ({ dari: p.dari, teks: p.teks }));
@@ -294,30 +301,40 @@ export function KokokChatPopup() {
           ))}
         </div>
 
-        <form className="tk-kchat__form" onSubmit={handleKirim}>
-          <label htmlFor={idInput} className="tk-sr-only">
-            {LANDING_KOKOK_CHAT.labelInput}
-          </label>
-          <input
-            ref={inputRef}
-            id={idInput}
-            className="tk-kchat__input"
-            type="text"
-            autoComplete="off"
-            maxLength={500}
-            placeholder={LANDING_KOKOK_CHAT.placeholderInput}
-            value={teks}
-            onChange={(e) => setTeks(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="tk-kchat__send"
-            aria-label="Kirim ke Kokok"
-            disabled={teks.trim() === "" || sedangMengetik}
-          >
-            <ArrowUpIcon size={20} />
-          </button>
-        </form>
+        {akun ? (
+          <form className="tk-kchat__form" onSubmit={handleKirim}>
+            <label htmlFor={idInput} className="tk-sr-only">
+              {LANDING_KOKOK_CHAT.labelInput}
+            </label>
+            <input
+              ref={inputRef}
+              id={idInput}
+              className="tk-kchat__input"
+              type="text"
+              autoComplete="off"
+              maxLength={500}
+              placeholder={LANDING_KOKOK_CHAT.placeholderInput}
+              value={teks}
+              onChange={(e) => setTeks(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="tk-kchat__send"
+              aria-label="Kirim ke Kokok"
+              disabled={teks.trim() === "" || sedangMengetik}
+            >
+              <ArrowUpIcon size={20} />
+            </button>
+          </form>
+        ) : (
+          <div className="tk-kchat__masuk">
+            <p>{LANDING_KOKOK_CHAT.ajakMasuk}</p>
+            <Link to="/app/masuk?lanjut=%2Fapp%2Ftanya" className="tk-kchat__action">
+              <span>{LANDING_KOKOK_CHAT.tombolMasuk}</span>
+              <ArrowRightIcon size={18} />
+            </Link>
+          </div>
+        )}
         <p className="tk-kchat__note">{LANDING_KOKOK_CHAT.catatanAman}</p>
       </section>
 

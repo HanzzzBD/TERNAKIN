@@ -15,10 +15,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { kokokObrolanResponseSchema, type AksiObrolan, type PesanRiwayat } from "@ternakin/shared";
-import { panggilApi, pesanGalat } from "@/lib/api";
+import { GalatApi, panggilApi, pesanGalat } from "@/lib/api";
 import { ambilPerangkatId } from "@/lib/penyimpanan";
 import { useSesi } from "@/lib/sesi";
-import { KepalaLayar, TombolIkon } from "@/components/ui";
+import { Kartu, KepalaLayar, Teks, Tombol, TombolIkon } from "@/components/ui";
 import { bayangan, huruf, jarak, sudut, warna } from "@/lib/tema";
 
 interface Pesan extends PesanRiwayat {
@@ -36,7 +36,50 @@ const SAPAAN: Pesan = {
 const MAKS_RIWAYAT = 8;
 
 export default function KokokLayar() {
-  const { peran } = useSesi();
+  const { pengguna } = useSesi();
+  // Kokok khusus akun (termasuk akun demo); tamu tetap bisa memakai pakan dan catatan.
+  return pengguna ? <ObrolanKokok /> : <AjakMasukKokok />;
+}
+
+function AjakMasukKokok() {
+  return (
+    <SafeAreaView style={gaya.layar} edges={["top", "left", "right"]}>
+      <View style={gaya.kepala}>
+        <KepalaLayar judul="Tanya Kokok" />
+      </View>
+      <View style={gaya.ajakan}>
+        <Kartu style={gaya.kartuAjakan}>
+          <Image
+            source={require("@/assets/images/kokok.webp")}
+            style={{ width: 96, height: 96 }}
+            contentFit="contain"
+          />
+          <Text style={gaya.judulAjakan}>Masuk untuk bertanya ke Kokok</Text>
+          <Teks redup style={{ textAlign: "center" }}>
+            Kokok khusus untuk pengguna yang sudah masuk. Daftar gratis dengan email, Google, atau
+            WhatsApp. Hitung pakan dan catatan harian tetap bisa dipakai tanpa akun.
+          </Teks>
+          <View style={{ alignSelf: "stretch", gap: jarak.s, marginTop: jarak.s }}>
+            <Tombol
+              label="Masuk atau daftar"
+              ikon="log-in-outline"
+              onPress={() => router.navigate("/masuk")}
+            />
+            <Tombol
+              label="Hitung pakan"
+              jenis="kedua"
+              ikon="calculator-outline"
+              onPress={() => router.navigate("/pakan")}
+            />
+          </View>
+        </Kartu>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+function ObrolanKokok() {
+  const { peran, segarkan } = useSesi();
   const [pesan, setPesan] = useState<Pesan[]>([SAPAAN]);
   const [draf, setDraf] = useState("");
   const [mengirim, setMengirim] = useState(false);
@@ -64,6 +107,8 @@ export default function KokokLayar() {
         { id: `k-${Date.now()}`, dari: "kokok", teks: res.balasan, aksi: res.aksi },
       ]);
     } catch (err) {
+      // Sesi berakhir di server: segarkan agar layar kembali ke ajakan masuk.
+      if (err instanceof GalatApi && err.status === 401) void segarkan();
       setPesan((lama) => [
         ...lama,
         { id: `g-${Date.now()}`, dari: "kokok", teks: pesanGalat(err), galat: true },
@@ -186,6 +231,9 @@ const gaya = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  ajakan: { flex: 1, justifyContent: "center", padding: jarak.l },
+  kartuAjakan: { alignItems: "center", gap: jarak.s, paddingVertical: jarak.xl },
+  judulAjakan: { fontSize: huruf.sub, fontWeight: "800", color: warna.tinta, textAlign: "center" },
   catatan: { fontSize: huruf.kecil, color: warna.tintaRedup, textAlign: "center", lineHeight: 20 },
   balon: { maxWidth: "88%", borderRadius: sudut.l, padding: jarak.m + 2, gap: jarak.s },
   balonKokok: {

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { evaluateAlerts, kesehatanApiSchema, type DataReferensi } from "@ternakin/shared";
+import { PengingatMasuk } from "../components/akun/PengingatMasuk";
 import { AppShell } from "../components/layout/AppShell";
 import {
   ArrowRightIcon,
@@ -166,6 +167,7 @@ export function FondasiPage() {
 
   return (
     <AppShell pageTitle="Beranda">
+      <PengingatMasuk />
       <Card variant="warm">
         <p className="tk-eyebrow">
           HARI INI · {kandang ? kandang.nama.toUpperCase() : "MODE TAMU"}

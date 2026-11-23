@@ -1,7 +1,8 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import { afterEach, describe, expect, it, vi } from "vitest";
-import type { KokokObrolanResponse } from "@ternakin/shared";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { KokokObrolanResponse, PenggunaSaya } from "@ternakin/shared";
+import { setelAkunLokal } from "../../lib/akunCache";
 import { KokokChatPopup } from "./KokokChatPopup";
 
 vi.mock("../../db/db", () => ({
@@ -44,12 +45,26 @@ function ketik(teks: string) {
   fireEvent.submit(screen.getByRole("textbox").closest("form")!);
 }
 
+const PENGGUNA: PenggunaSaya = {
+  id: "pengguna-uji",
+  nomorTersamar: "",
+  nama: "Peternak Uji",
+  emailTersamar: "u***@contoh.id",
+  peran: "peternak",
+  isDemo: false,
+};
+
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  act(() => setelAkunLokal(null));
 });
 
 describe("Popup obrolan Kokok memakai AI", () => {
+  beforeEach(() => {
+    act(() => setelAkunLokal(PENGGUNA));
+  });
+
   it("sapaan dibalas jawaban AI dari server, bukan kalimat tetap", async () => {
     const dikirim = pasangServer(
       balasan({ balasan: "Halo juga, Bapak/Ibu! Ada yang bisa Kokok bantu soal ayam?" }),
@@ -92,5 +107,19 @@ describe("Popup obrolan Kokok memakai AI", () => {
     bukaPopup();
     ketik("ayam saya lesu");
     expect(await screen.findByText(/Terima kasih sudah bercerita/)).toBeInTheDocument();
+  });
+});
+
+describe("Popup obrolan Kokok untuk tamu", () => {
+  it("tamu tidak bisa mengetik bebas dan diajak masuk, tanpa memanggil server", () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    bukaPopup();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Masuk untuk ngobrol/ })).toHaveAttribute(
+      "href",
+      "/app/masuk?lanjut=%2Fapp%2Ftanya",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Biayanya berapa?" }));
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

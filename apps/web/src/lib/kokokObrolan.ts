@@ -4,6 +4,7 @@ import {
   type PesanRiwayat,
 } from "@ternakin/shared";
 import { getOrCreateDeviceId } from "../db/db";
+import { setelAkunLokal } from "./akunCache";
 
 /** Berapa pesan terakhir yang dikirim agar Kokok paham konteks (batas server: 10). */
 const MAKS_RIWAYAT = 8;
@@ -34,6 +35,8 @@ export async function kirimPesanKokok(
         .map((r) => ({ dari: r.dari, teks: r.teks.slice(0, 800) })),
     }),
   });
+  // Kokok khusus akun: sesi berakhir di server, jadi status masuk lokal ikut dihapus.
+  if (res.status === 401) setelAkunLokal(null);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return kokokObrolanResponseSchema.parse(await res.json());
 }

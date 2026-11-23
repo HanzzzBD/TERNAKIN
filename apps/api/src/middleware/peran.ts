@@ -4,7 +4,8 @@ import { ambilPenggunaSesi } from "../lib/pemilik.js";
 
 /**
  * Pembagian peran:
- * - Peternak (dan tamu, sesuai PRD mode tamu) memakai pakan, catatan, toko, dan Kokok.
+ * - Peternak (dan tamu, sesuai PRD mode tamu) memakai pakan, catatan, dan toko.
+ * - Kokok wajib masuk (peternak maupun pengguna); tamu tidak bisa bertanya ke Kokok.
  * - Pengguna hanya memakai Kokok dan investasi.
  */
 
@@ -21,6 +22,18 @@ export const tolakPeranPengguna: RequestHandler = (_req, res, next) => {
   }
   next();
 };
+
+/** Mewajibkan sudah masuk (peran apa pun, termasuk akun demo). Tamu mendapat 401 BELUM_MASUK. */
+export function wajibMasuk(pesan: string): RequestHandler {
+  return (_req, res, next) => {
+    if (!ambilPenggunaSesi(res)) {
+      const galat: GalatApi = { kode: "BELUM_MASUK", pesan };
+      res.status(401).json(galat);
+      return;
+    }
+    next();
+  };
+}
 
 /** Mewajibkan sudah masuk dengan peran tertentu. */
 export function wajibPeran(peran: "peternak" | "pengguna"): RequestHandler {

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router";
 import { KhususPeternak } from "./components/akun/KhususPeternak";
+import { WajibMasuk } from "./components/akun/WajibMasuk";
 import { captureSrcParam } from "./db/db";
 import { CatatanPage } from "./pages/CatatanPage";
 import { FondasiPage } from "./pages/FondasiPage";
@@ -61,7 +62,19 @@ export function App() {
           }
         />
         <Route path="/app/profil" element={<ProfilPage />} />
-        <Route path="/app/tanya" element={<KokokPage />} />
+        <Route
+          path="/app/tanya"
+          element={
+            <WajibMasuk
+              pageTitle="Tanya Kokok"
+              judul="Masuk untuk bertanya ke Kokok"
+              deskripsi="Kokok khusus untuk pengguna yang sudah masuk. Daftar gratis dengan email, Google, atau WhatsApp. Draf pertanyaan Anda tetap tersimpan."
+              lanjut="/app/tanya"
+            >
+              <KokokPage />
+            </WajibMasuk>
+          }
+        />
         <Route
           path="/app/toko"
           element={

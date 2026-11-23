@@ -418,6 +418,20 @@ html[data-motion="on"] .tk-kchat__typing span[aria-hidden]:nth-of-type(4) {
   padding: var(--space-3) var(--space-4) var(--space-1);
 }
 
+.tk-kchat__masuk {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4) var(--space-1);
+}
+
+.tk-kchat__masuk p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--tk-ink-muted);
+}
+
 .tk-kchat__input {
   flex: 1;
   min-width: 0;

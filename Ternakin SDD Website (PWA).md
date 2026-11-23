@@ -131,11 +131,13 @@ Basis pengetahuan Kokok (RAG) terdiri dari 6 panduan triase (`apps/api/seed/pand
 
 | Peran | Fitur | Catatan |
 | --- | --- | --- |
-| Peternak | Penyusun pakan, catatan harian, toko, Kokok, mengajukan kandang sebagai peluang modal | Tamu (belum masuk) diperlakukan sebagai peternak sesuai mode tamu PRD |
+| Peternak | Penyusun pakan, catatan harian, toko, Kokok, mengajukan kandang sebagai peluang modal | Tamu (belum masuk) diperlakukan sebagai peternak sesuai mode tamu PRD, kecuali Kokok yang wajib masuk |
 | Pengguna | Kokok (untuk ayam peliharaan) dan mencatat minat titip modal ke peternak | Tidak bisa membuka pakan, catatan, dan toko; server menolak dengan kode `KHUSUS_PETERNAK` |
 
 - Peran dipilih saat pertama masuk dengan nomor WhatsApp dan disimpan di `pengguna.peran_akun`. Satu peran per akun, bisa diganti dari Profil (`PUT /v1/auth/peran`); data kandang tetap tersimpan saat berganti peran.
 - Akun demo bersama untuk juri (`POST /v1/auth/demo`, Rani sebagai pengguna dan Pak Dedi sebagai peternak) mengikuti aturan peran yang sama, tidak bisa diganti perannya atau dihapus, dan dapat dimatikan lewat `AKUN_DEMO_AKTIF=false`. Agar data tamu tidak bocor ke akun bersama, akun demo hanya bisa dibuka di perangkat tanpa data kandang tamu.
+- **Kokok wajib masuk (23 November 2026).** `POST /v1/kokok/triase` dan `POST /v1/kokok/obrolan` menolak tamu dengan `401 BELUM_MASUK`; akun demo dihitung sudah masuk. Web dan mobile menampilkan ajakan masuk di halaman Kokok. Popup Kokok di landing hanya menjawab pertanyaan cepat dengan teks tetap untuk tamu, tanpa memanggil server. Fitur pakan, catatan, dan toko tetap bisa dipakai tamu.
+- **Pengingat masuk untuk tamu.** Beranda web dan mobile menampilkan pengingat bahwa data tamu hanya tersimpan di perangkat. Tombol "Nanti saja" menyembunyikannya selama 7 hari.
 
 **Investasi ternak — Modul 5 (SIMULASI)**
 

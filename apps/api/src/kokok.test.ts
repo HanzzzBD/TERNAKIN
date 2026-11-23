@@ -14,6 +14,21 @@ import { llmLimiter } from "./middleware/rateLimit.js";
 
 const POLA_NOMOR_TELEPON = /(?:\+62|62|0)8\d{7,}/;
 
+type Aplikasi = ReturnType<typeof createApp>;
+type Agen = ReturnType<typeof request.agent>;
+
+/** Kokok khusus akun: tiap aplikasi uji masuk sekali memakai akun demo peternak. */
+const agenPerAplikasi = new WeakMap<Aplikasi, Agen>();
+async function sebagaiAkun(app: Aplikasi): Promise<Agen> {
+  const ada = agenPerAplikasi.get(app);
+  if (ada) return ada;
+  const agen = request.agent(app);
+  const res = await agen.post("/v1/auth/demo").send({ peran: "peternak" });
+  expect(res.status).toBe(200);
+  agenPerAplikasi.set(app, agen);
+  return agen;
+}
+
 interface KasusUjiKokok {
   label: string;
   gejala: string;
@@ -122,21 +137,19 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
     const app = createApp({ dailyLlmLimit: 30 });
 
     for (const kasus of SEPULUH_PERTANYAAN_UJI) {
-      const res = await request(app)
-        .post("/v1/kokok/triase")
-        .send({
-          gejala: kasus.gejala,
-          sejakKapan: kasus.sejakKapan,
-          perangkatId: "perangkat-uji-10",
-          konteksKandang: {
-            namaKandang: "Kandang Lembang A",
-            jenisAyam: "petelur",
-            umurMinggu: 28,
-            jumlahEkor: 760,
-            lokasi: "Bandung Barat",
-            peringatan7Hari: [],
-          },
-        });
+      const res = await (await sebagaiAkun(app)).post("/v1/kokok/triase").send({
+        gejala: kasus.gejala,
+        sejakKapan: kasus.sejakKapan,
+        perangkatId: "perangkat-uji-10",
+        konteksKandang: {
+          namaKandang: "Kandang Lembang A",
+          jenisAyam: "petelur",
+          umurMinggu: 28,
+          jumlahEkor: 760,
+          lokasi: "Bandung Barat",
+          peringatan7Hari: [],
+        },
+      });
 
       expect(res.status, kasus.label).toBe(200);
       const parsed = kokokTriaseResponseSchema.parse(res.body);
@@ -198,7 +211,7 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
     };
 
     const appDosis = createApp({ llmAdapter: llmDosisNakal });
-    const resDosis = await request(appDosis).post("/v1/kokok/triase").send({
+    const resDosis = await (await sebagaiAkun(appDosis)).post("/v1/kokok/triase").send({
       gejala: "Ayam ngorok dan bersin sejak kemarin",
       perangkatId: "dev-filter-1",
     });
@@ -227,7 +240,7 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
     };
 
     const appDiag = createApp({ llmAdapter: llmDiagnosisNakal });
-    const resDiag = await request(appDiag).post("/v1/kokok/triase").send({
+    const resDiag = await (await sebagaiAkun(appDiag)).post("/v1/kokok/triase").send({
       gejala: "Kematian mendadak dan jengger kebiruan",
       perangkatId: "dev-filter-2",
     });
@@ -249,21 +262,60 @@ describe("API Fase 5: Kokok Triase Penyakit (/v1/kokok/triase)", () => {
     expect(specRes.status).toBe(200);
     expect(specRes.body.paths["/v1/kokok/triase"]).toBeDefined();
 
-    const invalidRes = await request(app).post("/v1/kokok/triase").send({ gejala: "hi" });
+    const invalidRes = await (
+      await sebagaiAkun(app)
+    )
+      .post("/v1/kokok/triase")
+      .send({ gejala: "hi" });
     expect(invalidRes.status).toBe(400);
     expect(galatApiSchema.safeParse(invalidRes.body).success).toBe(true);
 
-    const pertama = await request(app)
+    const pertama = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/kokok/triase")
       .send({ gejala: "Ayam ngorok sejak pagi", perangkatId: "dev-kuota-kokok" });
     expect(pertama.status).toBe(200);
 
-    const kedua = await request(app)
+    const kedua = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/kokok/triase")
       .send({ gejala: "Ayam diare encer", perangkatId: "dev-kuota-kokok" });
     expect(kedua.status).toBe(429);
     expect(galatApiSchema.safeParse(kedua.body).success).toBe(true);
     expect(kedua.body.kode).toBe("BATAS_HARIAN_LLM");
+  });
+});
+
+describe("Kokok khusus akun", () => {
+  beforeEach(async () => {
+    for (const ip of ["::ffff:127.0.0.1", "127.0.0.1", "::1"]) await llmLimiter.resetKey(ip);
+  });
+
+  it("tamu ditolak 401 BELUM_MASUK di triase dan obrolan, akun demo boleh", async () => {
+    const app = createApp();
+    const triaseTamu = await request(app)
+      .post("/v1/kokok/triase")
+      .send({ gejala: "Ayam ngorok sejak pagi", perangkatId: "tamu-kokok" });
+    const obrolanTamu = await request(app)
+      .post("/v1/kokok/obrolan")
+      .send({ pesan: "halo", perangkatId: "tamu-kokok" });
+    for (const res of [triaseTamu, obrolanTamu]) {
+      expect(res.status).toBe(401);
+      expect(galatApiSchema.parse(res.body).kode).toBe("BELUM_MASUK");
+    }
+
+    const agen = await sebagaiAkun(app);
+    expect((await agen.post("/v1/kokok/obrolan").send({ pesan: "halo" })).status).toBe(200);
+    expect(
+      (await agen.post("/v1/kokok/triase").send({ gejala: "Ayam ngorok sejak pagi" })).status,
+    ).toBe(200);
+  });
+
+  it("tamu tetap bisa memakai fitur tanpa akun (referensi dan hitung pakan tidak ditolak)", async () => {
+    const app = createApp();
+    expect((await request(app).get("/v1/referensi")).status).toBe(200);
   });
 });
 
@@ -290,8 +342,8 @@ describe("Penjaga boleh/jangan Kokok di rute /v1/kokok/triase", () => {
     return { app: createApp({ llmAdapter }), jumlahPanggilan: () => dipanggil };
   }
 
-  const tanya = (app: ReturnType<typeof createApp>, gejala: string) =>
-    request(app)
+  const tanya = async (app: Aplikasi, gejala: string) =>
+    (await sebagaiAkun(app))
       .post("/v1/kokok/triase")
       .send({ gejala, perangkatId: `uji-penjaga-${gejala.length}` });
 
@@ -371,8 +423,8 @@ describe("Obrolan bebas Kokok (/v1/kokok/obrolan)", () => {
     return { app: createApp({ llmAdapter }), panggilan };
   }
 
-  const kirim = (app: ReturnType<typeof createApp>, body: Record<string, unknown>) =>
-    request(app)
+  const kirim = async (app: Aplikasi, body: Record<string, unknown>) =>
+    (await sebagaiAkun(app))
       .post("/v1/kokok/obrolan")
       .send({ perangkatId: "uji-obrolan", ...body });
 

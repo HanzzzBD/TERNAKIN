@@ -460,8 +460,22 @@ button.tk-akun-chip {
   color: var(--tk-danger);
 }
 
-.tk-khusus-peternak {
+.tk-khusus-peternak,
+.tk-wajib-masuk {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+}
+
+.tk-wajib-masuk .tk-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.tk-pengingat-masuk__aksi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
 }

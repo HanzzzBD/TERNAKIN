@@ -198,6 +198,10 @@ export function buildOpenApiSpec() {
               description: "Masukan tidak valid",
               content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
             },
+            "401": {
+              description: "Belum masuk (BELUM_MASUK): Kokok khusus akun, termasuk akun demo",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
+            },
             "429": {
               description: "Batas harian pertanyaan Kokok tercapai",
               content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
@@ -219,6 +223,10 @@ export function buildOpenApiSpec() {
               content: {
                 "application/json": { schema: z.toJSONSchema(kokokObrolanResponseSchema) },
               },
+            },
+            "401": {
+              description: "Belum masuk (BELUM_MASUK): Kokok khusus akun, termasuk akun demo",
+              content: { "application/json": { schema: z.toJSONSchema(galatApiSchema) } },
             },
             "429": { description: "Batas harian obrolan tercapai" },
           },
