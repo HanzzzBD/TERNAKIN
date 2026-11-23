@@ -97,6 +97,18 @@ export async function ambilTokenGoogle(webClientId: string): Promise<HasilGoogle
       if (err.code === statusCodes.IN_PROGRESS) {
         throw new Error("Proses masuk Google sedang berjalan.", { cause: err });
       }
+      // DEVELOPER_ERROR (kode 10): Google menolak aplikasi ini. Hampir selalu karena SHA-1 APK
+      // belum terdaftar sebagai OAuth client Android (paket id.ternakin.app) di proyek Google Cloud
+      // yang sama dengan GOOGLE_CLIENT_ID, atau webClientId bukan client bertipe Web.
+      if (String(err.code) === "10" || /DEVELOPER_ERROR/i.test(err.message)) {
+        throw new Error(
+          "Google menolak aplikasi ini (DEVELOPER_ERROR). SHA-1 aplikasi belum terdaftar di Google Cloud. Sementara pakai email atau WhatsApp.",
+          { cause: err },
+        );
+      }
+      throw new Error(`Masuk dengan Google gagal (kode ${String(err.code)}). Coba lagi atau pakai email.`, {
+        cause: err,
+      });
     }
     throw new Error("Masuk dengan Google gagal. Coba lagi atau pakai email.", { cause: err });
   }
