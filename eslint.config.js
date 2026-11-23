@@ -58,5 +58,14 @@ export default tseslint.config(
     languageOptions: { globals: { process: "readonly", console: "readonly" } },
     rules: { "no-console": "off" },
   },
+  {
+    // Preload CommonJS untuk NODE_OPTIONS --require (scripts/batasi-cpu.cjs).
+    files: ["scripts/**/*.cjs"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: { require: "readonly", module: "writable", process: "readonly" },
+    },
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   prettierConfig,
 );
