@@ -3,6 +3,8 @@
 | Commit | Tanggal | Penulis | Model (trailer) | Pesan |
 |---|---|---|---|---|
 | `e1e7197` | 23 Nov | HanzzzBD | Claude Haiku 5.5 | feat(mobile): menambah aplikasi mobile Expo, perbaikan API akun, dan log implementasi |
+| `b4d9731` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(mobile): menambah EAS Update dan mengarahkan APK preview/production ke server produksi |
+| `8b0cd50` | 23 Nov | HanzzzBD | Claude Opus 5.5 | feat(unduhan): menyediakan unduhan APK Android dari website Ternakin |
 
 ## Isi
 
@@ -25,11 +27,25 @@
 
 **Log implementasi.** Folder `log vibe coding/log implementasi/` (README dan berkas 01–08) ditambahkan, dan `log vibe coding hasby.md` dihapus.
 
+**EAS Update dan APK ke server produksi (`b4d9731`).** Perubahan JavaScript dan tampilan bisa dikirim ke APK yang sudah terpasang tanpa build dan pasang ulang.
+- `expo-updates` ~58.0.22. `app.json` berisi `updates.url` dan `runtimeVersion` berkebijakan `fingerprint`, sehingga update tidak dikirim ke APK yang native-nya berbeda.
+- `eas.json`: channel `preview` dan `production`, dan `EXPO_PUBLIC_API_URL` kedua profil itu ke `https://ternakin.code-xpert.my.id`. Profil `development` tetap memakai tunnel laptop untuk hot reload. Sebelumnya semua profil memakai tunnel, sehingga APK hanya jalan saat laptop menyala.
+- `npm run update -w @ternakin/mobile -- "pesan"` (`scripts/update.mjs`) membangun `@ternakin/shared`, lalu menjalankan `eas update --channel --environment` dengan alamat API produksi yang dipaksa, agar alamat tunnel dari `.env` lokal tidak ikut terkirim. Alamat bawaan di `src/lib/api.ts` juga diganti ke server produksi.
+- Hook `eas-build-post-install` membangun `@ternakin/shared` di server EAS. Build preview pertama gagal di fase bundle (`Unable to resolve "@ternakin/shared"`), karena `packages/shared/dist` tidak ikut git dan APK development tidak pernah memaketkan JavaScript sendiri. Setelah perbaikan, `expo export --platform android` dari kondisi tanpa `dist` berhasil (bundle 4,8 MB).
+
+**Unduhan APK dari website (`8b0cd50`).**
+- API: `GET /unduh/ternakin.apk` mengirim APK sebagai lampiran (`application/vnd.android.package-archive`, tanpa cache), dan `GET /v1/unduhan` memberi info tersedia, ukuran, dan waktu diperbarui. APK dibaca dari `UNDUHAN_DIR` (bawaan `<folder database>/unduhan`), sehingga tidak terhapus saat deploy. Nama berkas tetap dan tidak ada path dari klien yang dipakai.
+- Web: tombol "Unduh untuk Android (xx MB)" di hero dan ajakan penutup landing, hanya tampil bila APK tersedia. Service worker tidak lagi mengalihkan `/unduh/` ke `index.html`.
+- `deploy/pasang-apk.sh <link APK | berkas>` mengunduh APK hasil `eas build` ke folder unduhan, menolak berkas yang bukan APK (harus diawali "PK" dan minimal 1 MB), lalu menggantinya sekaligus dengan `mv` agar pengunjung tidak mengunduh berkas setengah jadi.
+- Tes: 4 tes API unduhan dan 2 tes tombol. Uji ujung ke ujung dengan APK tiruan: paket hosting dijalankan, `/v1/unduhan` melaporkan tersedia, dan berkas yang diunduh identik dengan aslinya.
+
 ## Keputusan yang tercatat
 
 - Aplikasi mobile berbagi logika dengan web lewat `@ternakin/shared`.
 - Sesi mobile memakai token Bearer karena aplikasi native tidak bisa memakai cookie HttpOnly seperti browser. Token hanya dikirim bila klien menandai diri sebagai mobile.
 - Build APK lewat EAS di cloud.
+- Perubahan JS/tampilan dikirim lewat EAS Update. Perubahan native (modul native, konfigurasi native di `app.json`, upgrade SDK) tetap butuh build APK baru, dan pengguna memasangnya di atas APK lama tanpa menghapusnya (kunci tanda tangan EAS sama).
+- APK untuk publik disimpan di server Ternakin, bukan di git (ukurannya puluhan MB) dan bukan link artefak EAS (disimpan sementara).
 
 ---
 
@@ -119,3 +135,59 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | `packages/shared/package.json` | 2 | 1 | diubah |
 | `packages/shared/src/schemas/akun.ts` | 2 | 0 | diubah |
 | `scripts/tunnel.mjs` | 23 | 0 | baru |
+
+### `b4d9731` — feat(mobile): menambah EAS Update dan mengarahkan APK preview/production ke server produksi
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 7 file, +207 / -4 baris
+
+**Isi pesan commit:**
+
+> - expo-updates ~58.0.22; app.json berisi updates.url dan runtimeVersion berkebijakan fingerprint agar update tidak dikirim ke APK yang native-nya berbeda.
+> - eas.json: channel preview/production, dan EXPO_PUBLIC_API_URL kedua profil ke https://ternakin.code-xpert.my.id (profil development tetap memakai tunnel).
+> - scripts/update.mjs (npm run update): membangun @ternakin/shared lalu menjalankan eas update --channel/--environment dengan alamat API produksi yang dipaksa, agar alamat tunnel dari .env lokal tidak ikut terkirim.
+> - Hook eas-build-post-install membangun @ternakin/shared di server EAS. Sebelumnya build preview gagal di fase bundle karena packages/shared/dist tidak ikut git.
+> - Alamat API bawaan di src/lib/api.ts diganti ke server produksi.
+> - README mobile: alamat produksi dan panduan EAS Update.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `apps/mobile/README.md` | 33 | 0 | diubah |
+| `apps/mobile/app.json` | 2 | 0 | diubah |
+| `apps/mobile/eas.json` | 4 | 2 | diubah |
+| `apps/mobile/package.json` | 3 | 0 | diubah |
+| `apps/mobile/scripts/update.mjs` | 60 | 0 | baru |
+| `apps/mobile/src/lib/api.ts` | 6 | 2 | diubah |
+| `package-lock.json` | 99 | 0 | diubah |
+
+### `8b0cd50` — feat(unduhan): menyediakan unduhan APK Android dari website Ternakin
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 16 file, +370 / -1 baris
+
+**Isi pesan commit:**
+
+> - API: GET /unduh/ternakin.apk mengirim APK sebagai lampiran, dan GET /v1/unduhan memberi info tersedia/ukuran/waktu diperbarui. APK dibaca dari UNDUHAN_DIR (bawaan <folder database>/unduhan) sehingga tidak terhapus saat deploy.
+> - Shared: skema unduhanResponseSchema dan URL_UNDUH_ANDROID. OpenAPI diperbarui.
+> - Web: tombol "Unduh untuk Android (xx MB)" di hero dan ajakan penutup landing, hanya tampil bila APK tersedia. Service worker tidak mengalihkan /unduh/ ke index.html.
+> - deploy/pasang-apk.sh: mengunduh APK dari link hasil eas build (atau menyalin berkas), memeriksa bahwa berkas benar APK, lalu menggantinya sekaligus.
+> - Tes: 4 tes API unduhan dan 2 tes tombol unduh.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `.env.example` | 3 | 0 | diubah |
+| `apps/api/src/app.ts` | 6 | 0 | diubah |
+| `apps/api/src/config/env.ts` | 2 | 0 | diubah |
+| `apps/api/src/openapi.ts` | 13 | 0 | diubah |
+| `apps/api/src/routes/unduhan.ts` | 66 | 0 | baru |
+| `apps/api/src/routes/v1.ts` | 6 | 0 | diubah |
+| `apps/api/src/server.ts` | 8 | 0 | diubah |
+| `apps/api/src/unduhan.test.ts` | 73 | 0 | baru |
+| `apps/web/src/components/landing/TombolUnduhAndroid.test.tsx` | 50 | 0 | baru |
+| `apps/web/src/components/landing/TombolUnduhAndroid.tsx` | 32 | 0 | baru |
+| `apps/web/src/lib/unduhan.ts` | 21 | 0 | baru |
+| `apps/web/src/pages/LandingPage.tsx` | 3 | 0 | diubah |
+| `apps/web/vite.config.ts` | 2 | 1 | diubah |
+| `deploy/pasang-apk.sh` | 58 | 0 | baru |
+| `packages/shared/src/index.ts` | 7 | 0 | diubah |
+| `packages/shared/src/schemas/unduhan.ts` | 20 | 0 | baru |

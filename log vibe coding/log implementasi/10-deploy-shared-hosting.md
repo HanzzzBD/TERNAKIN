@@ -5,8 +5,10 @@
 | `68c80e9` | 23 Nov | HanzzzBD | tidak tercatat | setup deploy |
 | `b0cdc09` | 23 Nov | HanzzzBD | tidak tercatat | setup deployv2 |
 | `34d2d69` | 23 Nov | HanzzzBD | tidak tercatat | setup deployv2.1 |
+| `6c0206c` | 23 Nov | HanzzzBD | tidak tercatat | setup.deployv2.1.1 |
+| `f7dfa72` | 23 Nov | HanzzzBD | Claude Opus 5.5 | chore(lint): mengenali scripts/*.cjs sebagai CommonJS Node |
 
-Ketiga commit tidak mencantumkan trailer `Co-Authored-By`. Kodenya dibuat dalam satu sesi Claude Code: `scripts/paket-hosting.mjs` dengan Claude Haiku 5.5, lalu `deploy/update-hosting.sh` dan migrasi ke `node:sqlite` dengan Claude Opus 5.5. Keterangan ini berasal dari sesi pengerjaan, bukan dari pesan commit.
+Commit `68c80e9` sampai `6c0206c` tidak mencantumkan trailer `Co-Authored-By`. Kodenya dibuat dalam satu sesi Claude Code: `scripts/paket-hosting.mjs` dengan Claude Haiku 5.5, lalu `deploy/update-hosting.sh` dan migrasi ke `node:sqlite` dengan Claude Opus 5.5, begitu juga `scripts/batasi-cpu.cjs` di `6c0206c`. Keterangan ini berasal dari sesi pengerjaan, bukan dari pesan commit.
 
 ## Latar
 
@@ -41,6 +43,12 @@ Ternakin dipasang di shared hosting jagoanhosting (cPanel, CloudLinux Node.js Se
 - `update-hosting.sh` menghapus `node_modules` dan hasil paket dari folder clone setelah build, untuk menghemat kuota disk dan inode. `npm ci` selalu memasang ulang dari nol, jadi pembersihan ini tidak membuat update berikutnya lebih lambat.
 - Dokumen SDD diperbarui: basis data memakai `node:sqlite`.
 
+**Batas thread saat build di server (`6c0206c`, `f7dfa72`).** Build web di server gagal dengan `Unable to write the service worker file. 'EAGAIN'`. Workbox memadatkan service worker dengan `@rollup/plugin-terser`, yang membuat worker thread sebanyak `os.cpus().length`. Server bersama melaporkan puluhan CPU, sedangkan CloudLinux membatasi jumlah proses/thread per akun.
+- `scripts/batasi-cpu.cjs` (baru) adalah preload Node yang membatasi `os.cpus()` dan `os.availableParallelism()` menjadi 2 (atur lewat `TERNAKIN_MAKS_CPU`), termasuk untuk `import { cpus }` di modul ES.
+- `update-hosting.sh` memasang preload itu lewat `NODE_OPTIONS` hanya saat build di server. Build di laptop dan Docker tidak terpengaruh.
+- Hasil build tidak berubah: dengan batas 1 CPU, `sw.js` dan `workbox-ccc5761b.js` tetap sama hash dan ukurannya, dan tetap dipadatkan.
+- `f7dfa72`: `eslint.config.js` mengenali `scripts/**/*.cjs` sebagai CommonJS Node, karena berkas preload itu membuat `npm run lint` gagal.
+
 ## Hasil verifikasi
 
 Dijalankan di mesin pengembang (Windows, Node 26) sebelum commit:
@@ -58,6 +66,7 @@ Tidak diuji di mesin pengembang: Node 22.23 itu sendiri. Situs kemudian berjalan
 - Document root subdomain tidak boleh mengarah ke folder clone, agar `.git` tidak bisa diunduh.
 - Memakai `node:sqlite` alih-alih modul native, agar aplikasi jalan di server dengan GLIBC lama. Format berkas database tidak berubah.
 - Alur update: `cd ~/TERNAKIN && git pull && bash deploy/update-hosting.sh`.
+- Jumlah thread build dibatasi lewat preload, bukan dengan mengganti mode workbox ke `development`, agar service worker yang dikirim ke pengguna tetap dipadatkan dan tanpa log debug.
 
 ---
 
@@ -123,3 +132,30 @@ Bagian ini dibuat dari `git show` untuk setiap commit: jumlah baris berubah per 
 | `deploy/update-hosting.sh` | 9 | 0 | diubah |
 | `package-lock.json` | 0 | 34 | diubah |
 | `scripts/paket-hosting.mjs` | 1 | 1 | diubah |
+
+### `6c0206c` — setup.deployv2.1.1
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** tidak tercatat
+- **Ringkasan:** 2 file, +24 / -1 baris
+
+**Isi pesan commit:**
+
+> setup.deployv2.1.1
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `deploy/update-hosting.sh` | 5 | 1 | diubah |
+| `scripts/batasi-cpu.cjs` | 19 | 0 | baru |
+
+### `f7dfa72` — chore(lint): mengenali scripts/*.cjs sebagai CommonJS Node
+
+- **Tanggal:** 2026-11-23 · **Penulis:** HanzzzBD · **Model:** Claude Opus 5.5
+- **Ringkasan:** 1 file, +9 / -0 baris
+
+**Isi pesan commit:**
+
+> scripts/batasi-cpu.cjs (preload build di shared hosting) membuat npm run lint gagal karena require dan process belum dikenali.
+
+| File | + | − | Status |
+|---|---:|---:|---|
+| `eslint.config.js` | 9 | 0 | diubah |

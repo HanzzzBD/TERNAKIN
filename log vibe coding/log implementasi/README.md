@@ -5,7 +5,7 @@
 | **Proyek** | Ternakin — asisten digital peternak ayam (PWA) |
 | **Branch** | `Dev-Website` |
 | **Periode commit** | 19–23 November 2026 |
-| **Cakupan** | Seluruh 55 commit di branch ini, dari dokumen PRD/SDD sampai Kokok wajib masuk (`f499ebd`). Commit yang hanya memperbarui log ini tidak dicatat |
+| **Cakupan** | 59 commit di branch ini, dari dokumen PRD/SDD sampai unduhan APK dan EAS Update (`f7dfa72`). Commit yang hanya memperbarui log ini (`8ee78b1` dan commit log berikutnya) tidak dicatat |
 | **Sumber model AI** | Trailer `Co-Authored-By` di pesan commit. Commit tanpa trailer ditulis "tidak tercatat" |
 
 ## Cara membaca
@@ -31,8 +31,8 @@ Log percakapan per permintaan (prompt asli, bug, dan koreksi) dulu ada di `log v
 | [06-kokok.md](06-kokok.md) | Triase, obrolan AI, penjaga keselamatan, basis pengetahuan | 6 |
 | [07-landing.md](07-landing.md) | Landing page, floating navbar, popup Kokok, strip kata kunci | 9 |
 | [08-akun-dan-investasi.md](08-akun-dan-investasi.md) | Masuk WhatsApp/email/Google, peran, Modul 5 investasi, Kokok wajib masuk | 4 |
-| [09-aplikasi-mobile.md](09-aplikasi-mobile.md) | Aplikasi Android Expo, sesi Bearer untuk mobile, tunnel pengembangan | 1 |
-| [10-deploy-shared-hosting.md](10-deploy-shared-hosting.md) | Paket runtime, skrip update dari git clone, migrasi ke `node:sqlite` | 3 |
+| [09-aplikasi-mobile.md](09-aplikasi-mobile.md) | Aplikasi Android Expo, sesi Bearer, EAS Update, unduhan APK dari website | 3 |
+| [10-deploy-shared-hosting.md](10-deploy-shared-hosting.md) | Paket runtime, skrip update dari git clone, migrasi ke `node:sqlite`, batas thread build | 5 |
 
 Commit `f81ef84` (log percakapan Hasby) tidak masuk ke berkas fitur mana pun. Commit `bea6f2e` berjudul "setup deployv2.1" tetapi isinya perbaikan tampilan landing, sehingga dicatat di [07-landing.md](07-landing.md).
 
@@ -40,12 +40,12 @@ Commit `f81ef84` (log percakapan Hasby) tidak masuk ke berkas fitur mana pun. Co
 
 | Model (dari trailer) | Jumlah commit | Keterangan |
 |---|---|---|
-| Claude Opus 5.5 | 14 | `578cbb8` dan `332fc60` sampai `658c81f` (20–21 Nov), termasuk `f81ef84`, serta `bea6f2e` dan `f499ebd` (23 Nov) |
+| Claude Opus 5.5 | 17 | `578cbb8` dan `332fc60` sampai `658c81f` (20–21 Nov), termasuk `f81ef84`, serta `bea6f2e`, `f499ebd`, `b4d9731`, `8b0cd50`, dan `f7dfa72` (23 Nov) |
 | Claude Sonnet 5.5 | 3 | `3252682`, `ffb10af` (dokumen PRD/SDD), dan `d426d14` (landing) |
 | Claude Haiku 5.5 | 1 | `e1e7197` (aplikasi mobile) |
-| Tidak tercatat | 37 | Sebagian besar commit 19 Nov (`bd2b287` sampai `76d9c4f`), `80dfe02` (revert), dan tiga commit deploy (`68c80e9`, `b0cdc09`, `34d2d69`) |
+| Tidak tercatat | 38 | Sebagian besar commit 19 Nov (`bd2b287` sampai `76d9c4f`), `80dfe02` (revert), dan empat commit deploy (`68c80e9`, `b0cdc09`, `34d2d69`, `6c0206c`) |
 
-Tabel ini dihitung dari trailer yang ada. Commit yang tidak mencantumkan trailer tidak diberi model tebakan. Untuk tiga commit deploy, model yang dipakai saat pengerjaan dijelaskan terpisah di [10-deploy-shared-hosting.md](10-deploy-shared-hosting.md).
+Tabel ini dihitung dari trailer yang ada. Commit yang tidak mencantumkan trailer tidak diberi model tebakan. Untuk empat commit deploy, model yang dipakai saat pengerjaan dijelaskan terpisah di [10-deploy-shared-hosting.md](10-deploy-shared-hosting.md).
 
 ## Ringkasan hasil
 
@@ -57,3 +57,4 @@ Tabel ini dihitung dari trailer yang ada. Commit yang tidak mencantumkan trailer
 - Modul 5 investasi ternak berupa prototipe simulasi tanpa transaksi uang.
 - Aplikasi Android (Expo) memakai `@ternakin/shared` yang sama dengan web, dengan sesi token Bearer.
 - Situs berjalan di shared hosting (`https://ternakin.code-xpert.my.id`). API memakai SQLite bawaan Node agar tidak bergantung pada modul native.
+- APK Android bisa diunduh dari website, dan perubahan JS/tampilan dikirim ke APK terpasang lewat EAS Update.
