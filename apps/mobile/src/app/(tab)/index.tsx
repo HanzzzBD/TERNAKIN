@@ -6,7 +6,6 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { evaluateAlerts, formatAngka } from "@ternakin/shared";
 import { GaugeBusur } from "@/components/GaugeBusur";
 import { KartuCatatan } from "@/components/KartuCatatan";
-import { PengingatMasuk } from "@/components/PengingatMasuk";
 import { JudulBagian, Kartu, KepalaLayar, Layar, Teks, Tombol, TombolIkon } from "@/components/ui";
 import { labelTanggal, tanggalLokal, useDataKandang } from "@/lib/kandang";
 import { useReferensi } from "@/lib/referensi";
@@ -58,7 +57,6 @@ function BerandaPeternak() {
         />
       }
     >
-      <PengingatMasuk />
       {!siap ? null : !kandang ? (
         <Kartu style={{ alignItems: "center", paddingVertical: jarak.xl }}>
           <Image source={require("@/assets/images/kokok.webp")} style={gaya.kokokBesar} contentFit="contain" />

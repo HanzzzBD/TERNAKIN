@@ -6,6 +6,7 @@ import {
   type Kandang,
 } from "@ternakin/shared";
 import { bacaAkunLokal, setelAkunLokal } from "../lib/akunCache";
+import { simpanPesanMasuk } from "../lib/pesanMasuk";
 import { useOnlineStatus } from "../lib/pwa";
 import {
   createClientUuid,
@@ -430,8 +431,14 @@ export async function hapusSemuaDataPengguna(): Promise<{ serverDihapus: boolean
   }
 
   await bersihkanDataLokal();
-  // Akun di server ikut terhapus bila sedang masuk.
-  if (serverDihapus) setelAkunLokal(null);
+  // Akun di server ikut terhapus bila sedang masuk. Sesi berakhir sehingga penjaga rute membuka
+  // halaman Masuk; pesan disimpan dulu agar tampil di sana.
+  if (serverDihapus) {
+    simpanPesanMasuk(
+      "Akun Anda beserta seluruh data kandang dan catatan di perangkat dan server telah dihapus.",
+    );
+    setelAkunLokal(null);
+  }
   return { serverDihapus };
 }
 

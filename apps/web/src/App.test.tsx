@@ -1,15 +1,43 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { PenggunaSaya } from "@ternakin/shared";
 import { App } from "./App";
+import { setelAkunLokal } from "./lib/akunCache";
 import { TEKS } from "./lib/teks";
+
+const PETERNAK: PenggunaSaya = {
+  id: "peternak-uji",
+  nomorTersamar: "0812****7890",
+  nama: "Peternak Uji",
+  emailTersamar: "",
+  peran: "peternak",
+  isDemo: false,
+};
 
 beforeEach(() => {
   window.history.pushState({}, "", "/app");
+  // Semua fitur aplikasi wajib masuk.
+  act(() => setelAkunLokal(PETERNAK));
 });
 
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  act(() => setelAkunLokal(null));
+});
+
+describe("Semua fitur aplikasi wajib masuk", () => {
+  it("tamu yang membuka /app/pakan dialihkan ke halaman Masuk dengan tujuan semula", () => {
+    act(() => setelAkunLokal(null));
+    window.history.pushState({}, "", "/app/pakan");
+    render(<App />);
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Masuk ke Ternakin" }),
+    ).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/app/masuk");
+    expect(new URLSearchParams(window.location.search).get("lanjut")).toBe("/app/pakan");
+  });
 });
 
 describe("Halaman beranda aplikasi PWA (/app)", () => {

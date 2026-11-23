@@ -4,11 +4,12 @@ import { describe, expect, it } from "vitest";
 import { daftarTokoResponseSchema, galatApiSchema, tokoTerurutSchema } from "@ternakin/shared";
 import { z } from "zod";
 import { createApp } from "./app.js";
+import { sebagaiAkun } from "./uji/masuk.js";
 
 describe("API Fase 4: Toko Mitra, Rujukan Biaya, Lead, dan Rute Admin", () => {
   it("GET /v1/toko mengembalikan 5 toko contoh tanpa nomor telepon tak terverifikasi", async () => {
     const app = createApp();
-    const res = await request(app).get("/v1/toko");
+    const res = await (await sebagaiAkun(app)).get("/v1/toko");
 
     expect(res.status).toBe(200);
     const parsed = daftarTokoResponseSchema.parse(res.body);
@@ -19,7 +20,9 @@ describe("API Fase 4: Toko Mitra, Rujukan Biaya, Lead, dan Rute Admin", () => {
 
   it("GET /v1/toko/rujukan mengurutkan murni dari total biaya dan menandai harga usang", async () => {
     const app = createApp({ staleDays: 7 });
-    const res = await request(app)
+    const res = await (
+      await sebagaiAkun(app)
+    )
       .get("/v1/toko/rujukan")
       .query({ bahan: "jagung_kuning:50,dedak_padi:20,konsentrat_petelur:25,tepung_batu_kapur:5" });
 
@@ -49,13 +52,17 @@ describe("API Fase 4: Toko Mitra, Rujukan Biaya, Lead, dan Rute Admin", () => {
     const clientId = crypto.randomUUID();
 
     // Catat lead dua kali dengan clientId sama -> tetap terhitung 1 lead
-    const l1 = await request(app)
+    const l1 = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/lead")
       .set("x-device-id", "dev-lead-1")
       .send({ clientId, tokoId: "toko-berkah-banjaran", src: "qr-banjaran" });
     expect(l1.status).toBe(200);
 
-    const l2 = await request(app)
+    const l2 = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/lead")
       .set("x-device-id", "dev-lead-1")
       .send({ clientId, tokoId: "toko-berkah-banjaran", src: "qr-banjaran" });
@@ -111,24 +118,22 @@ describe("API Fase 4: Toko Mitra, Rujukan Biaya, Lead, dan Rute Admin", () => {
     const opId = crypto.randomUUID();
     const clientId = crypto.randomUUID();
 
-    const syncRes = await request(app)
-      .post("/v1/sinkron")
-      .send({
-        perangkatId: "dev-offline-lead",
-        itemOutbox: [
-          {
-            opId,
-            jenis: "catat_lead",
+    const syncRes = await (await sebagaiAkun(app)).post("/v1/sinkron").send({
+      perangkatId: "dev-offline-lead",
+      itemOutbox: [
+        {
+          opId,
+          jenis: "catat_lead",
+          dibuatPada: new Date().toISOString(),
+          payload: {
+            clientId,
+            tokoId: "toko-sari-lembang",
+            src: "qr-lembang",
             dibuatPada: new Date().toISOString(),
-            payload: {
-              clientId,
-              tokoId: "toko-sari-lembang",
-              src: "qr-lembang",
-              dibuatPada: new Date().toISOString(),
-            },
           },
-        ],
-      });
+        },
+      ],
+    });
 
     expect(syncRes.status).toBe(200);
     expect(syncRes.body.dikonfirmasiOpIds).toEqual([opId]);

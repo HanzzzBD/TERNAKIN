@@ -1,4 +1,3 @@
-import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { pakanUraiResponseSchema, type BahanMaster, type PakanHitungLayak } from "@ternakin/shared";
 import {
@@ -12,6 +11,7 @@ import { buatPenyediaLlm, type EnvLlm } from "./adapters/penyediaLlm.js";
 import { SqliteGuidelineRetriever } from "./adapters/sqliteGuidelineRetriever.js";
 import type { GuidelineChunk } from "./adapters/types.js";
 import { createApp } from "./app.js";
+import { sebagaiAkun } from "./uji/masuk.js";
 import { loadEnv } from "./config/env.js";
 import { initDatabase } from "./db/database.js";
 
@@ -527,8 +527,9 @@ describe("Rute /v1/pakan/urai dengan Gemini", () => {
       maksTokenKeluar: 600,
     });
     const app = createApp({ dbCtx, llmAdapter });
+    const agen = await sebagaiAkun(app);
     const kirim = () =>
-      request(app)
+      agen
         .post("/v1/pakan/urai")
         .send({ teks: "jagung 6.500", perangkatId: "perangkat-uji-gemini" });
 

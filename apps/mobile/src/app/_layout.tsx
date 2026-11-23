@@ -54,9 +54,12 @@ function PenjagaSinkron() {
 }
 
 function Navigasi() {
-  const { memuat } = useSesi();
+  const { memuat, pengguna } = useSesi();
   const { selesai } = useSambutan();
   const siap = !memuat && selesai !== null;
+  // Semua fitur wajib masuk: tab aplikasi hanya terbuka untuk akun yang sudah memilih peran.
+  // Saat status ini berubah (masuk, keluar, sesi berakhir), Stack.Protected memindahkan layar.
+  const sudahMasuk = !!pengguna?.peran;
 
   // Splash ditahan sampai status sesi dan status sambutan selesai dibaca.
   useEffect(() => {
@@ -77,9 +80,11 @@ function Navigasi() {
       <Stack.Protected guard={!selesai}>
         <Stack.Screen name="sambutan" options={{ headerShown: false }} />
       </Stack.Protected>
-      <Stack.Protected guard={!!selesai}>
+      <Stack.Protected guard={!!selesai && sudahMasuk}>
         <Stack.Screen name="(tab)" options={{ headerShown: false }} />
-        <Stack.Screen name="masuk" options={{ headerShown: false, presentation: "modal" }} />
+      </Stack.Protected>
+      <Stack.Protected guard={!!selesai && !sudahMasuk}>
+        <Stack.Screen name="masuk" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );

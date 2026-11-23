@@ -9,8 +9,11 @@ import { captureSrcParam } from "./db/db";
 import { startSyncListeners } from "./db/sync";
 import { muatAkun } from "./lib/akun";
 import { initMotionPreference } from "./lib/motion";
+import { pasangPenjagaSesi } from "./lib/penjagaSesi";
 import { App } from "./App";
 
+// Dipasang sebelum pemanggilan API pertama (sinkron dan muatAkun).
+pasangPenjagaSesi();
 initMotionPreference();
 captureSrcParam();
 startSyncListeners();

@@ -1,5 +1,4 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { router } from "expo-router";
 import { useState } from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import {
@@ -13,7 +12,7 @@ import {
   type SesiAkunResponse,
 } from "@ternakin/shared";
 import { Info, MasukanKode, Pemisah, PilihanPeran, TautanTeks, useHitungMundur } from "@/components/MasukUi";
-import { Kartu, KepalaLayar, Layar, Masukan, PesanGalat, Teks, Tombol, TombolIkon } from "@/components/ui";
+import { Kartu, KepalaLayar, Layar, Masukan, PesanGalat, Teks, Tombol } from "@/components/ui";
 import {
   AKUN_DEMO_TAMPIL,
   DOMAIN_DEMO,
@@ -70,11 +69,13 @@ export default function MasukLayar() {
   const konfigurasi = useKonfigurasiAuth();
   const [pesanSukses, setPesanSukses] = useState<string | null>(null);
 
-  /** Setelah sesi dibuat: tanpa peran → pilih peran dulu; selain itu kembali ke aplikasi. */
+  /**
+   * Setelah sesi dibuat: tanpa peran → pilih peran dulu. Dengan peran, penjaga navigasi di
+   * app/_layout.tsx otomatis membuka aplikasi (layar ini tidak perlu kembali sendiri).
+   */
   function selesai(hasil: SesiAkunResponse) {
     const pindah = hasil.kandangDipindahkan ?? 0;
     if (pindah > 0) setPesanSukses(`${pindah} profil kandang dari HP ini sudah tersimpan di akun Anda.`);
-    if (hasil.pengguna.peran) router.back();
   }
 
   const perluPeran = !!pengguna && !pengguna.peran;
@@ -82,10 +83,7 @@ export default function MasukLayar() {
   return (
     <Layar
       kepala={
-        <KepalaLayar
-          judul="Masuk"
-          kiri={<TombolIkon ikon="close" label="Tutup" onPress={() => router.back()} />}
-        />
+        <KepalaLayar judul="Masuk" />
       }
     >
       <View style={{ gap: jarak.s }}>
@@ -93,7 +91,8 @@ export default function MasukLayar() {
         <Teks redup>
           Ada dua peran. <Text style={gaya.tebal}>Peternak</Text> menghitung pakan, mencatat kandang, bertanya
           ke Kokok, dan mengajukan peluang modal. <Text style={gaya.tebal}>Pengguna</Text> bertanya ke Kokok dan
-          menitipkan modal ke peternak. Tanpa akun, Ternakin tetap bisa dipakai sebagai peternak.
+          menitipkan modal ke peternak. Masuk dulu untuk memakai Ternakin; daftarnya gratis, dan setelah
+          masuk sekali, Ternakin tetap bisa dipakai tanpa sinyal.
         </Teks>
       </View>
 
@@ -153,8 +152,8 @@ function KartuPilihPeran({ pesanSukses }: { pesanSukses: string | null }) {
     setGalat("");
     setSedang(true);
     try {
+      // Peran terpilih: penjaga navigasi membuka aplikasi.
       await aturPeran(peran);
-      router.back();
     } catch (err) {
       setGalat(pesanGalat(err));
     } finally {
@@ -643,7 +642,6 @@ function BagianDemo() {
     setSedang(peran);
     try {
       await masukDemo(peran);
-      router.back();
     } catch (err) {
       setGalat(pesanGalat(err));
     } finally {

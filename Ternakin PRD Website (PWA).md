@@ -70,7 +70,7 @@ Tiap modul punya satu cerita pengguna dan kriteria penerimaan yang bisa diuji. A
 
 **F5. Akun dan data**
 
-- Masuk dengan nomor ponsel atau tanpa akun untuk mode tamu; data tamu dapat dipindah ke akun saat daring.
+- Masuk dengan nomor ponsel, email, atau Google. **Diubah 23 November 2026:** semua fitur aplikasi wajib masuk (mode tamu dihapus); landing page tetap publik. Masuk pertama butuh internet, setelah itu aplikasi tetap bisa dipakai offline. Data tamu lama dipindah ke akun saat masuk.
 
 ## Kebutuhan non-fungsional
 

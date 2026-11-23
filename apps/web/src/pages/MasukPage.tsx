@@ -18,6 +18,7 @@ import {
 } from "../components/ui";
 import { TEKS_INVESTASI } from "../content/investasiContent";
 import { GalatAkun, masukAkunDemo, useAkun, useKonfigurasiAuth } from "../lib/akun";
+import { ambilPesanMasuk } from "../lib/pesanMasuk";
 import { AKUN_DEMO_TAMPIL } from "../lib/akunDemo";
 import { BERANDA_PERAN, LABEL_PERAN } from "../lib/peran";
 import { buatTautanWhatsAppTim } from "../lib/wa";
@@ -62,6 +63,8 @@ export function MasukPage() {
   const peranSaran = peranDariParam(params.get("peran"));
   const lanjut = params.get("lanjut");
   const [galatDemo, setGalatDemo] = useState<string | null>(null);
+  // Pesan dari aksi yang mengakhiri sesi (mis. hapus akun); hanya tampil sekali.
+  const [pesanAwal] = useState(ambilPesanMasuk);
   const [sedangDemo, setSedangDemo] = useState<PeranAkun | null>(null);
 
   const masukSebagai = async (peran: PeranAkun) => {
@@ -82,13 +85,15 @@ export function MasukPage() {
 
   return (
     <AppShell pageTitle="Masuk">
+      {pesanAwal && <Banner variant="success">{pesanAwal}</Banner>}
       <Card variant="warm" className="tk-inv-hero">
         <p className="tk-eyebrow">AKUN TERNAKIN</p>
         <h1 className="tk-inv-title">Masuk ke Ternakin</h1>
         <p className="tk-muted tk-prose">
           Ada dua peran. <strong>Peternak</strong> menghitung pakan, mencatat kandang, bertanya ke
           Kokok, dan mengajukan peluang modal. <strong>Pengguna</strong> bertanya ke Kokok dan
-          menitipkan modal ke peternak. Tanpa akun, Ternakin tetap bisa dipakai sebagai peternak.
+          menitipkan modal ke peternak. Masuk dulu untuk memakai Ternakin; daftarnya gratis, dan
+          setelah masuk sekali, Ternakin tetap bisa dipakai tanpa sinyal.
         </p>
       </Card>
 

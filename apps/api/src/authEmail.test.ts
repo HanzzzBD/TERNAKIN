@@ -171,12 +171,14 @@ describe("Daftar dan masuk dengan email", () => {
     expect(benar.body.kode).toBe("KODE_KEDALUWARSA");
   });
 
-  it("data tamu perangkat ikut pindah ke akun email", async () => {
-    const { app } = buatApp();
-    await request(app)
-      .post("/v1/kandang")
-      .set("x-device-id", "tamu-email")
-      .send({ nama: "Kandang Tamu", jenisAyam: "petelur", jumlahEkor: 300 });
+  it("data tamu lama di perangkat ikut pindah ke akun email", async () => {
+    const { app, dbCtx } = buatApp();
+    // Tamu tidak bisa lagi menulis lewat API; baris disiapkan langsung untuk meniru data lama.
+    dbCtx.db
+      .prepare(
+        "INSERT INTO kandang (id, perangkat_id, nama, jenis_ayam, jumlah_ekor, diubah_pada) VALUES (?, ?, 'Kandang Tamu', 'petelur', 300, ?)",
+      )
+      .run(crypto.randomUUID(), "tamu-email", new Date().toISOString());
 
     const sesi = await daftarDanVerifikasi(request.agent(app), "tamu-email");
     expect(sesi.kandangDipindahkan).toBe(1);

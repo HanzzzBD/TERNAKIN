@@ -7,20 +7,22 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  penggunaSayaSchema,
   sesiAkunResponseSchema,
   type PenggunaSaya,
   type PeranAkun,
   type SesiAkunResponse,
 } from "@ternakin/shared";
-import { GalatApi, panggilApi } from "./api";
+import { aturPenanganSesiBerakhir, GalatApi, panggilApi } from "./api";
 import { ambilPerangkatId, ambilToken, hapusToken, simpanToken } from "./penyimpanan";
 
 interface NilaiSesi {
-  /** null = tamu (mode peternak tanpa akun, sesuai keputusan produk). */
+  /** null = belum masuk. Semua fitur wajib masuk, jadi aplikasi menampilkan layar Masuk. */
   pengguna: PenggunaSaya | null;
   memuat: boolean;
-  /** Peran efektif: tamu diperlakukan sebagai peternak. */
+  /** Peran efektif (bawaan peternak sampai pengguna memilih). */
   peran: PeranAkun;
   masukDemo: (peran: PeranAkun) => Promise<void>;
   masukEmail: (email: string, sandi: string) => Promise<SesiAkunResponse>;
@@ -36,8 +38,29 @@ interface NilaiSesi {
 
 const KonteksSesi = createContext<NilaiSesi | null>(null);
 
+/** Salinan data pengguna (bukan token) agar aplikasi tetap terbuka saat dibuka tanpa sinyal. */
+const KUNCI_PENGGUNA = "tk_pengguna";
+
+async function bacaPenggunaTersimpan(): Promise<PenggunaSaya | null> {
+  try {
+    const mentah = await AsyncStorage.getItem(KUNCI_PENGGUNA);
+    if (!mentah) return null;
+    const hasil = penggunaSayaSchema.safeParse(JSON.parse(mentah));
+    return hasil.success ? hasil.data : null;
+  } catch {
+    return null;
+  }
+}
+
+function simpanPenggunaTersimpan(pengguna: PenggunaSaya | null): void {
+  const tugas = pengguna
+    ? AsyncStorage.setItem(KUNCI_PENGGUNA, JSON.stringify(pengguna))
+    : AsyncStorage.removeItem(KUNCI_PENGGUNA);
+  tugas.catch(() => {});
+}
+
 /**
- * Pengguna dari token tersimpan. null = tamu (tanpa token, atau sesi kedaluwarsa/dicabut);
+ * Pengguna dari token tersimpan. null = belum masuk (tanpa token, atau sesi kedaluwarsa/dicabut);
  * "tidak_berubah" = server tak terjangkau (offline) sehingga token dibiarkan.
  */
 async function bacaSesiServer(): Promise<PenggunaSaya | null | "tidak_berubah"> {
@@ -80,17 +103,36 @@ export function SesiProvider({ children }: { children: ReactNode }) {
     if (hasil !== "tidak_berubah") setPengguna(hasil);
   }, []);
 
-  // Status sesi dibaca sekali saat aplikasi dibuka; splash ditahan sampai selesai.
+  // Status sesi dibaca sekali saat aplikasi dibuka; splash ditahan sampai selesai. Saat offline,
+  // salinan pengguna di HP dipakai (hanya bila token sesi masih ada) agar fitur tetap bisa dipakai.
   useEffect(() => {
     let aktif = true;
-    bacaSesiServer().then((hasil) => {
+    void (async () => {
+      const hasil = await bacaSesiServer();
+      let pengguna: PenggunaSaya | null = null;
+      if (hasil !== "tidak_berubah") pengguna = hasil;
+      else if (await ambilToken()) pengguna = await bacaPenggunaTersimpan();
       if (!aktif) return;
-      if (hasil !== "tidak_berubah") setPengguna(hasil);
+      setPengguna(pengguna);
       setMemuat(false);
-    });
+    })();
     return () => {
       aktif = false;
     };
+  }, []);
+
+  // Salinan di HP selalu mengikuti status sesi terbaru.
+  useEffect(() => {
+    if (!memuat) simpanPenggunaTersimpan(pengguna);
+  }, [pengguna, memuat]);
+
+  // 401 dari API aplikasi mana pun: token dihapus dan aplikasi kembali ke layar Masuk.
+  useEffect(() => {
+    aturPenanganSesiBerakhir(() => {
+      void hapusToken().catch(() => {});
+      setPengguna(null);
+    });
+    return () => aturPenanganSesiBerakhir(null);
   }, []);
 
   const nilai = useMemo<NilaiSesi>(

@@ -49,9 +49,15 @@ const AJUAN = {
 };
 
 describe("Daftar peluang investasi (simulasi)", () => {
-  it("bisa dilihat tanpa akun dan memakai data contoh yang sama dengan prototipe", async () => {
+  it("tamu ditolak; akun yang masuk melihat data contoh yang sama dengan prototipe", async () => {
     const { app } = buatApp();
-    const res = await request(app).get("/v1/investasi/peluang");
+    const tamu = await request(app).get("/v1/investasi/peluang");
+    expect(tamu.status).toBe(401);
+    expect(tamu.body.kode).toBe("BELUM_MASUK");
+
+    const agent = request.agent(app);
+    await masukOtp(agent, "081234500010", "pengguna");
+    const res = await agent.get("/v1/investasi/peluang");
     expect(res.status).toBe(200);
     const { peluang } = daftarPeluangResponseSchema.parse(res.body);
     expect(peluang.map((p) => p.id)).toEqual([
@@ -97,8 +103,10 @@ describe("Pengguna mencatat minat titip modal", () => {
     });
 
     // Orang lain melihat modal bertambah, tetapi minatSaya miliknya tetap 0.
-    const tamu = await request(app).get("/v1/investasi/peluang/pl-ciparay");
-    expect(tamu.body.peluang).toMatchObject({ modalTerkumpul: 19_750_000, minatSaya: 0 });
+    const lain = request.agent(app);
+    await masukOtp(lain, "081234500011", "pengguna");
+    const dilihatLain = await lain.get("/v1/investasi/peluang/pl-ciparay");
+    expect(dilihatLain.body.peluang).toMatchObject({ modalTerkumpul: 19_750_000, minatSaya: 0 });
   });
 
   it("menolak nominal di bawah minimal, melebihi sisa, dan peluang yang tidak dibuka", async () => {
@@ -165,13 +173,39 @@ describe("Pembatasan fitur untuk peran Pengguna", () => {
     expect((await agent.get("/v1/toko")).status).toBe(200);
   });
 
-  it("tamu tetap bisa memakai fitur peternak (mode tamu = peternak)", async () => {
+  it("tamu ditolak 401 BELUM_MASUK di semua fitur; referensi, unduhan, dan OpenAPI tetap terbuka", async () => {
     const { app } = buatApp();
-    const res = await request(app)
-      .post("/v1/kandang")
-      .set("x-device-id", "tamu-1")
-      .send({ nama: "Kandang Tamu", jenisAyam: "petelur", jumlahEkor: 300 });
-    expect(res.status).toBe(200);
+    const tamu = request(app);
+    const ditolak = [
+      await tamu
+        .post("/v1/kandang")
+        .set("x-device-id", "tamu-1")
+        .send({ nama: "Kandang Tamu", jenisAyam: "petelur", jumlahEkor: 300 }),
+      await tamu.get("/v1/kandang").set("x-device-id", "tamu-1"),
+      await tamu.put(`/v1/catatan/${crypto.randomUUID()}`).send({}),
+      await tamu.post("/v1/sinkron").send({ perangkatId: "tamu-1", itemOutbox: [] }),
+      await tamu.post("/v1/pakan/hitung").send({}),
+      await tamu.post("/v1/pakan/urai").send({ teks: "jagung 6.500" }),
+      await tamu.get("/v1/toko"),
+      await tamu.get("/v1/toko/rujukan"),
+      await tamu.post("/v1/lead").send({}),
+      await tamu.get("/v1/investasi/peluang"),
+      await tamu.post("/v1/kokok/obrolan").send({ pesan: "halo" }),
+    ];
+    for (const res of ditolak) {
+      expect(res.status, res.req.path).toBe(401);
+      expect(res.body.kode, res.req.path).toBe("BELUM_MASUK");
+    }
+
+    for (const path of [
+      "/v1/referensi",
+      "/v1/bahan",
+      "/v1/unduhan",
+      "/v1/openapi.json",
+      "/v1/auth/konfigurasi",
+    ]) {
+      expect((await tamu.get(path)).status, path).toBe(200);
+    }
   });
 });
 
@@ -188,7 +222,9 @@ describe("Peternak mengelola peluangnya", () => {
     expect(res.body.peluang).toMatchObject({ izinData: false, milikSaya: true });
     expect(res.body.peluang.catatan.length).toBeGreaterThan(0);
 
-    const lain = await request(app).get("/v1/investasi/peluang/pl-ciparay");
+    const orangLain = request.agent(app);
+    await masukOtp(orangLain, "081234500012", "pengguna");
+    const lain = await orangLain.get("/v1/investasi/peluang/pl-ciparay");
     expect(lain.body.peluang).toMatchObject({ izinData: false, catatan: [] });
 
     const bukanMilik = await peternak

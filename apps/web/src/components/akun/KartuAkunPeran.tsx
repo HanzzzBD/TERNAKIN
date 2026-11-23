@@ -23,7 +23,7 @@ export function KartuAkunPeran() {
       <Card>
         <h2 className="tk-pakan-h2">Akun</h2>
         <p className="tk-muted tk-prose">
-          Anda memakai Ternakin tanpa akun sebagai peternak; data tersimpan di HP ini.
+          Anda belum masuk. Masuk untuk memakai Ternakin.
         </p>
         <div className="tk-actions-row">
           <Link to="/app/masuk" className="tk-btn tk-btn--primary">

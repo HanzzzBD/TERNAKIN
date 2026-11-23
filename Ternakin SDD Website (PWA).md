@@ -40,7 +40,7 @@ Sepuluh tabel cukup untuk seluruh MVP. Setiap catatan milik pengguna memakai ID 
 
 | Tabel | Isi utama | Catatan |
 | --- | --- | --- |
-| pengguna | id, nomor ponsel (opsional), peran (peternak, admin) | Mode tamu tanpa baris di server |
+| pengguna | id, nomor ponsel (opsional), peran (peternak, admin) | Sejak 23 Nov 2026 semua fitur wajib masuk; baris tamu lama dipindah ke akun saat masuk |
 | kandang | id, pengguna, nama, jenis\_ayam, jumlah\_ekor | jenis\_ayam adalah parameter, awalnya petelur |
 | catatan\_harian | id, kandang, tanggal, pakan\_kg, telur, kematian, suhu, diubah\_pada | Satu catatan per kandang per tanggal |
 | bahan | id, nama, satuan | Master bahan pakan |
@@ -131,13 +131,16 @@ Basis pengetahuan Kokok (RAG) terdiri dari 6 panduan triase (`apps/api/seed/pand
 
 | Peran | Fitur | Catatan |
 | --- | --- | --- |
-| Peternak | Penyusun pakan, catatan harian, toko, Kokok, mengajukan kandang sebagai peluang modal | Tamu (belum masuk) diperlakukan sebagai peternak sesuai mode tamu PRD, kecuali Kokok yang wajib masuk |
+| Peternak | Penyusun pakan, catatan harian, toko, Kokok, mengajukan kandang sebagai peluang modal | Semua fitur wajib masuk (lihat di bawah) |
 | Pengguna | Kokok (untuk ayam peliharaan) dan mencatat minat titip modal ke peternak | Tidak bisa membuka pakan, catatan, dan toko; server menolak dengan kode `KHUSUS_PETERNAK` |
 
 - Peran dipilih saat pertama masuk dengan nomor WhatsApp dan disimpan di `pengguna.peran_akun`. Satu peran per akun, bisa diganti dari Profil (`PUT /v1/auth/peran`); data kandang tetap tersimpan saat berganti peran.
 - Akun demo bersama untuk juri (`POST /v1/auth/demo`, Rani sebagai pengguna dan Pak Dedi sebagai peternak) mengikuti aturan peran yang sama, tidak bisa diganti perannya atau dihapus, dan dapat dimatikan lewat `AKUN_DEMO_AKTIF=false`. Agar data tamu tidak bocor ke akun bersama, akun demo hanya bisa dibuka di perangkat tanpa data kandang tamu.
-- **Kokok wajib masuk (23 November 2026).** `POST /v1/kokok/triase` dan `POST /v1/kokok/obrolan` menolak tamu dengan `401 BELUM_MASUK`; akun demo dihitung sudah masuk. Web dan mobile menampilkan ajakan masuk di halaman Kokok. Popup Kokok di landing hanya menjawab pertanyaan cepat dengan teks tetap untuk tamu, tanpa memanggil server. Fitur pakan, catatan, dan toko tetap bisa dipakai tamu.
-- **Pengingat masuk untuk tamu.** Beranda web dan mobile menampilkan pengingat bahwa data tamu hanya tersimpan di perangkat. Tombol "Nanti saja" menyembunyikannya selama 7 hari.
+- **Semua fitur wajib masuk (23 November 2026, menggantikan mode tamu).** Server menolak tamu dengan `401 BELUM_MASUK` di `/v1/kandang`, `/catatan`, `/sinkron`, `/pakan`, `/lead`, `/toko`, `/investasi`, dan `/kokok`. Tetap terbuka: `/v1/auth/*`, data referensi pakan (`/v1/referensi`, `/v1/bahan`, untuk cache offline), `/v1/unduhan`, `/v1/openapi.json`, dan `DELETE /v1/akun`. Akun demo dihitung sudah masuk.
+- **Web:** semua rute `/app/*` kecuali `/app/masuk` dijaga `WajibMasuk`; tamu dialihkan ke `/app/masuk?lanjut=<tujuan>`. Landing (`/`) dan `/privasi` tetap publik; popup Kokok di landing hanya menjawab pertanyaan cepat dengan teks tetap untuk tamu. Respons 401 dari `/v1/*` (kecuali `/v1/auth/*`) menghapus status masuk lokal.
+- **Android:** tab aplikasi hanya terbuka untuk akun yang sudah memilih peran; selain itu layar Masuk (setelah layar sambutan). Respons 401 mengakhiri sesi.
+- **Offline:** masuk pertama butuh internet. Setelah itu status masuk disimpan di perangkat (web: `localStorage`; Android: `AsyncStorage`, token tetap di SecureStore), sehingga pakan dan catatan tetap bisa dipakai tanpa sinyal dan tersinkron nanti. Galat jaringan tidak mengakhiri sesi; hanya 401 dari server.
+- Data tamu lama (di server atau di perangkat) dipindah ke akun saat masuk, seperti sebelumnya.
 
 **Investasi ternak — Modul 5 (SIMULASI)**
 

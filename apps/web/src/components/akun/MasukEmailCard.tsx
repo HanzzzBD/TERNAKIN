@@ -233,7 +233,7 @@ export function MasukEmailCard({
 
       {!isOnline && (
         <Banner variant="offline">
-          Masuk butuh sinyal internet. Sementara itu Anda tetap bisa memakai Ternakin tanpa akun.
+          Masuk butuh sinyal internet. Sambungkan ke internet lalu coba lagi; setelah masuk sekali, Ternakin tetap bisa dipakai tanpa sinyal.
         </Banner>
       )}
 

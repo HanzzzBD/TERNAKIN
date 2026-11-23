@@ -23,6 +23,17 @@ export class GalatApi extends Error {
   }
 }
 
+/**
+ * Dipanggil saat API aplikasi menjawab 401 padahal HP memegang token (sesi berakhir atau dicabut).
+ * Didaftarkan oleh SesiProvider. Rute /v1/auth/* dikecualikan karena 401 di sana adalah jawaban
+ * normal proses masuk.
+ */
+let penanganSesiBerakhir: (() => void) | null = null;
+
+export function aturPenanganSesiBerakhir(fn: (() => void) | null): void {
+  penanganSesiBerakhir = fn;
+}
+
 interface OpsiPermintaan<T> {
   method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: unknown;
@@ -73,6 +84,7 @@ export async function panggilApi<T = unknown>(
   }
 
   const data: unknown = await res.json().catch(() => null);
+  if (res.status === 401 && token && !path.startsWith("/v1/auth/")) penanganSesiBerakhir?.();
   if (!res.ok) {
     const galat = (data ?? {}) as { kode?: string; pesan?: string; rinci?: Record<string, unknown> };
     throw new GalatApi(

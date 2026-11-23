@@ -39,6 +39,23 @@ function payloadKandang(id: string, nama: string) {
   return { id, nama, jenisAyam: "petelur", jumlahEkor: 500 };
 }
 
+/**
+ * Data tamu lama di server (dibuat sebelum semua fitur wajib masuk). Tamu tidak bisa lagi menulis
+ * lewat API, jadi baris disiapkan langsung di basis data untuk menguji pemindahan ke akun.
+ */
+function simpanKandangTamuLama(
+  dbCtx: ReturnType<typeof initDatabase>,
+  perangkatId: string,
+  id: string,
+  nama: string,
+) {
+  dbCtx.db
+    .prepare(
+      "INSERT INTO kandang (id, perangkat_id, nama, jenis_ayam, jumlah_ekor, diubah_pada) VALUES (?, ?, ?, 'petelur', 500, ?)",
+    )
+    .run(id, perangkatId, nama, new Date().toISOString());
+}
+
 describe("OTP: minta kode", () => {
   it("mode demo mengembalikan kode dan menyamarkan nomor", async () => {
     const { app } = buatAppUji();
@@ -166,18 +183,17 @@ describe("Pindah data tamu ke akun", () => {
     const perangkatA = "perangkat-tamu-a";
     const kandangId = crypto.randomUUID();
 
-    await request(app)
-      .post("/v1/kandang")
-      .set("x-device-id", perangkatA)
-      .send(payloadKandang(kandangId, "Kandang Ciparay"));
+    simpanKandangTamuLama(dbCtx, perangkatA, kandangId, "Kandang Ciparay");
 
     const agentA = request.agent(app);
     const sesi = await masuk(agentA, { perangkatId: perangkatA });
     expect(sesi.kandangDipindahkan).toBe(1);
 
     // Data tidak lagi milik perangkat (mode tamu)...
-    const tamu = await request(app).get("/v1/kandang").set("x-device-id", perangkatA);
-    expect(tamu.body.kandang).toEqual([]);
+    const sisaTamu = dbCtx.db
+      .prepare("SELECT COUNT(*) AS n FROM kandang WHERE perangkat_id = ?")
+      .get(perangkatA) as { n: number };
+    expect(sisaTamu.n).toBe(0);
 
     // ...melainkan milik akun, dari perangkat mana pun yang masuk.
     dbCtx.db.prepare("DELETE FROM otp_permintaan").run();
@@ -219,10 +235,18 @@ describe("Keamanan kepemilikan data", () => {
     const sesi = await masuk(agent);
     await agent.post("/v1/kandang").send(payloadKandang(crypto.randomUUID(), "Kandang Rahasia"));
 
+    // Tanpa sesi: ditolak sebelum header perangkat dibaca.
     const penyamar = await request(app)
       .get("/v1/kandang")
       .set("x-device-id", `akun:${sesi.pengguna.id}`);
-    expect(penyamar.status).toBe(400);
+    expect(penyamar.status).toBe(401);
+
+    // Akun lain yang mengirim header berawalan akun: tetap hanya melihat datanya sendiri.
+    const lain = request.agent(app);
+    await masuk(lain, { nomor: "081298765432" });
+    const lihatLain = await lain.get("/v1/kandang").set("x-device-id", `akun:${sesi.pengguna.id}`);
+    expect(lihatLain.status).toBe(200);
+    expect(lihatLain.body.kandang).toEqual([]);
 
     const hapus = await request(app)
       .delete("/v1/akun")
@@ -231,58 +255,52 @@ describe("Keamanan kepemilikan data", () => {
     expect((await agent.get("/v1/kandang")).body.kandang).toHaveLength(1);
   });
 
-  it("kandang tidak bisa diambil alih atau ditulisi perangkat lain lewat ID-nya", async () => {
+  it("kandang tidak bisa diambil alih atau ditulisi akun lain lewat ID-nya", async () => {
     const { app, dbCtx } = buatAppUji();
     const kandangId = crypto.randomUUID();
-    await request(app)
-      .post("/v1/kandang")
-      .set("x-device-id", "pemilik-asli")
-      .send(payloadKandang(kandangId, "Kandang Asli"));
+    const pemilik = request.agent(app);
+    await masuk(pemilik);
+    await pemilik.post("/v1/kandang").send(payloadKandang(kandangId, "Kandang Asli"));
 
-    const ambilAlih = await request(app)
-      .post("/v1/kandang")
-      .set("x-device-id", "penyusup")
-      .send(payloadKandang(kandangId, "Diambil"));
+    const penyusup = request.agent(app);
+    await masuk(penyusup, { nomor: "081298765432" });
+
+    const ambilAlih = await penyusup.post("/v1/kandang").send(payloadKandang(kandangId, "Diambil"));
     expect(ambilAlih.status).toBe(403);
 
-    const catatanPut = await request(app)
-      .put(`/v1/catatan/${crypto.randomUUID()}`)
-      .set("x-device-id", "penyusup")
-      .send({
-        kandangId,
-        tanggal: "2026-11-20",
-        pakanKg: 1,
-        telur: 1,
-        kematian: 0,
-        suhu: 27,
-        diubahPada: "2026-11-20T08:00:00.000Z",
-      });
+    const catatanPut = await penyusup.put(`/v1/catatan/${crypto.randomUUID()}`).send({
+      kandangId,
+      tanggal: "2026-11-20",
+      pakanKg: 1,
+      telur: 1,
+      kematian: 0,
+      suhu: 27,
+      diubahPada: "2026-11-20T08:00:00.000Z",
+    });
     expect(catatanPut.status).toBe(403);
 
     const opCatatan = crypto.randomUUID();
-    const sinkron = await request(app)
-      .post("/v1/sinkron")
-      .send({
-        perangkatId: "penyusup",
-        terakhirSinkron: null,
-        itemOutbox: [
-          {
-            opId: opCatatan,
-            jenis: "upsert_catatan",
-            dibuatPada: "2026-11-20T08:00:00.000Z",
-            payload: {
-              id: crypto.randomUUID(),
-              kandangId,
-              tanggal: "2026-11-20",
-              pakanKg: 1,
-              telur: 1,
-              kematian: 0,
-              suhu: 27,
-              diubahPada: "2026-11-20T08:00:00.000Z",
-            },
+    const sinkron = await penyusup.post("/v1/sinkron").send({
+      perangkatId: "penyusup",
+      terakhirSinkron: null,
+      itemOutbox: [
+        {
+          opId: opCatatan,
+          jenis: "upsert_catatan",
+          dibuatPada: "2026-11-20T08:00:00.000Z",
+          payload: {
+            id: crypto.randomUUID(),
+            kandangId,
+            tanggal: "2026-11-20",
+            pakanKg: 1,
+            telur: 1,
+            kematian: 0,
+            suhu: 27,
+            diubahPada: "2026-11-20T08:00:00.000Z",
           },
-        ],
-      });
+        },
+      ],
+    });
     expect(sinkron.status).toBe(200);
     expect(sinkron.body.dikonfirmasiOpIds).toEqual([opCatatan]);
 

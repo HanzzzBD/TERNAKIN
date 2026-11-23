@@ -37,56 +37,47 @@ export function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/privasi" element={<PrivasiPage />} />
-        <Route
-          path="/app"
-          element={
-            <KhususPeternak alihkanPengguna>
-              <FondasiPage />
-            </KhususPeternak>
-          }
-        />
-        <Route
-          path="/app/pakan"
-          element={
-            <KhususPeternak>
-              <PakanPage />
-            </KhususPeternak>
-          }
-        />
-        <Route
-          path="/app/catatan"
-          element={
-            <KhususPeternak>
-              <CatatanPage />
-            </KhususPeternak>
-          }
-        />
-        <Route path="/app/profil" element={<ProfilPage />} />
-        <Route
-          path="/app/tanya"
-          element={
-            <WajibMasuk
-              pageTitle="Tanya Kokok"
-              judul="Masuk untuk bertanya ke Kokok"
-              deskripsi="Kokok khusus untuk pengguna yang sudah masuk. Daftar gratis dengan email, Google, atau WhatsApp. Draf pertanyaan Anda tetap tersimpan."
-              lanjut="/app/tanya"
-            >
-              <KokokPage />
-            </WajibMasuk>
-          }
-        />
-        <Route
-          path="/app/toko"
-          element={
-            <KhususPeternak>
-              <TokoPage />
-            </KhususPeternak>
-          }
-        />
         <Route path="/app/masuk" element={<MasukPage />} />
-        <Route path="/app/investasi" element={<InvestasiPage />} />
-        <Route path="/app/investasi/:id" element={<InvestasiDetailPage />} />
-        <Route path="/app/peternak" element={<PeternakPage />} />
+        {/* Semua fitur aplikasi wajib masuk; tamu dialihkan ke /app/masuk?lanjut=... */}
+        <Route element={<WajibMasuk />}>
+          <Route
+            path="/app"
+            element={
+              <KhususPeternak alihkanPengguna>
+                <FondasiPage />
+              </KhususPeternak>
+            }
+          />
+          <Route
+            path="/app/pakan"
+            element={
+              <KhususPeternak>
+                <PakanPage />
+              </KhususPeternak>
+            }
+          />
+          <Route
+            path="/app/catatan"
+            element={
+              <KhususPeternak>
+                <CatatanPage />
+              </KhususPeternak>
+            }
+          />
+          <Route path="/app/profil" element={<ProfilPage />} />
+          <Route path="/app/tanya" element={<KokokPage />} />
+          <Route
+            path="/app/toko"
+            element={
+              <KhususPeternak>
+                <TokoPage />
+              </KhususPeternak>
+            }
+          />
+          <Route path="/app/investasi" element={<InvestasiPage />} />
+          <Route path="/app/investasi/:id" element={<InvestasiDetailPage />} />
+          <Route path="/app/peternak" element={<PeternakPage />} />
+        </Route>
         {DevKomponenPage && (
           <Route
             path="/dev/komponen"

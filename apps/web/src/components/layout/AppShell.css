@@ -334,7 +334,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 40px;
+  /* Ukuran sentuh minimal (48px) juga untuk tombol akun saat sudah masuk. */
+  min-height: var(--tap-min);
   max-width: 40vw;
   padding: 0 var(--space-3);
   border-radius: var(--radius-pill);
@@ -364,7 +365,7 @@
 
 @media (max-width: 639px) {
   .tk-akun-chip {
-    width: 40px;
+    width: var(--tap-min);
     padding: 0;
     justify-content: center;
   }

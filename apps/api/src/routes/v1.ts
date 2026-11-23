@@ -11,7 +11,7 @@ import { createAdminRouter } from "./admin.js";
 import { createAkunRouter } from "./akun.js";
 import { createAuthRouter } from "./auth.js";
 import { createInvestasiRouter } from "./investasi.js";
-import { tolakPeranPengguna } from "../middleware/peran.js";
+import { tolakPeranPengguna, wajibMasuk } from "../middleware/peran.js";
 import { createCatatanRouter } from "./catatan.js";
 import { createKandangRouter } from "./kandang.js";
 import { createKokokRouter } from "./kokok.js";
@@ -52,7 +52,17 @@ export function createV1Router(deps: V1RouterDeps): Router {
   // Info unduhan APK Android: terbuka untuk semua (tamu juga), dipakai tombol unduh di web.
   router.use("/unduhan", createUnduhanRouter(deps.unduhanDir));
 
-  // Fitur khusus peternak (dan tamu): ditolak untuk akun berperan Pengguna.
+  // Semua fitur aplikasi wajib masuk (keputusan 23 Nov 2026): tamu mendapat 401 BELUM_MASUK.
+  // Tetap terbuka: /auth (masuk), data referensi pakan (cache offline), /unduhan, /openapi.json,
+  // dan DELETE /akun (menghapus data lama perangkat). /kokok dijaga di routernya sendiri.
+  router.use(
+    ["/kandang", "/catatan", "/sinkron", "/pakan", "/lead", "/toko", "/investasi"],
+    wajibMasuk(
+      "Masuk dulu untuk memakai Ternakin. Daftar gratis dengan email, Google, atau WhatsApp.",
+    ),
+  );
+
+  // Fitur khusus peternak: ditolak untuk akun berperan Pengguna.
   // Harus dipasang sebelum router fitur tersebut.
   router.use(
     ["/kandang", "/catatan", "/sinkron", "/pakan", "/lead", "/toko/rujukan"],

@@ -11,6 +11,7 @@ import {
 import { MockLlmAdapter } from "./adapters/mockLlm.js";
 import type { LlmAdapter } from "./adapters/types.js";
 import { createApp } from "./app.js";
+import { sebagaiAkun } from "./uji/masuk.js";
 
 describe("API Fase 2: Referensi & Penyusun Pakan", () => {
   it("GET /v1/bahan dan GET /v1/referensi mengembalikan data referensi valid berlabel contoh", async () => {
@@ -44,11 +45,11 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
   it("POST /v1/pakan/urai mengurai teks bebas, memakai cache pada permintaan sama, dan menolak masukan tidak valid", async () => {
     const app = createApp();
 
-    const gagal = await request(app).post("/v1/pakan/urai").send({ teks: "" });
+    const gagal = await (await sebagaiAkun(app)).post("/v1/pakan/urai").send({ teks: "" });
     expect(gagal.status).toBe(400);
     expect(galatApiSchema.safeParse(gagal.body).success).toBe(true);
 
-    const pertama = await request(app).post("/v1/pakan/urai").send({
+    const pertama = await (await sebagaiAkun(app)).post("/v1/pakan/urai").send({
       teks: "Jagung 6.500 per kg, dedak 4.000, konsentrat 12.000 per kg",
       perangkatId: "dev-test-1",
     });
@@ -65,7 +66,7 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
     expect(parsed.data.item[2]?.bahanId).toBe("konsentrat_petelur");
     expect(parsed.data.item[2]?.hargaPerKg).toBe(12000);
 
-    const kedua = await request(app).post("/v1/pakan/urai").send({
+    const kedua = await (await sebagaiAkun(app)).post("/v1/pakan/urai").send({
       teks: "  jagung 6.500 per kg, dedak 4.000, konsentrat 12.000 per kg ",
       perangkatId: "dev-test-1",
     });
@@ -76,19 +77,17 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
   it("POST /v1/pakan/hitung mengembalikan campuran layak dan kasus tak layak dengan zat kurang", async () => {
     const app = createApp();
 
-    const layakRes = await request(app)
-      .post("/v1/pakan/hitung")
-      .send({
-        jenisAyam: "petelur",
-        fase: "layer",
-        bahan: [
-          { bahanId: "jagung_kuning", hargaPerKg: 6500 },
-          { bahanId: "dedak_padi", hargaPerKg: 4000 },
-          { bahanId: "konsentrat_petelur", hargaPerKg: 12000 },
-          { bahanId: "tepung_batu_kapur", hargaPerKg: 1500 },
-        ],
-        biayaSekarangPerKg: 8200,
-      });
+    const layakRes = await (await sebagaiAkun(app)).post("/v1/pakan/hitung").send({
+      jenisAyam: "petelur",
+      fase: "layer",
+      bahan: [
+        { bahanId: "jagung_kuning", hargaPerKg: 6500 },
+        { bahanId: "dedak_padi", hargaPerKg: 4000 },
+        { bahanId: "konsentrat_petelur", hargaPerKg: 12000 },
+        { bahanId: "tepung_batu_kapur", hargaPerKg: 1500 },
+      ],
+      biayaSekarangPerKg: 8200,
+    });
 
     expect(layakRes.status).toBe(200);
     const layak = pakanHitungResultSchema.parse(layakRes.body);
@@ -98,16 +97,14 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
       expect(layak.biayaPerKg).toBeGreaterThan(0);
     }
 
-    const takLayakRes = await request(app)
-      .post("/v1/pakan/hitung")
-      .send({
-        jenisAyam: "petelur",
-        fase: "layer",
-        bahan: [
-          { bahanId: "jagung_kuning", hargaPerKg: 6500 },
-          { bahanId: "dedak_padi", hargaPerKg: 4000 },
-        ],
-      });
+    const takLayakRes = await (await sebagaiAkun(app)).post("/v1/pakan/hitung").send({
+      jenisAyam: "petelur",
+      fase: "layer",
+      bahan: [
+        { bahanId: "jagung_kuning", hargaPerKg: 6500 },
+        { bahanId: "dedak_padi", hargaPerKg: 4000 },
+      ],
+    });
 
     expect(takLayakRes.status).toBe(200);
     const takLayak = pakanHitungResultSchema.parse(takLayakRes.body);
@@ -120,21 +117,21 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
 
   it("POST /v1/pakan/jelaskan menerima penjelasan sesuai solver dan membuang LLM yang mengubah angka", async () => {
     const appNormal = createApp();
-    const hitungRes = await request(appNormal)
-      .post("/v1/pakan/hitung")
-      .send({
-        jenisAyam: "petelur",
-        fase: "layer",
-        bahan: [
-          { bahanId: "jagung_kuning", hargaPerKg: 6500 },
-          { bahanId: "dedak_padi", hargaPerKg: 4000 },
-          { bahanId: "konsentrat_petelur", hargaPerKg: 12000 },
-          { bahanId: "tepung_batu_kapur", hargaPerKg: 1500 },
-        ],
-      });
+    const hitungRes = await (await sebagaiAkun(appNormal)).post("/v1/pakan/hitung").send({
+      jenisAyam: "petelur",
+      fase: "layer",
+      bahan: [
+        { bahanId: "jagung_kuning", hargaPerKg: 6500 },
+        { bahanId: "dedak_padi", hargaPerKg: 4000 },
+        { bahanId: "konsentrat_petelur", hargaPerKg: 12000 },
+        { bahanId: "tepung_batu_kapur", hargaPerKg: 1500 },
+      ],
+    });
     const hasilLayak = hitungRes.body as PakanHitungLayak;
 
-    const okRes = await request(appNormal)
+    const okRes = await (
+      await sebagaiAkun(appNormal)
+    )
       .post("/v1/pakan/jelaskan")
       .send({ hasilSolver: hasilLayak, perangkatId: "dev-normal" });
     expect(okRes.status).toBe(200);
@@ -155,7 +152,9 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
     };
 
     const appCurang = createApp({ llmAdapter: mockCurang });
-    const tolakRes = await request(appCurang)
+    const tolakRes = await (
+      await sebagaiAkun(appCurang)
+    )
       .post("/v1/pakan/jelaskan")
       .send({ hasilSolver: hasilLayak, perangkatId: "dev-curang" });
 
@@ -169,12 +168,16 @@ describe("API Fase 2: Referensi & Penyusun Pakan", () => {
   it("membatasi kuota harian LLM per perangkat dengan pesan ramah 429", async () => {
     const app = createApp({ dailyLlmLimit: 1 });
 
-    const kesatu = await request(app)
+    const kesatu = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/pakan/urai")
       .send({ teks: "Jagung 6500", perangkatId: "perangkat-kuota" });
     expect(kesatu.status).toBe(200);
 
-    const kedua = await request(app)
+    const kedua = await (
+      await sebagaiAkun(app)
+    )
       .post("/v1/pakan/urai")
       .send({ teks: "Dedak 4000", perangkatId: "perangkat-kuota" });
     expect(kedua.status).toBe(429);
