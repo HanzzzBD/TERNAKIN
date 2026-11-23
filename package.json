@@ -17,7 +17,8 @@
     "typecheck": "npm run build -w @ternakin/shared && npm run typecheck -w @ternakin/api && npm run typecheck -w @ternakin/web && npm run typecheck -w @ternakin/mobile",
     "test": "npm run build -w @ternakin/shared && npm run test --workspaces --if-present",
     "mobile": "npm run build -w @ternakin/shared && npm run dev -w @ternakin/mobile",
-    "tunnel": "node scripts/tunnel.mjs"
+    "tunnel": "node scripts/tunnel.mjs",
+    "paket:hosting": "node scripts/paket-hosting.mjs"
   },
   "devDependencies": {
     "@eslint/js": "latest",

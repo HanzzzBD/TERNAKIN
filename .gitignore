@@ -3,6 +3,8 @@ node_modules/
 
 # Build outputs
 dist/
+/hosting-bundle/
+/ternakin-hosting.tar.gz
 dev-dist/
 *.tsbuildinfo
 
